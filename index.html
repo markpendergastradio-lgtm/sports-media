@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Global Academy KS5 Sports Media: course outline, units, weekly log guide and checker, grading, and live media jobs for students.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Global Academy Sports Media</title>
+</head>
+<body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a broadcast gallery — a scorebug-style masthead, a channel strip for
+   navigation, and lower-third headed panels for each part of the course. */
+:root{
+  --ground:#eef5f5; --panel:#ffffff; --ink:#12313f; --muted:#4e6b76; --rule:#d2e2e3;
+  --navy:#2d6ea6; --navy-ink:#ffffff; --tally:#c8382f; --accent:#3c9f8c; --g1:#5fb895; --g2:#49a5ab; --g3:#2e6fa7; --pitch:#1f7a55; --amber:#b86b00;
+  --chip:#e1eeee; --blue:#2b6cd6; --scrim:rgba(15,40,50,.38); --focus:#2b6cd6;
+  --display:"Jost","Futura","Century Gothic",system-ui,sans-serif;
+  --body:"Jost","Futura","Century Gothic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#0b171c; --panel:#11232a; --ink:#e5f1f1; --muted:#8fadb3; --rule:#21393f;
+  --navy:#2a5f8f; --navy-ink:#ffffff; --tally:#ff6a5e; --accent:#62c8a8; --g1:#3f8f72; --g2:#2f7f86; --g3:#24578a; --pitch:#3fbf7f; --amber:#f0a43a;
+  --chip:#183238; --blue:#7fb0ff; --scrim:rgba(0,0,0,.55); --focus:#7fb0ff; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --ground:#0b171c; --panel:#11232a; --ink:#e5f1f1; --muted:#8fadb3; --rule:#21393f;
+  --navy:#2a5f8f; --navy-ink:#ffffff; --tally:#ff6a5e; --accent:#62c8a8; --g1:#3f8f72; --g2:#2f7f86; --g3:#24578a; --pitch:#3fbf7f; --amber:#f0a43a;
+  --chip:#183238; --blue:#7fb0ff; --scrim:rgba(0,0,0,.55); --focus:#7fb0ff; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font:400 16px/1.6 var(--body)}
+.mast .bug,.mast h1,.mast p{position:relative;z-index:1}
+a{color:var(--focus)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--g1)}
+
+/* Masthead */
+.mast{background:linear-gradient(100deg,var(--g1),var(--g2) 45%,var(--g3));color:#fff;position:relative;overflow:hidden}
+.mast .waves{position:absolute;left:0;right:0;bottom:-34px;width:100%;height:120px;pointer-events:none;opacity:.7}
+.mast .wrap{position:relative}
+.mast .wrap{padding-block:30px 78px;display:grid;gap:14px}
+.bug{display:flex;align-items:stretch;width:max-content;max-width:100%;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.bug span{padding:4px 10px;background:rgba(255,255,255,.16)}
+.bug .live{background:#fff;color:var(--g3);display:flex;gap:6px;align-items:center}
+.bug .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--g1)}
+.mast h1{font:700 clamp(44px,8vw,80px)/.95 var(--display);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.mast p{margin:0;max-width:62ch;color:rgba(255,255,255,.86)}
+
+/* Channel strip */
+.strip{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--rule)}
+.strip nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.strip a{flex:none;text-decoration:none;color:var(--muted);font:600 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:15px 12px 13px;border-bottom:3px solid transparent}
+.strip a[aria-current="page"]{color:var(--ink);border-color:var(--accent)}
+.strip a:hover{color:var(--ink)}
+
+main{padding-block:28px 64px}
+section[data-view]{display:grid;gap:22px}
+h2{font:700 clamp(30px,5vw,44px)/1.05 var(--display);letter-spacing:-.01em;margin:0;text-wrap:balance}
+h3{font:600 21px/1.15 var(--display);margin:0}
+h4{font:600 14px/1.3 var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px}
+p{margin:0}
+.lede{font-size:18px;max-width:66ch}
+.kicker{font:500 12px/1 var(--mono);letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+
+/* Lower-third panels */
+.l3{background:var(--panel);border:1px solid var(--rule);display:grid}
+.l3 > header{display:flex;align-items:stretch;flex-wrap:wrap}
+.l3 > header .tag{background:linear-gradient(120deg,var(--g2),var(--g3));color:var(--navy-ink);font:700 15px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;display:flex;align-items:center}
+.l3 > header .ttl{background:var(--chip);flex:1;min-width:0;padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.l3 > header .ttl h3{font-size:19px}
+.l3 > header .tc{margin-left:auto;font:500 12px/1 var(--mono);color:var(--muted)}
+.l3 .body{padding:18px;display:grid;gap:14px;min-width:0}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.facts div{background:var(--panel);padding:14px 16px;display:grid;gap:4px}
+.facts dt{font:500 11px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:0;font:700 22px/1.1 var(--display)}
+.facts dd small{display:block;font:400 13px/1.4 var(--body);text-transform:none;color:var(--muted);margin-top:3px}
+ul.clean{margin:0;padding-left:18px;display:grid;gap:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--chip);border-radius:3px;padding:3px 9px;font-size:13px;font-weight:500}
+
+/* Journey */
+.year-switch{display:flex;gap:0;border:1px solid var(--rule);width:max-content;max-width:100%}
+.year-switch button{font:700 16px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;border:0;background:var(--panel);color:var(--muted);padding:11px 18px;cursor:pointer}
+.year-switch button[aria-pressed="true"]{background:var(--g3);color:var(--navy-ink)}
+.rundown{display:grid;gap:14px}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px}
+.builds{border-top:1px dashed var(--rule);padding-top:12px;font-size:14px;color:var(--muted)}
+.builds b{color:var(--ink)}
+
+/* Grading table */
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{border-bottom:1px solid var(--rule);padding:12px;text-align:left;vertical-align:top}
+thead th{font:700 15px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--chip)}
+tbody th{font:700 18px/1.1 var(--display);text-transform:uppercase;width:130px}
+.g-p{color:var(--amber)} .g-m{color:var(--focus)} .g-d{color:var(--pitch)}
+
+/* Weekly log guide */
+.guide{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.guide > li{background:var(--panel);border:1px solid var(--rule);display:grid;grid-template-columns:52px 1fr;min-width:0}
+.guide .gb ul li{display:list-item;background:none;border:0;grid-template-columns:none}
+.guide .num{background:linear-gradient(160deg,var(--g1),var(--g3));color:#fff;font:800 24px/1 var(--display);display:flex;align-items:flex-start;justify-content:center;padding-top:14px}
+.guide .gb{padding:12px 14px;display:grid;gap:6px;min-width:0;align-content:start}
+.guide .gb b{font:600 19px/1.15 var(--display)}
+.guide .gb em{font-size:13px;color:var(--muted)}
+.guide .gb h5{margin:4px 0 0;font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--pitch)}
+.guide .gb ul{margin:0;padding-left:16px;display:grid;gap:3px;font-size:14px}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ticks li{display:flex;gap:8px}.ticks li::before{content:"☐";color:var(--muted)}
+.covers{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.unitchip{text-decoration:none;color:var(--g3);font-weight:600;border:1px solid var(--rule)}
+.unitchip:hover{border-color:var(--accent)}
+.assess{border-top:1px dashed var(--rule);padding-top:12px;display:grid;gap:6px;font-size:14px}
+ol.clean{margin:0;padding-left:20px;display:grid;gap:6px}
+.lc-check{list-style:none!important;padding:0!important}
+.lc-check li{display:flex;gap:8px;align-items:baseline}
+.lc-check li span:first-child{font-weight:700;width:14px}
+.lc-check li.ok span:first-child{color:var(--pitch)} .lc-check li.no span:first-child{color:var(--tally)} .lc-check li.na span:first-child{color:var(--amber)}
+.lc-check small{color:var(--muted)}
+.sec-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;counter-reset:s;list-style:none;margin:0;padding:0}
+.sec-list li{background:var(--panel);border:1px solid var(--rule);padding:14px;display:grid;gap:6px;counter-increment:s;align-content:start}
+.sec-list li b{font:700 19px/1.1 var(--display);text-transform:uppercase}
+.sec-list li b::before{content:counter(s) " ";color:var(--accent)}
+.sec-list li span{font-size:14px;color:var(--muted)}
+
+.checker{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.checker{grid-template-columns:1fr}}
+textarea{width:100%;min-height:340px;resize:vertical;font:400 14px/1.5 var(--mono);background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:12px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+button.btn{font:700 15px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--navy);background:var(--navy);color:var(--navy-ink);padding:11px 16px;cursor:pointer}
+button.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.report{background:var(--panel);border:1px solid var(--rule);padding:16px;display:grid;gap:14px;min-width:0}
+.empty{color:var(--muted);font-size:14px}
+
+/* Checker report (shared markup) */
+.lc-head{display:flex;gap:14px;flex-wrap:wrap;align-items:stretch}
+.lc-band{display:grid;align-content:center;padding:10px 14px;background:var(--chip);border-left:5px solid var(--muted);min-width:130px}
+.lc-band span{font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.lc-band strong{font:800 30px/1 var(--display);text-transform:uppercase}
+.lc-band-distinction{border-color:var(--pitch)} .lc-band-merit{border-color:var(--focus)} .lc-band-pass{border-color:var(--amber)} .lc-band-incomplete{border-color:var(--tally)}
+.lc-stats{display:flex;flex-wrap:wrap;gap:14px;margin:0;flex:1}
+.lc-stats div{display:grid}
+.lc-stats dt{font:500 11px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.lc-stats dd{margin:0;font:700 22px/1 var(--display);font-variant-numeric:tabular-nums}
+.lc-stats small{font:400 12px var(--body);color:var(--muted)}
+.lc-sections{list-style:none;margin:0;padding:0;display:grid}
+.lc-s{display:grid;grid-template-columns:14px 1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.lc-dot{width:10px;height:10px;border-radius:50%;background:var(--rule)}
+.lc-strong .lc-dot,.lc-solid .lc-dot{background:var(--pitch)} .lc-thin .lc-dot,.lc-mentioned .lc-dot{background:var(--amber)} .lc-missing .lc-dot{background:var(--tally)}
+.lc-name{font-weight:600}
+.lc-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.lc-status{font:600 12px/1 var(--mono);text-transform:uppercase;padding:4px 6px;background:var(--chip)}
+.lc-next ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.lc-note{font-size:12px;color:var(--muted)}
+
+footer{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion:no-preference){section[data-view]:not([hidden]){animation:in .25s ease-out}@keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+
+/* ---------- Tracker (staff only) ---------- */
+:is(#tracker,.monitor) .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+:is(#tracker,.monitor) .summary > div{background:var(--panel);padding:14px 16px;display:grid;gap:6px;align-content:start}
+:is(#tracker,.monitor) .summary .n{font:800 34px/1 var(--display);font-variant-numeric:tabular-nums}
+:is(#tracker,.monitor) .dist{display:flex;height:10px;background:var(--chip);overflow:hidden}
+:is(#tracker,.monitor) .dist span{display:block}
+:is(#tracker,.monitor) .legend{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+:is(#tracker,.monitor) .legend i{display:inline-block;width:8px;height:8px;margin-right:4px}
+:is(#tracker,.monitor) .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+:is(#tracker,.monitor) input[type=search],:is(#tracker,.monitor) select,:is(#tracker,.monitor) textarea,:is(#tracker,.monitor) input[type=url],:is(#tracker,.monitor) input[type=text]{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--rule);padding:8px 10px}
+:is(#tracker,.monitor) input[type=search]{min-width:0;flex:1 1 200px}
+:is(#tracker,.monitor) .filters{display:flex;gap:4px;flex-wrap:wrap}
+:is(#tracker,.monitor) .filters button{font:600 13px/1 var(--body);border:1px solid var(--rule);background:var(--panel);color:var(--muted);padding:8px 10px;cursor:pointer}
+:is(#tracker,.monitor) .filters button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+:is(#tracker,.monitor) .tablewrap{overflow-x:auto;border:1px solid var(--rule);background:var(--panel)}
+:is(#tracker,.monitor) table{border-collapse:collapse;width:100%;min-width:860px}
+:is(#tracker,.monitor) th,:is(#tracker,.monitor) td{padding:10px 12px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:middle;font-size:14px}
+:is(#tracker,.monitor) thead th{font:700 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--chip);position:sticky;top:0}
+:is(#tracker,.monitor) tbody tr{cursor:pointer}
+:is(#tracker,.monitor) tbody tr:hover{background:var(--chip)}
+:is(#tracker,.monitor) td.name b{display:block;font-weight:600}
+:is(#tracker,.monitor) td.name a{font-size:12px;word-break:break-all}
+:is(#tracker,.monitor) .pill{display:inline-block;min-width:34px;text-align:center;font:800 16px/1 var(--display);padding:5px 7px;color:#fff;background:var(--muted)}
+:is(#tracker,.monitor) .pill.D{background:var(--pitch)}
+:is(#tracker,.monitor) .pill.M{background:var(--blue)}
+:is(#tracker,.monitor) .pill.P{background:var(--amber)}
+:is(#tracker,.monitor) .pill.I{background:var(--tally)}
+:is(#tracker,.monitor) .pill.none{background:transparent;color:var(--muted);border:1px dashed var(--rule)}
+:is(#tracker,.monitor) .state{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+:is(#tracker,.monitor) .state::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--rule)}
+:is(#tracker,.monitor) .state.on-track::before{background:var(--pitch)}
+:is(#tracker,.monitor) .state.watch::before{background:var(--amber)}
+:is(#tracker,.monitor) .state.concern::before{background:var(--tally)}
+:is(#tracker,.monitor) .dots{display:flex;gap:3px}
+:is(#tracker,.monitor) .dots i{width:12px;height:12px;background:var(--chip);border:1px solid var(--rule)}
+:is(#tracker,.monitor) .dots i.s1{background:var(--pitch);border-color:var(--pitch)}
+:is(#tracker,.monitor) .dots i.s05{background:var(--amber);border-color:var(--amber)}
+:is(#tracker,.monitor) .dots i.s0{background:transparent;border-color:var(--tally)}
+:is(#tracker,.monitor) .flags{display:flex;flex-wrap:wrap;gap:4px}
+:is(#tracker,.monitor) .flag{font-size:12px;background:var(--chip);padding:2px 6px}
+:is(#tracker,.monitor) .stale{color:var(--tally)}
+:is(#tracker,.monitor) .emptystate{background:var(--panel);border:1px dashed var(--rule);padding:28px;display:grid;gap:8px;text-align:left}
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:20}
+.monitor{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--panel);z-index:21;overflow-y:auto;border-left:1px solid var(--rule);
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) 18px;display:grid;gap:16px;align-content:start}
+.monitor header{display:flex;gap:10px;align-items:flex-start}
+.monitor header h2{flex:1;min-width:0}
+:is(#tracker,.monitor) .close{font:700 14px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--rule);background:var(--panel);color:var(--ink);padding:8px 10px;cursor:pointer}
+:is(#tracker,.monitor) .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+:is(#tracker,.monitor) .field{display:grid;gap:4px;min-width:0}
+:is(#tracker,.monitor) .field textarea{min-height:90px;resize:vertical}
+:is(#tracker,.monitor) .secrows{display:grid}
+:is(#tracker,.monitor) .secrows div{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--rule);font-size:14px}
+:is(#tracker,.monitor) ul.tight{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+:is(#tracker,.monitor) .btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+:is(#tracker,.monitor) .btn{font:600 14px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--navy);background:var(--navy);color:var(--navy-ink);padding:10px 14px;cursor:pointer}
+:is(#tracker,.monitor) .btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+:is(#tracker,.monitor) .btn:disabled{opacity:.5;cursor:default}
+:is(#tracker,.monitor) .saved{font-size:13px;color:var(--muted)}
+:is(#tracker,.monitor) .hist{display:flex;gap:4px;flex-wrap:wrap}
+:is(#tracker,.monitor) .checker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+:is(#tracker,.monitor) .card{background:var(--panel);border:1px solid var(--rule);padding:16px;display:grid;gap:12px;min-width:0}
+:is(#tracker,.monitor) #ckText{min-height:320px;font:400 13px/1.5 var(--mono);width:100%;resize:vertical}
+.lc-head{display:flex;gap:14px;flex-wrap:wrap}
+.lc-band{display:grid;padding:8px 12px;background:var(--chip);border-left:5px solid var(--muted);min-width:120px}
+.lc-band span{font:500 11px/1 var(--mono);text-transform:uppercase;color:var(--muted)}
+.lc-band strong{font:800 26px/1 var(--display);text-transform:uppercase}
+.lc-band-distinction{border-color:var(--pitch)}
+.lc-band-merit{border-color:var(--blue)}
+.lc-band-pass{border-color:var(--amber)}
+.lc-band-incomplete{border-color:var(--tally)}
+.lc-stats{display:flex;flex-wrap:wrap;gap:14px;margin:0;flex:1}
+.lc-stats div{display:grid}
+.lc-stats dt{font:500 11px/1.4 var(--mono);text-transform:uppercase;color:var(--muted)}
+.lc-stats dd{margin:0;font:700 20px/1 var(--display);font-variant-numeric:tabular-nums}
+.lc-stats small{font:400 12px var(--body);color:var(--muted)}
+.lc-sections{list-style:none;margin:0;padding:0}
+.lc-s{display:grid;grid-template-columns:14px 1fr auto auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.lc-dot{width:10px;height:10px;border-radius:50%;background:var(--rule)}
+.lc-strong .lc-dot,.lc-solid .lc-dot{background:var(--pitch)}
+.lc-thin .lc-dot,.lc-mentioned .lc-dot{background:var(--amber)}
+.lc-missing .lc-dot{background:var(--tally)}
+.lc-name{font-weight:600}
+.lc-meta{color:var(--muted);font-size:12px}
+.lc-status{font:600 11px/1 var(--mono);text-transform:uppercase;padding:4px 6px;background:var(--chip)}
+.lc-next h4{margin:0 0 6px;font:600 12px/1 var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.lc-next ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.lc-note{font-size:12px;color:var(--muted);margin:0}
+#aiOut{white-space:pre-wrap;font-size:14px}
+.lc-check{list-style:none!important;padding:0!important}
+.lc-check li{display:flex;gap:8px;align-items:baseline}
+.lc-check li span:first-child{font-weight:700;width:14px}
+.lc-check li.ok span:first-child{color:var(--pitch)}
+.lc-check li.no span:first-child{color:var(--tally)}
+.lc-check li.na span:first-child{color:var(--amber)}
+.lc-check small{color:var(--muted)}
+@media (max-width:860px){#tracker .checker{grid-template-columns:1fr}}
+#tracker{gap:18px}
+.tk-head{display:flex;gap:14px;justify-content:space-between;align-items:end;flex-wrap:wrap}
+.subtabs{display:flex;border:1px solid var(--rule);background:var(--panel)}
+.subtabs a{font:600 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:11px 14px}
+.subtabs a[aria-current="page"]{background:var(--g3);color:#fff}
+.staffpill{display:inline-flex;align-items:center;gap:6px;font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.staffpill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.strip a.staff{color:var(--g3)}
+.strip a.staff::before{content:"● ";color:var(--accent)}
+.banner{background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--amber);padding:10px 14px;font-size:14px}
+.k{font:500 11px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* Jobs board */
+.jb-filters{display:flex;flex-wrap:wrap;gap:8px}
+.jb-filters button{font:600 14px/1 var(--body);border:1px solid var(--rule);background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:999px;cursor:pointer}
+.jb-filters button[aria-pressed="true"]{background:var(--g3);border-color:var(--g3);color:var(--navy-ink)}
+.jb-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))}
+.jb{background:var(--panel);border:1px solid var(--rule);border-top:4px solid var(--g2);padding:14px 16px;display:grid;gap:8px;align-content:start;min-width:0}
+.jb[data-cat="Apprenticeship"]{border-top-color:var(--pitch)}
+.jb[data-cat="Work experience & insight"]{border-top-color:var(--amber)}
+.jb[data-cat="Freelance & talent pools"]{border-top-color:var(--g3)}
+.jb[data-cat="Graduate schemes (for later)"],.jb[data-cat="Industry roles to aim for"]{border-top-color:var(--muted)}
+.jb h3{font:700 19px/1.2 var(--display);margin:0;text-wrap:balance}
+.jb .org{font-weight:600;color:var(--muted)}
+.jb .meta{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+.jb p{margin:0;font-size:15px}
+.jb .req{font-size:13px;color:var(--muted)}
+.jb .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+.jb .closes{font:500 12px/1.3 var(--mono);color:var(--muted)}
+.jb .closes.soon{color:var(--tally);font-weight:700}
+.jb a.apply{background:var(--g3);color:var(--navy-ink);text-decoration:none;font:700 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:10px 14px}
+.jb-group h3.grp{font:700 15px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:8px 0}
+.stages{border-top:1px solid var(--rule);padding-top:12px}.stages ol{margin:6px 0 0;padding-left:22px;display:grid;gap:6px}.stages li::marker{color:var(--accent);font-weight:700}
+
+/* CV checker */
+.jb .actions{display:flex;gap:8px;flex-wrap:wrap}
+.jb button.cvbtn{font:700 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;border:1px solid var(--g3);background:var(--panel);color:var(--g3);cursor:pointer}
+.cvwrap{position:fixed;inset:0;background:var(--scrim);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.cvbox{background:var(--panel);color:var(--ink);border:1px solid var(--rule);width:min(760px,100%);display:grid;gap:14px;padding:18px 18px 22px;margin-top:4vh}
+.cvbox h3{font:700 22px/1.2 var(--display);margin:0;text-wrap:balance}
+.cvbox .sub{color:var(--muted);font-size:14px}
+.cvbox textarea{width:100%;min-height:140px;font:14px/1.5 var(--body);padding:10px;border:1px solid var(--rule);background:var(--ground);color:var(--ink);box-sizing:border-box}
+.cvbox .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.cvbox .go{background:var(--g3);color:var(--navy-ink);border:0;font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:12px 16px;cursor:pointer}
+.cvbox .go[disabled]{opacity:.5;cursor:default}
+.cvbox .ghost{background:none;border:1px solid var(--rule);color:var(--ink);padding:10px 14px;font:600 14px/1 var(--body);cursor:pointer}
+.cvbox .note{font-size:13px;color:var(--muted)}
+.cvres{display:grid;gap:12px}
+.cvverdict{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-left:6px solid var(--g3);padding:10px 14px;background:var(--ground)}
+.cvverdict strong{font:800 22px/1.1 var(--display)}
+.cvverdict .score{font:700 30px/1 var(--display)}
+.cvverdict.v-strong{border-left-color:var(--pitch)}.cvverdict.v-worth{border-left-color:var(--g2)}.cvverdict.v-stretch{border-left-color:var(--amber)}.cvverdict.v-not{border-left-color:var(--tally)}
+.cvres h4{margin:0 0 4px;font:700 13px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.cvres ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.cvres .blk{display:grid;gap:4px}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="bug"><span class="live">Global Academy</span><span>KS5</span><span>UAL Level 3</span></div>
+    <h1>Sports Media</h1>
+    <p>Global Academy's practical pathway for telling stories from the world of sport: plan, film, record, edit and publish for broadcast, digital and social.</p>
+  </div>
+  <svg class="waves" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1" opacity=".55"><polyline points="0,121.0 20,131.6 40,141.7 60,151.1 80,159.3 100,166.1 120,171.3 140,174.7 160,176.3 180,176.1 200,174.3 220,171.0 240,166.5 260,161.2 280,155.3 300,149.2 320,143.2 340,137.7 360,132.8 380,128.8 400,125.9 420,123.9 440,123.0 460,123.0 480,123.7 500,124.9 520,126.3 540,127.7 560,128.8 580,129.2 600,128.9 620,127.5 640,125.0 660,121.4 680,116.6 700,110.9 720,104.3 740,97.3 760,89.9 780,82.7 800,76.0 820,70.1 840,65.4 860,62.1 880,60.5 900,60.7 920,62.8 940,66.8 960,72.5 980,79.8 1000,88.5 1020,98.1 1040,108.4 1060,118.9 1080,129.1 1100,138.8 1120,147.6 1140,155.1 1160,161.2 1180,165.6 1200,168.3"/><polyline points="0,124.4 20,135.3 40,145.9 60,155.7 80,164.4 100,171.7 120,177.3 140,181.0 160,182.9 180,182.8 200,181.0 220,177.6 240,172.8 260,166.9 280,160.4 300,153.4 320,146.5 340,139.8 360,133.8 380,128.6 400,124.3 420,121.2 440,119.1 460,118.0 480,117.7 500,118.2 520,119.0 540,120.0 560,120.9 580,121.4 600,121.2 620,120.1 640,118.1 660,115.1 680,111.0 700,106.0 720,100.2 740,93.8 760,87.2 780,80.6 800,74.5 820,69.0 840,64.7 860,61.7 880,60.4 900,60.8 920,63.2 940,67.4 960,73.3 980,80.9 1000,89.9 1020,99.9 1040,110.7 1060,121.6 1080,132.5 1100,142.8 1120,152.2 1140,160.4 1160,167.1 1180,172.1 1200,175.3"/><polyline points="0,128.7 20,139.8 40,150.6 60,160.7 80,169.7 100,177.3 120,183.1 140,187.1 160,189.1 180,189.1 200,187.2 220,183.5 240,178.3 260,171.9 280,164.6 300,156.8 320,148.8 340,141.0 360,133.8 380,127.3 400,121.8 420,117.4 440,114.1 460,112.0 480,110.8 500,110.5 520,110.8 540,111.5 560,112.2 580,112.7 600,112.8 620,112.2 640,110.8 660,108.5 680,105.3 700,101.1 720,96.2 740,90.7 760,84.9 780,79.1 800,73.7 820,68.9 840,65.1 860,62.6 880,61.6 900,62.3 920,64.9 940,69.3 960,75.5 980,83.3 1000,92.6 1020,102.9 1040,114.0 1060,125.4 1080,136.7 1100,147.5 1120,157.4 1140,166.1 1160,173.3 1180,178.7 1200,182.2"/><polyline points="0,133.6 20,144.8 40,155.7 60,165.9 80,175.1 100,182.7 120,188.7 140,192.8 160,194.8 180,194.7 200,192.6 220,188.6 240,182.9 260,175.9 280,167.8 300,159.1 320,150.1 340,141.2 360,132.8 380,125.1 400,118.3 420,112.7 440,108.3 460,105.1 480,103.1 500,102.1 520,101.9 540,102.2 560,102.9 580,103.6 600,104.0 620,104.0 640,103.3 660,101.8 680,99.5 700,96.4 720,92.5 740,88.1 760,83.3 780,78.4 800,73.8 820,69.8 840,66.6 860,64.6 880,64.1 900,65.2 920,68.0 940,72.6 960,79.0 980,87.0 1000,96.4 1020,107.0 1040,118.3 1060,129.9 1080,141.5 1100,152.7 1120,163.0 1140,172.0 1160,179.5 1180,185.2 1200,189.0"/><polyline points="0,139.1 20,150.2 40,161.0 60,171.2 80,180.2 100,187.9 120,193.8 140,197.8 160,199.6 180,199.4 200,197.0 220,192.6 240,186.4 260,178.7 280,169.9 300,160.3 320,150.3 340,140.3 360,130.7 380,121.8 400,113.8 420,107.0 440,101.5 460,97.4 480,94.5 500,92.9 520,92.2 540,92.4 560,93.1 580,94.0 600,94.9 620,95.5 640,95.7 660,95.2 680,94.0 700,92.0 720,89.3 740,86.0 760,82.4 780,78.6 800,75.0 820,71.8 840,69.4 860,68.0 880,68.0 900,69.4 920,72.5 940,77.4 960,83.9 980,92.0 1000,101.5 1020,112.1 1040,123.4 1060,135.2 1080,146.9 1100,158.3 1120,168.7 1140,177.9 1160,185.6 1180,191.4 1200,195.3"/><polyline points="0,145.1 20,155.8 40,166.3 60,176.2 80,185.0 100,192.5 120,198.2 140,201.9 160,203.6 180,203.0 200,200.2 220,195.4 240,188.7 260,180.3 280,170.7 300,160.2 320,149.3 340,138.2 360,127.5 380,117.4 400,108.3 420,100.5 440,94.0 460,88.9 480,85.4 500,83.2 520,82.2 540,82.2 560,83.0 580,84.3 600,85.7 620,87.2 640,88.3 660,88.9 680,88.8 700,88.2 720,86.8 740,84.9 760,82.5 780,79.9 800,77.4 820,75.1 840,73.5 860,72.8 880,73.3 900,75.1 920,78.5 940,83.5 960,90.0 980,98.1 1000,107.6 1020,118.1 1040,129.4 1060,141.1 1080,152.8 1100,164.0 1120,174.5 1140,183.7 1160,191.4 1180,197.2 1200,200.9"/><polyline points="0,151.2 20,161.5 40,171.5 60,180.9 80,189.3 100,196.3 120,201.7 140,205.1 160,206.3 180,205.3 200,202.1 220,196.8 240,189.5 260,180.5 280,170.2 300,158.9 320,147.0 340,134.9 360,123.2 380,112.1 400,102.0 420,93.1 440,85.7 460,79.9 480,75.7 500,73.1 520,71.9 540,71.9 560,72.9 580,74.6 600,76.8 620,79.1 640,81.2 660,83.0 680,84.4 700,85.1 720,85.2 740,84.6 760,83.6 780,82.4 800,81.0 820,79.8 840,79.0 860,79.0 880,80.0 900,82.2 920,85.8 940,90.9 960,97.4 980,105.3 1000,114.6 1020,124.9 1040,135.9 1060,147.4 1080,158.8 1100,169.9 1120,180.1 1140,189.1 1160,196.6 1180,202.2 1200,205.8"/><polyline points="0,157.4 20,167.0 40,176.3 60,185.1 80,192.8 100,199.3 120,204.1 140,207.0 160,207.7 180,206.3 200,202.6 220,196.7 240,188.8 260,179.2 280,168.2 300,156.1 320,143.4 340,130.5 360,117.8 380,105.8 400,94.8 420,85.1 440,77.0 460,70.5 480,65.8 500,62.9 520,61.6 540,61.7 560,63.0 580,65.3 600,68.2 620,71.5 640,74.8 660,77.9 680,80.7 700,82.9 720,84.5 740,85.5 760,86.0 780,86.0 800,85.9 820,85.8 840,85.9 860,86.6 880,88.2 900,90.7 920,94.4 940,99.4 960,105.8 980,113.5 1000,122.4 1020,132.3 1040,142.9 1060,153.9 1080,164.9 1100,175.5 1120,185.3 1140,194.0 1160,201.1 1180,206.3 1200,209.5"/><polyline points="0,163.5 20,172.1 40,180.5 60,188.4 80,195.4 100,201.1 120,205.3 140,207.5 160,207.7 180,205.7 200,201.5 220,195.1 240,186.6 260,176.4 280,164.8 300,152.0 320,138.6 340,125.0 360,111.5 380,98.7 400,87.0 420,76.6 440,67.9 460,60.9 480,55.9 500,52.7 520,51.4 540,51.8 560,53.5 580,56.5 600,60.3 620,64.6 640,69.2 660,73.8 680,78.0 700,81.8 720,85.0 740,87.6 760,89.6 780,91.0 800,92.1 820,93.1 840,94.2 860,95.6 880,97.6 900,100.4 920,104.2 940,109.1 960,115.2 980,122.5 1000,130.9 1020,140.1 1040,150.1 1060,160.5 1080,170.8 1100,180.8 1120,190.0 1140,198.1 1160,204.6 1180,209.4 1200,212.0"/><polyline points="0,169.1 20,176.6 40,184.0 60,190.8 80,196.9 100,201.7 120,205.0 140,206.5 160,206.1 180,203.5 200,198.7 220,191.8 240,182.8 260,172.1 280,159.9 300,146.6 320,132.6 340,118.4 360,104.4 380,91.0 400,78.7 420,67.8 440,58.6 460,51.3 480,46.1 500,42.9 520,41.7 540,42.4 560,44.8 580,48.5 600,53.2 620,58.7 640,64.7 660,70.7 680,76.5 700,81.9 720,86.7 740,90.9 760,94.4 780,97.3 800,99.7 820,101.8 840,103.7 860,105.8 880,108.2 900,111.2 920,114.9 940,119.6 960,125.3 980,132.0 1000,139.7 1020,148.2 1040,157.4 1060,166.9 1080,176.3 1100,185.5 1120,193.9 1140,201.2 1160,207.1 1180,211.1 1200,213.2"/><polyline points="0,174.1 20,180.4 40,186.5 60,192.1 80,197.0 100,200.9 120,203.3 140,204.0 160,202.8 180,199.6 200,194.2 220,186.8 240,177.4 260,166.3 280,153.7 300,140.0 320,125.6 340,110.9 360,96.5 380,82.7 400,70.0 420,58.8 440,49.3 460,41.9 480,36.7 500,33.6 520,32.7 540,33.9 560,36.9 580,41.4 600,47.3 620,54.0 640,61.3 660,68.8 680,76.2 700,83.3 720,89.8 740,95.6 760,100.6 780,104.9 800,108.6 820,111.7 840,114.4 860,117.1 880,119.8 900,122.9 920,126.5 940,130.8 960,136.0 980,142.0 1000,148.8 1020,156.3 1040,164.4 1060,172.9 1080,181.3 1100,189.4 1120,196.8 1140,203.2 1160,208.2 1180,211.5 1200,212.8"/><polyline points="0,178.3 20,183.1 40,187.8 60,192.1 80,195.8 100,198.5 120,199.9 140,199.7 160,197.8 180,193.9 200,188.1 220,180.2 240,170.5 260,159.0 280,146.2 300,132.2 320,117.6 340,102.7 360,88.0 380,74.1 400,61.2 420,49.9 440,40.4 460,33.0 480,27.9 500,25.1 520,24.6 540,26.4 560,30.1 580,35.6 600,42.6 620,50.6 640,59.3 660,68.3 680,77.3 700,86.0 720,94.2 740,101.6 760,108.1 780,113.8 800,118.6 820,122.7 840,126.2 860,129.3 880,132.3 900,135.4 920,138.7 940,142.5 960,146.9 980,152.0 1000,157.8 1020,164.2 1040,171.1 1060,178.3 1080,185.4 1100,192.3 1120,198.6 1140,203.9 1160,207.8 1180,210.2 1200,210.7"/><polyline points="0,181.5 20,184.7 40,187.9 60,190.7 80,193.0 100,194.5 120,194.8 140,193.7 160,191.0 180,186.6 200,180.2 220,172.0 240,162.0 260,150.4 280,137.4 300,123.4 320,108.8 340,93.9 360,79.3 380,65.3 400,52.5 420,41.3 440,32.0 460,24.8 480,20.0 500,17.6 520,17.7 540,20.1 560,24.7 580,31.3 600,39.3 620,48.6 640,58.7 660,69.3 680,79.9 700,90.2 720,99.9 740,108.8 760,116.8 780,123.8 800,129.7 820,134.7 840,138.8 860,142.4 880,145.5 900,148.4 920,151.3 940,154.5 960,158.0 980,162.0 1000,166.6 1020,171.6 1040,177.1 1060,182.8 1080,188.6 1100,194.1 1120,199.0 1140,203.1 1160,205.9 1180,207.3 1200,206.9"/><polyline points="0,183.6 20,185.0 40,186.5 60,187.8 80,188.6 100,188.8 120,188.0 140,186.0 160,182.6 180,177.5 200,170.8 220,162.3 240,152.2 260,140.6 280,127.7 300,113.8 320,99.4 340,84.7 360,70.3 380,56.7 400,44.2 420,33.3 440,24.3 460,17.5 480,13.2 500,11.4 520,12.2 540,15.4 560,20.9 580,28.5 600,37.7 620,48.3 640,59.8 660,71.8 680,83.9 700,95.8 720,107.0 740,117.4 760,126.7 780,134.8 800,141.7 820,147.5 840,152.2 860,156.0 880,159.1 900,161.7 920,164.0 940,166.4 960,168.9 980,171.7 1000,174.8 1020,178.4 1040,182.3 1060,186.4 1080,190.5 1100,194.5 1120,198.0 1140,200.7 1160,202.3 1180,202.6 1200,201.2"/><polyline points="0,184.2 20,183.8 40,183.6 60,183.2 80,182.6 100,181.4 120,179.5 140,176.6 160,172.4 180,166.9 200,159.9 220,151.3 240,141.2 260,129.8 280,117.1 300,103.6 320,89.6 340,75.4 360,61.5 380,48.4 400,36.4 420,26.0 440,17.6 460,11.4 480,7.8 500,6.7 520,8.2 540,12.3 560,18.8 580,27.4 600,37.8 620,49.6 640,62.5 660,75.9 680,89.4 700,102.7 720,115.3 740,127.0 760,137.5 780,146.7 800,154.5 820,160.9 840,166.0 860,169.9 880,172.8 900,175.0 920,176.6 940,178.0 960,179.3 980,180.7 1000,182.3 1020,184.2 1040,186.4 1060,188.7 1080,191.1 1100,193.4 1120,195.3 1140,196.6 1160,197.0 1180,196.1 1200,193.8"/><polyline points="0,183.4 20,181.1 40,179.0 60,177.0 80,174.8 100,172.4 120,169.3 140,165.5 160,160.8 180,154.8 200,147.6 220,139.1 240,129.2 260,118.1 280,106.0 300,93.0 320,79.6 340,66.2 360,53.0 380,40.6 400,29.4 420,19.8 440,12.1 460,6.8 480,3.9 500,3.6 520,6.0 540,11.0 560,18.5 580,28.2 600,39.7 620,52.7 640,66.8 660,81.5 680,96.4 700,111.0 720,124.8 740,137.7 760,149.3 780,159.4 800,167.8 820,174.7 840,180.0 860,183.9 880,186.5 900,188.1 920,188.8 940,189.1 960,189.0 980,188.9 1000,188.8 1020,188.9 1040,189.2 1060,189.7 1080,190.3 1100,190.8 1120,191.0 1140,190.8 1160,189.8 1180,187.8 1200,184.6"/><polyline points="0,181.0 20,176.8 40,172.8 60,169.1 80,165.4 100,161.7 120,157.6 140,153.0 160,147.7 180,141.5 200,134.2 220,125.8 240,116.3 260,105.8 280,94.4 300,82.3 320,69.8 340,57.3 360,45.1 380,33.7 400,23.5 420,14.8 440,8.1 460,3.7 480,1.7 500,2.4 520,5.7 540,11.7 560,20.1 580,30.8 600,43.5 620,57.6 640,72.8 660,88.7 680,104.7 700,120.4 720,135.4 740,149.2 760,161.7 780,172.4 800,181.5 820,188.6 840,194.0 860,197.6 880,199.8 900,200.6 920,200.4 940,199.3 960,197.8 980,196.0 1000,194.1 1020,192.3 1040,190.6 1060,189.1 1080,187.8 1100,186.4 1120,185.0 1140,183.2 1160,180.9 1180,177.8 1200,173.7"/><polyline points="0,176.9 20,170.8 40,165.0 60,159.6 80,154.5 100,149.5 120,144.4 140,139.1 160,133.4 180,127.0 200,119.8 220,111.8 240,102.9 260,93.2 280,82.7 300,71.6 320,60.3 340,49.0 360,38.0 380,27.8 400,18.8 420,11.3 440,5.8 460,2.4 480,1.5 500,3.1 520,7.5 540,14.4 560,23.8 580,35.5 600,49.1 620,64.2 640,80.4 660,97.3 680,114.3 700,130.9 720,146.8 740,161.4 760,174.5 780,185.8 800,195.1 820,202.4 840,207.6 860,210.9 880,212.4 900,212.3 920,210.9 940,208.5 960,205.4 980,201.8 1000,198.0 1020,194.1 1040,190.4 1060,186.9 1080,183.6 1100,180.4 1120,177.2 1140,173.9 1160,170.3 1180,166.1 1200,161.2"/></g></svg>
+</header>
+
+<div class="strip"><div class="wrap"><nav aria-label="Course sections">
+  <a href="#home">Course</a>
+  <a href="#journey">Journey</a>
+  <a href="#units">Units</a>
+  <a href="#weekly-log">Weekly log</a>
+  <a href="#grading">Grading</a>
+  <a href="#parents">For parents</a>
+  <a href="#next-steps">After the course</a>
+  <a href="#jobs">Jobs</a>
+</nav></div></div>
+
+<main class="wrap">
+
+<!-- COURSE -->
+<section data-view="home">
+  <p class="lede">You will plan, film, record and edit content for broadcast, digital and social platforms, learning how audiences, narrative and professional production workflows fit together. Projects include match highlights, interviews, commentary, sports news, podcasts, promotional content and live event coverage. As the course goes on you take on briefs with more independence and build an industry-ready portfolio or showreel.</p>
+  <dl class="facts">
+    <div><dt>Year 12</dt><dd>UAL L3 Diploma<small>Creative Practice: Art, Design and Communication</small></dd></div>
+    <div><dt>Year 13</dt><dd>UAL L3 Extended Diploma<small>Creative Media Production and Technology</small></dd></div>
+    <div><dt>Entry</dt><dd>5 GCSEs at 5+<small>Plus a strong interest in sport, media and content production</small></dd></div>
+    <div><dt>Year 12 timetable</dt><dd>12 hrs a week<small>Three 4-hour practical sessions</small></dd></div>
+    <div><dt>Kit</dt><dd>8 studios<small>Radio studios, 3 sound booths and a 30-seat edit suite</small></dd></div>
+  </dl>
+  <div class="grid2">
+    <article class="l3">
+      <header><span class="tag">How</span><span class="ttl"><h3>How you will learn</h3></span></header>
+      <div class="body"><p>Demonstrations, practical workshops, analysis of professional sports media, team productions, live or simulated briefs, pitch practice, peer critique and one-to-one feedback. Projects move from guided skills-building to independent production, and you spend as much time as possible operating studios and cameras.</p></div>
+    </article>
+    <article class="l3">
+      <header><span class="tag">Skills</span><span class="ttl"><h3>What you will be able to do</h3></span></header>
+      <div class="body"><div class="chips">
+        <span class="chip">Storytelling</span><span class="chip">Audience research</span><span class="chip">Pitching</span><span class="chip">Production planning</span><span class="chip">Camera</span><span class="chip">Lighting</span><span class="chip">Sound</span><span class="chip">Editing</span><span class="chip">Graphics</span><span class="chip">Interviewing</span><span class="chip">Teamwork</span><span class="chip">Evaluation</span><span class="chip">Adobe Premiere Pro</span><span class="chip">Adobe Audition</span>
+      </div><p>You will also learn to meet a brief, manage deadlines and present a professional portfolio.</p></div>
+    </article>
+    <article class="l3">
+      <header><span class="tag">Partners</span><span class="ttl"><h3>Industry links</h3></span></header>
+      <div class="body"><p>IMG Studios, RaceTech, EMG Media, Global Media &amp; Entertainment, London College of Communication and visiting media professionals. Expect live briefs, workshops, feedback, mentoring and industry presentations.</p></div>
+    </article>
+    <article class="l3">
+      <header><span class="tag">Every week</span><span class="ttl"><h3>Your weekly log</h3></span></header>
+      <div class="body"><p>Your portfolio site carries a weekly log of what you made, how and why. It is the evidence your grade is built on, so keep it up to date. Follow the guide for your year and run the <a href="#weekly-log">log checker</a> before you publish each week.</p></div>
+    </article>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section data-view="journey" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Curriculum journey</span>
+    <h2>Two seasons, one showreel</h2>
+    <p class="lede">Year 12 builds the craft: editing, studio and location production, and a live client brief. Year 13 moves onto the Creative Media Production and Technology Extended Diploma: context, audience, law, ethics and sustainability, ending with your calling-card project.</p>
+  </div>
+  <div class="year-switch" role="group" aria-label="Choose year" id="journeySwitch">
+    <button type="button" data-year="y12" aria-pressed="true">Year 12</button>
+    <button type="button" data-year="y13" aria-pressed="false">Year 13</button>
+  </div>
+  <div class="rundown" id="rundown"></div>
+</section>
+
+<!-- UNITS -->
+<section data-view="units" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Units and what they are graded on</span>
+    <h2>Course units</h2>
+    <p class="lede">Each unit is graded Pass, Merit or Distinction against the criteria for that year's qualification. Pick your year.</p>
+  </div>
+  <div class="year-switch" role="group" aria-label="Choose year" id="unitSwitch">
+    <button type="button" data-u="u12" aria-pressed="true">Year 12 · Creative Practice</button>
+    <button type="button" data-u="u13" aria-pressed="false">Year 13 · Creative Media</button>
+  </div>
+  <div id="u12" style="display:grid;gap:14px">
+    <p>Year 12 is the <b>UAL Level 3 Diploma in Creative Practice: Art, Design and Communication</b>. The Sports Media projects each deliver one of the six units.</p>
+    <article class="l3"><header><span class="tag">Unit 1</span><span class="ttl"><h3>The Creative Process</h3><span class="tc">SKILLS BUILD · WK 1–6</span></span></header><div class="body"><p>Learn how professionals use the creative process, then work through its stages with the core tools of sports media: publishing, audio and video.</p>
+<h4>Tasks</h4><ul class="clean">
+  <li><b>Online publishing and initial research:</b> set up your professional portfolio website with custom navigation and an About Me page setting out your niche, brand and target audience.</li>
+  <li><b>Premier League goals clips:</b> edit an audio highlights package from match commentary with the Premier League anthem as a music bed, including kick-off, goals and full-time score. Export as MP3 and embed it.</li>
+  <li><b>Video production:</b> cut a 60-second highlights reel in Premiere Pro with cuts, transitions and slow-motion replays (0.25x–0.40x), exported as MP4 for YouTube and embedded.</li>
+</ul><h4>Briefs set on Showbie</h4><ul class="clean"><li><b>Editing Premier League highlights (timed, 120 min):</b> a 2–3 minute MP3 audio package of Chelsea v Brighton with kick-off, all seven goals and the full-time score, plus a dry version with no music bed, embedded on your site.</li><li><b>Radio studio operation:</b> watch the studio guide, then record your own audio in the radio studio.</li><li><b>Filming basics:</b> the Shoot Better Content demo on framing and camera settings.</li><li><b>Football social media posts:</b> 1080×1350 Instagram goal graphics in Canva for England v Spain and Netherlands v Germany: player cut-out, mono background, bold text behind the player, team-coloured smoke and crest.</li><li><b>Czechia v England story pack:</b> a seven-slide 9:16 matchday story (matchday, starting XI, kick-off, half-time, two goals, full-time) in one consistent navy, white and red style.</li><li><b>Motion fixture graphic:</b> a 5–8 second animated scorebug that enters at 0–0, fires a GOAL banner and flips to 1–0, built in Canva with Match &amp; Move and whoosh/impact sound.</li><li><b>Motion fixture graphics, part 2:</b> a streaming/logo intro, a matchday intro and a line-up formation graphic in the same broadcast style.</li><li><b>Video highlights package:</b> Barnsley v Manchester United U21 cut twice in Premiere Pro: a goals-only package, and a broadcast version with a 0.25x slow-motion replay of every goal. Timeline and speed-setting screenshots go in your log.</li><li><b>Website checklist:</b> check your portfolio site against the course checklist.</li></ul><div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 2</span><span class="ttl"><h3>Developing Creative Practice</h3><span class="tc">DEVELOPING PRACTICE</span></span></header><div class="body"><p>Try a range of practices and techniques safely and professionally, then bring them together in your own work.</p>
+<h4>Tasks</h4><ul class="clean">
+  <li><b>AI in sports production:</b> use AI tools to enhance and repurpose content you have already made across audio, visual and video channels, for wider reach and accessibility.</li>
+  <li><b>Multimedia feature:</b> combine your image, audio and video into one cohesive multimedia feature article on your site.</li>
+  <li><b>Press day interview simulation:</b> in teams of five, set up and record athlete interviews, managing framing with the rule of thirds, three-point lighting, location sound and scene choice under live production pressure.</li>
+</ul><p>The Audio Project (football highlights and a studio package) and Video Project (match highlights and a studio interview) build on these skills.</p><div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 3</span><span class="ttl"><h3>Responding to a Set Brief</h3><span class="tc">LIVE CLIENT BRIEF</span></span></header><div class="body"><p>Draw on Units 1 and 2 to solve a creative problem set by a brief: propose, plan, experiment, develop, produce and present an original solution. In Sports Media: the Branded Content brief from an industry client, ending in a pitch.</p><div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 4</span><span class="ttl"><h3>Researching a Specialist Industry Practice</h3><span class="tc">INDUSTRY RESEARCH</span></span></header><div class="body"><p>Explore the sectors and roles that interest you, research how practitioners in your chosen field use the creative process, and apply that theory in practical work to sharpen your career plans.</p><div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 5</span><span class="ttl"><h3>Specialist Technical Skills Development</h3><span class="tc">SPECIALIST SKILLS</span></span></header><div class="body"><p>Go deep on the materials, processes, safety and technical skills of your specialism, use them to solve creative problems, and learn the ethical principles of your industry.</p><p>In Sports Media this is the <b>sport audio production</b> block, a six-week practical unit.</p><h4>Briefs set on Showbie</h4><ul class="clean"><li><b>Broadcast audio journalism:</b> as a junior broadcast journalist, build a 60–90 second bulletin of three stories from IRN audio and Sky News wire copy. Rewrite the copy for the ear, voice each cue, and edit in Adobe Audition to broadcast loudness (−16 LUFS, −1 dB true peak). Hand in a one-page running order with scripts, durations and out-words.</li><li><b>Sports news bulletin:</b> write, record and edit your own 3-minute bulletin for Youths Choice: five stories with the biggest first, at least three Sky clips of 10–20 seconds, each introduced and back-announced, timed to 2:50–3:10.</li><li><b>Bulletin and Zetta playout:</b> add the sports news bed and load your bulletin into RCS Zetta for playout.</li></ul><p><b>For a Distinction</b> it should sound like a professional bulletin: tight radio writing, confident delivery, a well-chosen mix of clips and timing inside the window. Save a screenshot of your edit timeline for your weekly log.</p><div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Project 2</span><span class="ttl"><h3>Radio sports news bulletin</h3><span class="tc">UNIT 5 · YOUTHS CHOICE · RCS ZETTA</span></span></header><div class="body"><p>You run the sports desk. Find the stories, cut the clips, voice a 3-minute bulletin, load it into Zetta and play it out live. Then a late story breaks and you shake the running order up on the fly.</p>
+<ol class="clean">
+  <li><b>1 · Source the stories.</b> Pick the five biggest sports stories of the day from IRN, Sky Sports News wire copy and club and league sources. Check every fact in two places and rank the stories: new today, matters to your listeners, has a clip that brings it to life. Biggest first, lighter or local last.</li>
+  <li><b>2 · Edit the clips.</b> Cut at least three clips of 10–20 seconds in Adobe Audition. Top and tail them, remove clicks and dead air, balance them to −16 LUFS, and log each clip's in-words, out-words and duration.</li>
+  <li><b>3 · Write and voice.</b> Every word is yours: short sentences, numbers written the way you say them ("two-nil"), and every clip introduced and back-announced. Record your links on the studio mic.</li>
+  <li><b>4 · Load into Zetta.</b> Ingest your voice links, clips and the sports news bed into RCS Zetta. Label every item in the house format (for example <i>SurnameDDMMYY Story 1</i>), set your segue and ducking points, and build the bulletin on the log.</li>
+  <li><b>5 · Shake it up and go live.</b> Play your bulletin out from Zetta to time. Then your teacher drops in a late story. Re-rank, rewrite and re-cut, rebuild the log, and play out the new version with no dead air.</li>
+</ol>
+<div class="three"><div><h4>Hand in</h4><ul class="clean"><li>Running order with scripts, clip in/out words and durations</li><li>Both bulletins as MP3 (first and shaken-up versions)</li><li>Zetta log screenshot showing every item labelled and timed</li><li>Edit timeline screenshots in your weekly log</li></ul></div>
+<div><h4>Pass</h4><p>Five stories, three introduced clips, about 3 minutes, clear voice, loaded into Zetta and played out.</p></div>
+<div><h4>Merit and Distinction</h4><p><b>Merit:</b> sensible ranking, even levels, clean segues, no gaps. <b>Distinction:</b> sounds like a professional bulletin, timed to 2:50–3:10, with a confident live rework when the late story breaks.</p></div></div>
+<div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 6</span><span class="ttl"><h3>Specialist Creative Outcome</h3><span class="tc">FINAL MAJOR PROJECT</span></span></header><div class="body"><p>A self-directed project drawing on the whole course: propose a thematic enquiry, define your audience, and produce industry-relevant sports media that supports your next step.</p><div class="assess"><span class="k">Graded on (Creative Practice Diploma)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+</div>
+  <div id="u13" style="display:grid;gap:14px" hidden>
+    <p>Year 13 is the <b>UAL Level 3 Extended Diploma in Creative Media Production and Technology</b>, built on the Diploma units from the first year.</p>
+    <article class="l3"><header><span class="tag">Units 1, 2, 3, 5 &amp; 6</span><span class="ttl"><h3>Introduction to media processes and technical skills</h3><span class="tc">PORTFOLIO TASKS</span></span></header><div class="body"><ul class="clean">
+  <li><b>Online publishing and initial research:</b> a public WordPress blog with custom navigation and an About Me page setting out your niche, brand and target audience.</li>
+  <li><b>Premier League goals clips:</b> an audio highlights package from match commentary with the Premier League anthem as a music bed, including kick-off, goals and full-time score. Exported as MP3 and embedded.</li>
+  <li><b>Video production:</b> a 60-second highlights reel in Premiere Pro with cuts, transitions and slow-motion replays (0.25x–0.40x), exported as MP4 for YouTube.</li>
+  <li><b>AI in sports production:</b> use AI tools to repurpose your content across audio, visual and video channels for reach and accessibility.</li>
+  <li><b>Multimedia feature:</b> combine your image, audio and video into one feature article on WordPress.</li>
+  <li><b>Press day interview simulation (Unit 6):</b> in teams of five, set up and record athlete interviews using the rule of thirds, three-point lighting and location sound, under live production pressure.</li></ul><div class="assess"><span class="k">Graded on (Creative Media Production &amp; Technology)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Brief</span><span class="ttl"><h3>The Final Whistle: football radio report</h3><span class="tc">ADOBE AUDITION</span></span></header><div class="body"><p>A professional-standard football match report built in Adobe Audition, covering research, scripting, voice-over, editing and mixing for a target audience.</p><ol class="clean">
+  <li><b>Assemble a sports report</b> from supplied voice-over, manager quotes and sound effects. Submit as MP3 with timeline screenshots.</li>
+  <li><b>Deconstruct and research:</b> analyse professional radio reports for structure, pacing, tone and sound (300 words), then gather team news, stats and story angles.</li>
+  <li><b>Script and plan:</b> a 2-minute script (300–350 words) with audio cues and manager soundbites, plus a production plan.</li>
+  <li><b>Produce and mix:</b> record an authoritative voice-over, then balance voice, manager clips and crowd atmos in a multitrack session. Export a high-quality MP3.</li>
+  <li><b>Publish and evaluate:</b> post the package and script on WordPress with a 300-word critical evaluation of your choices, challenges and audience impact.</li></ol><div class="assess"><span class="k">Graded on (Creative Media Production &amp; Technology)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 10</span><span class="ttl"><h3>Engaging with an Audience</h3><span class="tc">AUDIENCE PERSONAS</span></span></header><div class="body"><p>Create an audience persona for three different pieces of content you have made: we suggest the Heinz content, your rugby highlights (a different audience) and your Final Major Project. A PDF guide with research links is on Showbie.</p><h4>Each persona covers</h4><div class="chips"><span class="chip">Name and AI-generated portrait</span><span class="chip">Age and gender</span><span class="chip">Where they live</span><span class="chip">Interests and hobbies</span><span class="chip">What they care about</span><span class="chip">What they don't</span><span class="chip">What matters to them</span><span class="chip">How they consume media</span></div><div class="assess"><span class="k">Graded on (Creative Media Production &amp; Technology)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div><a href="#grading">What P, M and D look like</a></div></div></article><article class="l3"><header><span class="tag">Production</span><span class="ttl"><h3>Broadcast production tasks</h3><span class="tc">SET ON SHOWBIE</span></span></header><div class="body"><ul class="clean"><li><b>Joe Cole and Owen Hargreaves interview (TNT Sports):</b> from about 11 minutes of audio, cut a three-part version for a music radio station and a single tidied-up podcast version, each with written presenter intros and outros. Follow the client notes: introduce them as TNT Sports pundits and include the Champions League credit line.</li><li><b>Editing match highlights:</b> a broadcast-ready rugby package in Premiere Pro with kick-off, half-time and full-time whistles, and every try followed by a 12-frame dissolve and a 50% slow-motion replay, built from the timecodes on the format sheet.</li><li><b>Match and rugby highlights (Task 5):</b> a second highlights edit to the same rules.</li><li><b>Cobham v Staines:</b> a highlights edit from the supplied match footage.</li><li><b>The Bench Warmers radio show:</b> plan, record and build your own 60-minute sports show in RCS Zetta. Link 1 is the intro, link 4 the Sky Sports News bulletin at the half-hour, link 7 the outro, and links 2, 3, 5 and 6 your own content. Label every file in the set format, set segues and ducking, and hit your timing exactly with no dead air. Hand in the running order, a Zetta log screenshot, the full mixdown and a short evaluation on WordPress.</li><li><b>EFL commentary:</b> live commentary to the line-up board.</li></ul><div class="assess"><span class="k">Graded on (Creative Media Production &amp; Technology)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div><a href="#grading">What P, M and D look like</a></div></div></article><article class="l3"><header><span class="tag">Unit 8</span><span class="ttl"><h3>Personal Project (FMP)</h3><span class="tc">FINAL MAJOR PROJECT</span></span></header><div class="body"><p>An independent project built on your own interests, using everything from the course to plan, research, produce and evaluate a creative media outcome.</p><div class="three">
+  <div><h4>Project phases</h4><ul class="clean"><li>Proposal form and BIF document approved</li><li>Pitch deck or video pitch</li><li>Primary research: a survey of at least 10 questions, a focus group or interview</li><li>Secondary research: locations, props, colour palettes, styles</li><li>Pre-production: storyboards, scripts, mood boards, shot lists, schedules</li></ul></div>
+  <div><h4>Deliverables</h4><ul class="clean"><li>A practical outcome, normally 3–5 minutes for media productions</li><li>Production evidence in screenshots and photos</li><li>Weekly reflection posts on WordPress</li><li>A final evaluation: at least 1,000 words or a video vlog covering strengths, weaknesses and future improvements</li></ul></div></div><div class="assess"><span class="k">Graded on (Creative Media Production &amp; Technology)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+<article class="l3"><header><span class="tag">Unit 12</span><span class="ttl"><h3>Specialist Study: The Platform Revolution</h3><span class="tc">ESSAY + PODCAST</span></span></header><div class="body"><p>A written essay arguing a position on how sports media is changing, plus a <b>3–5 minute sports podcast episode</b> that takes a robust critical stance on your essay's argument. Explore distribution ecosystems, audience fragmentation and how sports broadcasting platforms have evolved.</p><p><a href="#unit-12">Open the full Unit 12 page</a></p><div class="assess"><span class="k">Graded on (Creative Media Production &amp; Technology)</span><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div><a href="#grading">What P, M and D look like</a></div></div></article>
+</div>
+</section>
+
+<!-- UNIT 12 -->
+<section data-view="unit-12" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Unit 12 · Year 13 · Creative Media Production and Technology</span>
+    <h2>Specialist Study: The Platform Revolution</h2>
+    <p class="lede">A written essay taking a position on how sport's media landscape is changing, and a 3–5 minute sports podcast episode that argues that position hard. Explore content distribution ecosystems, audience fragmentation and the evolution of sports broadcasting platforms.</p>
+  </div>
+  <div class="grid2">
+    <article class="l3">
+      <header><span class="tag">Deliver</span><span class="ttl"><h3>What you hand in</h3></span></header>
+      <div class="body"><ul class="clean">
+        <li>A Unit 12 tab on your WordPress portfolio</li>
+        <li>A referenced, critical essay with a clear argument</li>
+        <li>A 3–5 minute sports podcast episode that takes a robust critical position on your essay's argument</li>
+        <li>A fully realised script with vocal delivery notes</li>
+        <li>Production schedules</li>
+        <li>A clean multitrack master with editorial sound design and balanced music beds, embedded on your WordPress blog</li>
+        <li>Weekly log entries for every stage</li>
+      </ul></div>
+    </article>
+    <article class="l3">
+      <header><span class="tag">Format</span><span class="ttl"><h3>Choose your podcast format</h3></span></header>
+      <div class="body"><div class="chips"><span class="chip">Investigative feature</span><span class="chip">Radio debate</span><span class="chip">Audio documentary</span><span class="chip">Deep-dive sports media explainer</span></div>
+      <p>Pick the format that best serves your argument and your audience, and explain that choice in your weekly log.</p></div>
+    </article>
+    <article class="l3">
+      <header><span class="tag">Questions</span><span class="ttl"><h3>What your essay can explore</h3></span></header>
+      <div class="body"><ul class="clean">
+        <li>How have rights, distribution and audiences moved from traditional TV, radio and print to streaming, social, YouTube, podcasts and club channels?</li>
+        <li>Is the audience fragmenting, and who holds it now?</li>
+        <li>How do athletes and clubs reach fans directly, and what does that mean for broadcasters and journalists?</li>
+        <li>What are the strengths, limits and business models of old and new platforms?</li>
+      </ul></div>
+    </article>
+    <article class="l3">
+      <header><span class="tag">Build it</span><span class="ttl"><h3>A structure that works</h3><span class="tc">ESSAY</span></span></header>
+      <div class="body"><ul class="clean">
+        <li><b>Introduction:</b> the question, your definitions, your argument.</li>
+        <li><b>Case studies:</b> two or three organisations compared with evidence.</li>
+        <li><b>Analysis:</b> figures, quotes and sources, weighing both sides.</li>
+        <li><b>Conclusion:</b> answer the question and set up your podcast's stance.</li>
+        <li><b>References:</b> academic, industry and news sources, consistently referenced.</li>
+      </ul><p class="empty">Word count and deadlines are on your Unit 12 brief.</p></div>
+    </article>
+  </div>
+  <article class="l3">
+    <header><span class="tag">Grade</span><span class="ttl"><h3>Graded on the Creative Media Production &amp; Technology criteria</h3></span></header>
+    <div class="body"><div class="chips"><span class="chip">Context</span><span class="chip">Research</span><span class="chip">Problem solving</span><span class="chip">Planning &amp; production</span><span class="chip">Practical skills</span><span class="chip">Evaluation &amp; reflection</span><span class="chip">Presentation</span></div>
+    <p>For Distinction: independently find a wide range of sources and say what you took from each, plan and produce to schedule with continuous evaluation, and present the episode with a personal style that reaches your audience. See the <a href="#grading">grading guide</a>.</p></div>
+  </article>
+</section>
+
+<!-- WEEKLY LOG -->
+<section data-view="weekly-log" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">How to write a weekly log</span>
+    <h2>Eight sections, one brilliant log</h2>
+    <p class="lede">Your weekly log is evidence of your thinking, not a diary of what you did. Work through the eight sections for your year and answer every prompt in your own words.</p>
+  </div>
+  <div class="grid3">
+    <article class="l3"><header><span class="tag">Rule 1</span><span class="ttl"><h3>Show, don't tell</h3></span></header><div class="body"><p>Screenshots, screen recordings, photos and diagrams beat description every time.</p></div></article>
+    <article class="l3"><header><span class="tag">Rule 2</span><span class="ttl"><h3>Link your research</h3></span></header><div class="body"><p>Reviews, manuals, academic papers, examples: hyperlink them at the point you mention them.</p></div></article>
+    <article class="l3"><header><span class="tag">Rule 3</span><span class="ttl"><h3>Keep it building</h3></span></header><div class="body"><p>Write a section well once, then copy, paste and add to it as the project progresses.</p></div></article>
+  </div>
+  <div class="year-switch" role="group" aria-label="Choose your year" id="logSwitch">
+    <button type="button" data-y="y12" aria-pressed="true">Year 12 · Creative Practice</button>
+    <button type="button" data-y="y13" aria-pressed="false">Year 13 · Creative Media</button>
+  </div>
+  <ol class="guide" id="guideList"></ol>
+  <article class="l3">
+    <header><span class="tag">Submit</span><span class="ttl"><h3>Before you submit</h3></span></header>
+    <div class="body"><ul class="ticks">
+      <li>Every section has at least one screenshot, photo or diagram.</li>
+      <li>Every source, example and how-to guide is hyperlinked.</li>
+      <li>You've explained why, not just what.</li>
+      <li>Your three problems are matched to three solutions.</li>
+      <li>Three things that went well and three to improve are written down.</li>
+      <li>You've referred back to an earlier log to show progression.</li>
+      <li>Spelling, grammar and file names are checked. This is a professional document.</li>
+    </ul></div>
+  </article>
+
+  <article class="l3">
+    <header><span class="tag">Check</span><span class="ttl"><h3>Log checker</h3><span class="tc">REPLAY · REVIEW</span></span></header>
+    <div class="body">
+      <p>Paste this week's log (copy the text from your site, headings included). The checker uses your year's guide to find each section, how much you wrote, your links and your reasons, runs the before-you-submit checks, then lists what to fix. Nothing you paste is saved or sent anywhere.</p>
+      <div class="checker">
+        <div style="display:grid;gap:10px;min-width:0">
+          <label for="logText" class="kicker">Your weekly log</label>
+          <textarea id="logText" spellcheck="true"></textarea>
+          <div class="btnrow">
+            <button class="btn" type="button" id="runCheck">Check my log</button>
+            <button class="btn ghost" type="button" id="loadSample">Load an example</button>
+            <button class="btn ghost" type="button" id="clearLog">Clear</button>
+          </div>
+        </div>
+        <div class="report" id="report" aria-live="polite"></div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- GRADING -->
+<section data-view="grading" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">UAL grade criteria, explained</span>
+    <h2>What Pass, Merit and Distinction look like</h2>
+    <p class="lede">Pass means your work meets every assessment criterion to a satisfactory standard, Merit to a high standard, Distinction to a very high standard. Missing any criterion is a Fail. Year 12 and Year 13 are graded on different qualifications, so pick your year.</p>
+  </div>
+  <div class="year-switch" role="group" aria-label="Choose year" id="gradeSwitch">
+    <button type="button" data-g="g12" aria-pressed="true">Year 12 · Diploma</button>
+    <button type="button" data-g="g13" aria-pressed="false">Year 13 · Extended Diploma</button>
+  </div>
+
+  <div id="g12" style="display:grid;gap:16px">
+  <p>Year 12 is the <b>UAL Level 3 Diploma in Creative Practice: Art, Design and Communication</b>, graded on four strands.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th scope="col">Criterion</th><th scope="col" class="g-p">Pass</th><th scope="col" class="g-m">Merit</th><th scope="col" class="g-d">Distinction</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Context</th>
+        <td>Proposal and BIF are there but low on detail. They don't link your skills to the project, or the pitch talks about you rather than the project.</td>
+        <td>Good detail, a few references, and a clear link between your skills and why you are doing it. You understand the audience but could say more about them.</td>
+        <td>A detailed Proposal, a detailed BIF and a simple, effective pitch that explains exactly what you are making and the audience it serves. Lots of references.</td></tr>
+      <tr><th scope="row">Research</th>
+        <td>Some sources with links, but you haven't explained what you took from each one or how you used it.</td>
+        <td>Quite a few linked sources, each with what you took from it and how you used it in your product.</td>
+        <td>Lots of independently found sources, each explained. Your research reads like an instruction manual someone could follow to make your project.</td></tr>
+      <tr><th scope="row">Practical skills</th>
+        <td>An adequate range of processes and skills, competently applied to develop ideas.</td>
+        <td>Consistent, appropriate processes and skills used to extend your ideas and find creative solutions.</td>
+        <td>In-depth understanding and aesthetic awareness, with imaginative, flexible use of skills across extensive experimentation.</td></tr>
+      <tr><th scope="row">Evaluation &amp; reflection</th>
+        <td>Clear, valid evaluation and realistic analysis that you use to develop ideas.</td>
+        <td>Effective analysis, your own synthesis of information, and reasoned decisions that drive your ideas forward.</td>
+        <td>Professional, perceptive analysis with clear, sophisticated thinking and mature decision-making.</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+
+  <div id="g13" style="display:grid;gap:16px" hidden>
+  <p>Year 13 is the <b>UAL Level 3 Extended Diploma in Creative Media Production and Technology</b>, graded on seven strands. The extra three are problem solving, planning and production, and presentation.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th scope="col">Criterion</th><th scope="col" class="g-p">Pass</th><th scope="col" class="g-m">Merit</th><th scope="col" class="g-d">Distinction</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Context</th>
+        <td>You understand the subject well enough to make judgements, describe your aims and say what the project is for.</td>
+        <td>Good knowledge of the subject used to make sound judgements and set out clear ambitions.</td>
+        <td>Comprehensive knowledge used to explain complex ideas, with clear ambitions and purpose.</td></tr>
+      <tr><th scope="row">Research</th>
+        <td>Enough relevant information gathered, recorded and used to develop ideas.</td>
+        <td>Thorough, sustained research from relevant sources, interpreted and pulled together to support your ideas.</td>
+        <td>Independently found, thorough research from a wide range of sources, with insightful interpretation that drives your ideas.</td></tr>
+      <tr><th scope="row">Problem solving</th>
+        <td>You explore alternatives and use established approaches to fix practical and theoretical problems.</td>
+        <td>You show initiative, adapt to problems you didn't expect and still reach your goals.</td>
+        <td>You solve problems on your own initiative, put creative solutions in place yourself and adapt to the unexpected.</td></tr>
+      <tr><th scope="row">Planning &amp; production</th>
+        <td>Effective planning, checked against your aims, that gets the work done.</td>
+        <td>Coherent, reasoned planning and commitment, with realistic evaluation against aims and production on schedule.</td>
+        <td>Detailed self-directed planning and negotiation, continuous evaluation against aims, and efficient production against deadlines.</td></tr>
+      <tr><th scope="row">Practical skills</th>
+        <td>An adequate range of processes and skills, competently applied to develop ideas.</td>
+        <td>Consistent, appropriate processes and skills used to extend your ideas and find creative solutions.</td>
+        <td>In-depth understanding and aesthetic awareness, with imaginative, flexible use of skills across extensive experimentation.</td></tr>
+      <tr><th scope="row">Evaluation &amp; reflection</th>
+        <td>Clear, valid evaluation and realistic analysis that you use to develop ideas.</td>
+        <td>Effective analysis, your own synthesis of information, and reasoned decisions that drive your ideas forward.</td>
+        <td>Professional, perceptive analysis with clear, sophisticated thinking and mature decision-making.</td></tr>
+      <tr><th scope="row">Presentation</th>
+        <td>Your work is presented clearly and consistently for its audience.</td>
+        <td>Confident selection and organisation, presented to industry conventions and standards.</td>
+        <td>Confident, autonomous presentation with a personal style and ambitious use of resources to reach your audience.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="empty">The Creative Media Production and Technology Diploma carries 36, 60 or 84 UCAS points for Pass, Merit or Distinction.</p>
+  </div>
+
+  <div class="grid3">
+    <article class="l3"><header><span class="tag">Context</span><span class="ttl"><h3>Why this?</h3></span></header>
+      <div class="body"><p>Why you are making it, why it suits your skills, time and kit, who the audience is, and what you include to make it work for them. No proposal is an instant fail.</p></div></article>
+    <article class="l3"><header><span class="tag">Research</span><span class="ttl"><h3>Three kinds</h3></span></header>
+      <div class="body"><ul class="clean">
+        <li><b>Technical:</b> the software and kit, why it was best for the job, guides with screenshots of how you edited.</li>
+        <li><b>Story:</b> linked sources for facts and figures, what you used and how, and how storytelling works.</li>
+        <li><b>Stylistic:</b> what your piece is based on and how you recreated that style.</li></ul></div></article>
+    <article class="l3"><header><span class="tag">Reflect</span><span class="ttl"><h3>Say why</h3></span></header>
+      <div class="body"><p>Evaluation is where the top grades are won. Explain your decisions with "because", say what you would change, and show how feedback moved the work on.</p></div></article>
+  </div>
+</section>
+
+<!-- PARENTS -->
+<section data-view="parents" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">For parents and carers</span>
+    <h2>Supporting your young person on Sports Media</h2>
+    <p class="lede">Sports Media is a practical, coursework-based course. There are no exams: your young person builds a portfolio of real productions across two years and is graded on it. Here is how it works and how you can help.</p>
+  </div>
+  <div class="grid2">
+    <article class="l3"><header><span class="tag">What</span><span class="ttl"><h3>The qualifications</h3></span></header>
+      <div class="body"><ul class="clean">
+        <li><b>Year 12:</b> UAL Level 3 Diploma in Creative Practice: Art, Design and Communication.</li>
+        <li><b>Year 13:</b> UAL Level 3 Extended Diploma in Creative Media Production and Technology.</li>
+        <li>Both are awarded by UAL Awarding Body (University of the Arts London) and graded Pass, Merit or Distinction.</li>
+        <li>They carry UCAS points, so they count towards university applications. The Creative Media Production and Technology Diploma carries 36, 60 or 84 points for Pass, Merit or Distinction.</li>
+      </ul></div></article>
+    <article class="l3"><header><span class="tag">How</span><span class="ttl"><h3>How it is assessed</h3></span></header>
+      <div class="body"><ul class="clean">
+        <li>Every project is assessed by teachers against the UAL grading criteria. You can read them in plain language on the <a href="#grading">Grading</a> page.</li>
+        <li>Each year ends with a Final Major Project: an independent piece of sports media your young person plans, makes and evaluates.</li>
+        <li>The evidence lives on their own portfolio website, which is what teachers and the moderator look at.</li>
+      </ul></div></article>
+    <article class="l3"><header><span class="tag">Weekly</span><span class="ttl"><h3>The weekly log</h3></span></header>
+      <div class="body"><p>Every week students write a log on their portfolio site under eight set headings: what they made, the research behind it, problems they solved, and what they would do better. It is the main evidence for their grade, so a missed week makes a real difference.</p>
+      <p>The <a href="#weekly-log">Weekly log</a> page shows the headings for each year and has a checker they can paste their log into.</p></div></article>
+    <article class="l3"><header><span class="tag">Help</span><span class="ttl"><h3>How you can help</h3></span></header>
+      <div class="body"><ul class="clean">
+        <li>Ask to see their portfolio website once a week and have them talk you through the latest log.</li>
+        <li>Ask "why did you do it that way?" The best logs explain decisions, not just list what happened.</li>
+        <li>Encourage them to run the log checker before they publish each week.</li>
+        <li>Watch and listen to what they make. Feedback from a real audience feeds straight into their evaluation.</li>
+        <li>Look out for sports events, clubs and local media they could film, interview or report on.</li>
+      </ul></div></article>
+    <article class="l3"><header><span class="tag">Time</span><span class="ttl"><h3>The working week</h3></span></header>
+      <div class="body"><p>Year 12 Sports Media runs for 12 hours a week as three 4-hour practical sessions, using the school's 8 radio studios, 3 sound booths and edit suite. Most work is done in those sessions; the weekly log and some research happen alongside.</p></div></article>
+    <article class="l3"><header><span class="tag">Future</span><span class="ttl"><h3>Where it leads</h3></span></header>
+      <div class="body"><p>University, creative and broadcast apprenticeships, freelance work or entry-level roles in sports content, broadcasting, video editing, audio, journalism and digital marketing. See <a href="#next-steps">After the course</a>. Students work with industry partners including IMG Studios, RaceTech, EMG Media, Global and London College of Communication.</p></div></article>
+  </div>
+  <p class="empty">Questions about the course? Contact Mark Pendergast, Head of Content Production, through the Global Academy school office.</p>
+</section>
+
+<!-- JOBS -->
+<section data-view="jobs" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Opportunities board · refreshed every five days</span>
+    <h2>Media jobs, apprenticeships and work experience</h2>
+    <p class="lede">Live openings across TV, radio, journalism, digital and sport, plus media roles inside brands, charities and public bodies. Every role was checked as open when it was added. Always read the full listing before you apply.</p>
+    <p class="empty" id="jbUpdated"></p>
+  </div>
+  <div class="jb-filters" id="jbCat" role="group" aria-label="Filter by type"></div>
+  <div class="jb-filters" id="jbSector" role="group" aria-label="Filter by sector"></div>
+  <div id="jbList" style="display:grid;gap:18px"></div>
+  <article class="l3"><header><span class="tag">Apply</span><span class="ttl"><h3>Before you apply</h3></span></header>
+    <div class="body"><ul class="clean">
+      <li>Send your portfolio link with every application, and point to the one piece that best matches the role.</li>
+      <li>Tailor two or three lines of your CV or cover note to the job. Use the words in the listing.</li>
+      <li>Check the age and qualification requirements. Some roles need you to be 18 or to have finished Year 13.</li>
+      <li>Never pay to apply, and never share bank details before you have a written contract. If something looks wrong, ask Mark first.</li>
+      <li>Tell Mark when you apply. He can help with interviews and references.</li>
+    </ul></div></article>
+</section>
+
+<!-- AFTER -->
+<section data-view="next-steps" hidden>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Progression</span>
+    <h2>Where this course leads</h2>
+    <p class="lede">You leave with a professional portfolio or showreel, a calling-card Final Major Project, and UAL qualifications recognised by universities for UCAS entry.</p>
+  </div>
+  <div class="grid2">
+    <article class="l3"><header><span class="tag">Routes</span><span class="ttl"><h3>Next moves</h3></span></header>
+      <div class="body"><ul class="clean"><li>University degrees in media, journalism, broadcast and sport</li><li>Creative and broadcast apprenticeships</li><li>Freelance work</li><li>Entry-level industry roles</li><li>UAL Foundation Diploma in Art and Design</li></ul></div></article>
+    <article class="l3"><header><span class="tag">Roles</span><span class="ttl"><h3>Jobs in sports media</h3></span></header>
+      <div class="body"><div class="chips"><span class="chip">Sports content producer</span><span class="chip">Broadcast assistant</span><span class="chip">Social media producer</span><span class="chip">Video editor</span><span class="chip">Camera operator</span><span class="chip">Audio and podcast producer</span><span class="chip">Sports journalist</span><span class="chip">Production coordinator</span><span class="chip">Digital marketing</span></div></div></article>
+  </div>
+</section>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="monitor" id="monitor" hidden aria-label="Student detail"></aside>
+
+<footer><div class="wrap">Global Academy · Media, Broadcast and Technical · KS5 Sports Media · Curriculum leader: Mark Pendergast · <a href="https://claude.ai/artifact/6k32ZRr7HGf8t2dBooBnjD#tracker-y12" style="color:inherit">Staff tracker</a></div></footer>
+
+<script>
+/* Weekly log checker — shared by the course site and the staff dashboard.
+   Year-aware: Year 12 (UAL L3 Creative Practice) and Year 13 (UAL L3 Creative Media
+   Production and Technology) each have their own 8-section weekly log guide. */
+(function(){
+  const DEF = {
+    context:{label:'Context', kw:['context','the brief','brief','aims','purpose','target audience','audience','intro','introduction'],
+      tip:'Outline the brief, say who the target audience is and why, link demographic research on them, and explain how you will use language, style and interests to hold them.'},
+    research:{label:'Research', kw:['research','technical research','story research','stylistic research','technical','story','stylistic','sources','references'],
+      tip:'Cover technical (kit and software, the alternative, why yours is better), story (your sources, why they are reliable, how they differ) and stylistic (your inspiration and linked examples), each hyperlinked.'},
+    ethics:{label:'Ethics & sustainability', kw:['ethics and sustainability','ethics & sustainability','ethics','ethical','sustainability','sustainable'],
+      tip:'Ethics: how you chose subjects, sources and contributors and treated them safely and fairly. Sustainability: the least wasteful option you chose and what damage you avoided.'},
+    problem:{label:'Problem solving', kw:['problem solving','problem-solving','problems','problem','challenges'],
+      tip:'List three problems you ran into, then the three solutions you found, matched up.'},
+    planning:{label:'Planning & production', kw:['planning and production','planning & production','planning','pre-production','pre production','production','post-production'],
+      tip:'Use the four headings: pre-production/planning, production (with a set-up diagram), post-production, and distribution (how and why you published it). Illustrate every stage.'},
+    practical:{label:'Practical skills', kw:['practical skills','practical','skills','techniques','technique','workflow'],
+      tip:'Annotated, dated screenshots and screen recordings of your edit, the moments you made decisions or corrections, links to how-to guides, camera and lighting photos with a diagram, and before/after comparisons.'},
+    evaluation:{label:'Evaluation & reflection', kw:['evaluation and reflection','evaluation & reflection','evaluation','reflection','reflect','www','ebi','what went well','even better if'],
+      tip:'Compare the final product with what you set out to make, say what the process taught you, and list three things that went well and three you will do better.'},
+    website:{label:'Presentation: your website', kw:['website','ux','ui','user experience'],
+      tip:'Check your site is suitable, clear and easy to navigate, and that every video and audio embed plays with one click.'},
+    presentation:{label:'Presentation: format', kw:['presentation','format'],
+      tip:'Explain how you chose to communicate this to your audience, what the options were, and why this format is the best fit for them.'}
+  };
+  const ORDER = {
+    y12:['context','research','ethics','problem','planning','practical','evaluation','presentation'],
+    y13:['context','research','problem','planning','practical','evaluation','website','presentation']
+  };
+  const YEAR_NAME = {y12:'Year 12 · Creative Practice', y13:'Year 13 · Creative Media Production and Technology'};
+  function sectionsFor(year){ return ORDER[year==='y13'?'y13':'y12'].map(k => Object.assign({key:k}, DEF[k])); }
+
+  const REASON = /\b(because|so that|which meant|this meant|this is why|that's why|the reason|i chose|i decided)\b/gi;
+  const URL = /(https?:\/\/[^\s)\]]+|www\.[^\s)\]]+)/gi;
+  const WEEK = /^\s*(?:year\s*1[23]\s*)?week\s*(\d{1,2})\b/i;
+  const SITEWORDS = /\b(website|site|ux|ui|navigat\w*|embed\w*|one click|plays?)\b/i;
+
+  function words(s){ const m = s.trim().match(/[A-Za-z0-9'’-]+/g); return m ? m.length : 0; }
+  function headingFor(line, keys){
+    const raw = line.trim();
+    if(!raw || raw.length > 70) return null;
+    const t = raw.toLowerCase().replace(/^[\s#*\d.):–—-]+/,'').replace(/[:*#–—-]+\s*$/,'').trim();
+    if(!t || words(t) > 7) return null;
+    let best = null, bestLen = 0;
+    for(const k of keys){
+      for(const w of DEF[k].kw){
+        if((t === w || t.startsWith(w + ' ') || t.startsWith(w + ':') || t.endsWith(' ' + w) || t.includes(' ' + w + ' ')) && w.length > bestLen){ best = k; bestLen = w.length; }
+      }
+    }
+    return best;
+  }
+
+  function analyse(text, year){
+    year = year === 'y13' ? 'y13' : 'y12';
+    const keys = ORDER[year];
+    text = (text || '').replace(/\r/g,'');
+    const blocks = []; const weeks = new Set(); let cur = null;
+    for(const line of text.split('\n')){
+      const wk = line.match(WEEK);
+      if(wk && words(line) <= 10){ weeks.add(+wk[1]); continue; }
+      const h = headingFor(line, keys);
+      if(h){ cur = {key:h, lines:[]}; blocks.push(cur); const rest = line.split(/[:–—]/).slice(1).join(' '); if(words(rest) > 3) cur.lines.push(rest); continue; }
+      if(cur) cur.lines.push(line);
+    }
+    // Year 13 has two presentation sections: a block about the site/embeds is the website check.
+    if(year === 'y13'){
+      const pres = blocks.filter(b => b.key === 'presentation');
+      pres.forEach(b => { if(SITEWORDS.test(b.lines.join(' ')) && !blocks.some(x => x.key === 'website')) b.key = 'website'; });
+    }
+    const body = Object.fromEntries(keys.map(k => [k, blocks.filter(b => b.key === k).map(b => b.lines.join('\n')).join('\n')]));
+    const found = new Set(blocks.map(b => b.key));
+
+    const totalWords = words(text);
+    const links = (text.match(URL) || []).length;
+    const reasoning = (text.match(REASON) || []).length;
+    const sections = keys.map(k => {
+      const b = body[k], w = found.has(k) ? words(b) : 0, l = (b.match(URL) || []).length;
+      let status = !found.has(k) ? 'missing' : w < 35 ? 'thin' : w < 90 ? 'solid' : 'strong';
+      if(k === 'research' && status === 'strong' && l === 0) status = 'solid';
+      if(found.has(k) && w === 0) status = 'thin';
+      const score = (status === 'strong' || status === 'solid') ? 1 : status === 'thin' ? 0.5 : 0;
+      return {key:k, label:DEF[k].label, words:w, links:l, status, score, tip:DEF[k].tip};
+    });
+
+    // "Before you submit" checklist (same in both guides)
+    const probText = body.problem || '';
+    const probs = (probText.match(/\bproblem\s*\d|\bproblem\b/gi) || []).length;
+    const sols = (probText.match(/\bsolution\s*\d|\bsolution\b|\bsolved\b|\bfixed\b/gi) || []).length;
+    const evalText = body.evaluation || '';
+    const wentWell = /went well|www|what went well/i.test(evalText);
+    const doBetter = /do better|ebi|even better if|improve|next time/i.test(evalText);
+    const backRef = /\b(last week|previous (week|log)|earlier log|week\s*\d{1,2}\b.*\b(log|i)|last log|since week|carried forward|carry(ing)? forward)/i.test(text.replace(WEEK,''));
+    const planHeads = ['pre-production|pre production|planning','\\bproduction\\b','post-production|post production','distribution|publish'].filter(p => new RegExp(p,'i').test(body.planning || '')).length;
+    const checklist = [
+      {label:'Every source, example and how-to guide is hyperlinked', ok: links >= 3, note: links + ' link' + (links===1?'':'s') + ' found'},
+      {label:"You've explained why, not just what", ok: reasoning >= 4, note: reasoning + ' reasons given'},
+      {label:'Three problems matched to three solutions', ok: probs >= 3 && sols >= 3, note: probs + ' problems, ' + sols + ' solutions'},
+      {label:'Three things that went well and three to improve', ok: wentWell && doBetter, note: (wentWell?'went well ✓':'went well missing') + ' · ' + (doBetter?'do better ✓':'do better missing')},
+      {label:'Planning covers pre-production, production, post-production and distribution', ok: planHeads === 4, note: planHeads + ' of 4 stages'},
+      {label:'You referred back to an earlier log to show progression', ok: backRef, note: backRef ? 'found' : 'not found'},
+      {label:'Every section has a screenshot, photo or diagram', ok: null, note:'check on your site: images do not come through when you paste text'}
+    ];
+
+    const present = sections.filter(s => s.score > 0).length;
+    const good = sections.filter(s => s.score === 1).length;
+    const strong = sections.filter(s => s.status === 'strong').length;
+    const checksOk = checklist.filter(c => c.ok === true).length;
+    let band = 'Incomplete';
+    if(totalWords >= 150 && present >= 6) band = 'Pass';
+    if(band === 'Pass' && good >= 6 && links >= 3 && reasoning >= 3) band = 'Merit';
+    if(band === 'Merit' && good === 8 && strong >= 5 && links >= 5 && reasoning >= 6 && checksOk >= 5) band = 'Distinction';
+
+    const next = [];
+    sections.filter(s => s.status === 'missing').forEach(s => next.push('Add the "' + s.label + '" section. ' + s.tip));
+    sections.filter(s => s.status === 'thin').forEach(s => next.push('Build out ' + s.label + (s.words ? ' (only ' + s.words + ' words). ' : '. ') + s.tip));
+    checklist.filter(c => c.ok === false).forEach(c => next.push('Before you submit: ' + c.label.charAt(0).toLowerCase() + c.label.slice(1) + '.'));
+    return {year, weeks:[...weeks].sort((a,b)=>a-b), totalWords, links, reflective:reasoning, sections, checklist, band, present, good, strong, next:next.slice(0,6), headingsFound:found.size};
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  const STATUS_TEXT = {missing:'Missing', thin:'Thin', solid:'Solid', strong:'Strong'};
+
+  function render(r, el){
+    el.innerHTML =
+      '<div class="lc-head">' +
+        '<div class="lc-band lc-band-' + r.band.toLowerCase() + '"><span>Indicative</span><strong>' + r.band + '</strong></div>' +
+        '<dl class="lc-stats">' +
+          '<div><dt>Words</dt><dd>' + r.totalWords + '</dd></div>' +
+          '<div><dt>Sections</dt><dd>' + r.good + '<small>/8 solid</small></dd></div>' +
+          '<div><dt>Links</dt><dd>' + r.links + '</dd></div>' +
+          '<div><dt>Reasons</dt><dd>' + r.reflective + '</dd></div>' +
+          '<div><dt>Weeks</dt><dd>' + (r.weeks.length ? r.weeks.join(', ') : '–') + '</dd></div>' +
+        '</dl>' +
+      '</div>' +
+      '<p class="lc-note">Checked against the ' + esc(YEAR_NAME[r.year]) + ' weekly log guide.</p>' +
+      '<ol class="lc-sections">' + r.sections.map((s,i) =>
+        '<li class="lc-s lc-' + s.status + '"><span class="lc-dot" aria-hidden="true"></span><span class="lc-name">' + (i+1) + ' · ' + esc(s.label) + '</span>' +
+        '<span class="lc-meta">' + (s.words ? s.words + ' words' : '') + (s.links ? ' · ' + s.links + ' link' + (s.links>1?'s':'') : '') + '</span>' +
+        '<span class="lc-status">' + STATUS_TEXT[s.status] + '</span></li>').join('') + '</ol>' +
+      '<div class="lc-next"><h4>Before you submit</h4><ul class="lc-check">' + r.checklist.map(c =>
+        '<li class="' + (c.ok === true ? 'ok' : c.ok === false ? 'no' : 'na') + '"><span aria-hidden="true">' + (c.ok === true ? '✓' : c.ok === false ? '✗' : '?') + '</span><span>' + esc(c.label) + ' <small>(' + esc(c.note) + ')</small></span></li>').join('') + '</ul></div>' +
+      (r.next.length ? '<div class="lc-next"><h4>Do next</h4><ul>' + r.next.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul></div>' : '<div class="lc-next"><h4>Do next</h4><p>Every section and check is there. Push for depth: more linked sources, sharper reasoning, annotated screenshots.</p></div>') +
+      '<p class="lc-note">This is an automatic check of structure and depth. Your teacher makes the actual grading decision against the UAL criteria.</p>';
+  }
+
+  window.LogCheck = {DEF, ORDER, YEAR_NAME, sectionsFor, analyse, render};
+})();
+
+</script>
+<script>
+(function(){
+  const JOURNEY = {
+    y12: [
+      {tag:'Wk 1–6', title:'Skills build', tc:'PROJECT 1', units:['Unit 1: The Creative Process'],
+       covered:'A six-week induction: a timed Premier League audio highlights edit, radio studio operation, filming basics, Canva goal graphics and a Czechia v England story pack, an animated scorebug and matchday intros, and a Barnsley v Man United U21 highlights package with 0.25x replays. Plus setting up your website and weekly log.',
+       skills:['Import, organise and edit audio and video','Balance levels and remove noise','Cut a short sequence to music','Design and export a lower third and score strap','Export to platform specs','Annotated screenshots of your work'],
+       why:'Everyone gets the same technical foundation before being asked to tell a story with it.', next:'The Audio Project, where your Audition skills go into real football highlights and a studio package.'},
+      {tag:'Radio', title:'Radio sports news bulletin', tc:'PROJECT 2 · NOW', units:['Unit 5: Specialist Technical Skills Development'],
+       covered:'Run your own sports desk for Youths Choice: find and rank the day\'s stories, cut the clips, write and voice the bulletin, load every element into RCS Zetta, then play it out live and shake it up when a late story breaks.',
+       stages:['Source the stories: pick the five biggest sports stories of the day from IRN, Sky Sports News wire copy and club and league sources, check each one in two places, and rank them with the biggest first.','Edit the clips: cut at least three 10–20 second clips in Adobe Audition, clean them up, log the in-words, out-words and durations, and balance them to −16 LUFS.','Write and voice: write every word yourself for the ear, introduce and back-announce each clip, and record your links in the studio.','Load into Zetta: ingest your voice links, clips and the sports news bed, label every item in the house format, set segue and ducking points, and build the bulletin on the log.','Shake it up and go live: play the bulletin out from Zetta to time. Then a late story lands. Re-rank, rewrite and re-cut a new version and play it out again without dead air.'],
+       skills:['Find, check and rank stories','Rewrite copy for the ear','Cut and clean clips in Audition','Introduce and back-announce clips','Ingest, label and schedule in RCS Zetta','Play out live and react to breaking news','Hit 2:50–3:10 on time'],
+       why:'Every sports station runs a bulletin on the hour. It is the fastest way to build news judgement, studio confidence and playout skills you can show an employer.', next:'Football highlights and a studio package.'},
+      {tag:'Audio', title:'Football highlights & studio package', tc:'PROJECT 3', units:['Unit 2: Developing Creative Practice'],
+       covered:'Edit a football audio highlights package from live commentary, then script, record and produce your own sports package in the radio studio, mixing voice, interview clips, crowd atmos and music.',
+       skills:['Log and select key moments from commentary','Tight, well-paced edits with balanced levels','Write a script for an audio package','Record clean voice on a studio mic','Mix voice, clips, atmos and music','Export to broadcast standard'],
+       why:'Selecting the moments that tell the story of a match is the core editorial skill in sport.', next:'The Video Project, where the same judgement is applied to pictures.'},
+      {tag:'Video', title:'Match highlights & studio interview', tc:'PROJECT 4', units:['Unit 2: Developing Creative Practice'],
+       covered:'Edit a broadcast-style highlights package from a full match, then plan and shoot a sports interview: set design, three-point lighting, framing and clean audio, edited with B-roll and graphics.',
+       skills:['Log a full match and build a highlights edit with replays and crowd sound','Design and dress an interview set','Set up three-point lighting','Frame and record an interview with clean audio','Edit with B-roll and lower thirds'],
+       why:'Broadcasters condense 90 minutes into a few; you learn how, then move the studio discipline onto camera.', next:'Branded Content, where you pitch an idea to a real client.'},
+      {tag:'Client', title:'Branded content: live brief', tc:'PROJECT 5', units:['Unit 3: Responding to a Set Brief'],
+       covered:'Respond to a live brief from an external company: research the brand, audience and competitors, develop an original content idea and pitch it to the client, who gives feedback.',
+       skills:['Analyse a client brief and brand','Research audience and competitor content','Develop creative ideas','Build a pitch deck with mock-ups or a sizzle reel','Present to a client and handle questions'],
+       why:'Sports brands, broadcasters and rights holders all commission content. This is how that works.', next:'The Year 12 Final Major Project.'},
+      {tag:'FMP', title:'Final Major Project: Year 12', tc:'SELF-DIRECTED', units:['Unit 6: Specialist Creative Outcome'],
+       covered:'Your own piece of sports media, such as a highlights show, documentary, podcast series, studio interview or promo campaign, documented from proposal to evaluation in your weekly log.',
+       skills:['Write a project proposal','Research: technical, stylistic, audience, subject','Plan shoots and recordings','Produce and edit a finished piece','Gather peer feedback and evaluate'],
+       why:'Brings the whole year together in one project you own.', next:'Year 13 and a more ambitious final project.'}
+    ],
+    y13: [
+      {tag:'Unit 12', title:'Specialist Study: The Platform Revolution', tc:'ESSAY + PODCAST', units:['Unit 12: Specialist Study'],
+       covered:'An academic essay on how streaming, social, YouTube, podcasts and club channels are changing sport against traditional TV, radio and print, plus a 3–5 minute sports podcast episode that takes a robust critical position on the essay\'s argument.',
+       skills:['Research academic, industry and news sources','Write a referenced, critical essay','Script with vocal delivery notes','Sound design, music beds and a clean multitrack master'],
+       why:'Understanding who now holds the audience shapes every decision you make in Year 13.', next:'Broadcast production tasks.', link:'#unit-12'},
+      {tag:'Radio & TV', title:'Broadcast production tasks', tc:'ONGOING',
+       covered:'Client and live-format work alongside the units: the TNT Sports Joe Cole and Owen Hargreaves interview cut for radio and podcast, rugby and football highlights with dissolves and 50% replays, Cobham v Staines, EFL commentary, and The Bench Warmers, your own one-hour sports radio show built in Zetta.',
+       skills:['Edit to a client\'s brief and credit lines','Write presenter intros and outros','Cut highlights to timecodes with replays','Commentate live','Build and time an hour of radio in Zetta'],
+       why:'This is the day-to-day output of a sports broadcaster, and the evidence that you can deliver to a deadline.', next:'Audience Profiling.'},
+      {tag:'Audience', title:'Audience profiling & personas', tc:'PROJECT 2', units:['Unit 10: Engaging with an Audience'],
+       covered:'Build a detailed audience persona for three pieces of your own content (for example the Heinz content, your rugby highlights and your FMP): age, location, interests, what they care about and how they consume media, with a name and an AI-generated portrait.',
+       skills:['Deconstruct content and identify its audience','Primary and secondary audience research','Read audience data and analytics','Write a profile and design a persona','Justify content decisions with evidence'],
+       why:'Commissioners and producers decide with evidence, not assumptions.', next:'Ethics, Law and Sustainability.'},
+      {tag:'Ethics', title:'Ethics, law & sustainability', tc:'PROJECT 3',
+       covered:'Copyright and the use of footage, music and images; broadcast rights in sport; consent, release forms and permissions; filming in public and private; duty of care; sustainable production with BAFTA albert.',
+       skills:['Spot legal and ethical risk in a production','Design consent and release forms','Source correctly licensed music and footage','Write a risk assessment','Plan a production carbon footprint with albert'],
+       why:'Professionals spot risk before it becomes a problem.', next:'The Year 13 Final Major Project.'},
+      {tag:'FMP', title:'Final Major Project: Year 13', tc:'CALLING CARD', units:['Unit 8: Personal Project'],
+       covered:'An extended piece of original sports media, such as a documentary, highlights or magazine show, narrative podcast series, live event coverage or multi-platform campaign, with a promotional package.',
+       skills:['Formal proposal, audience research and personas','Schedule, risk assessment, consent forms, sustainability plan','Shoot, record and interview independently','Edit, sound design and graphics to a broadcast finish','Comprehensive critical evaluation'],
+       why:'Your professional calling card for university, apprenticeships or work.', next:'Higher education, apprenticeships, freelance work or entry-level roles.'}
+    ]
+  };
+  function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+  function renderJourney(y){
+    document.getElementById('rundown').innerHTML = JOURNEY[y].map(p =>
+      '<article class="l3"><header><span class="tag">'+esc(p.tag)+'</span><span class="ttl"><h3>'+esc(p.title)+'</h3><span class="tc">'+esc(p.tc)+'</span></span></header>'+
+      '<div class="body">'+(p.units?'<div class="covers"><span class="k">Covers</span>'+p.units.map(u=>'<a class="chip unitchip" href="#units">'+esc(u)+'</a>').join('')+'</div>':'')+'<div class="three"><div><h4>Content</h4><p>'+esc(p.covered)+'</p></div>'+
+      '<div><h4>Skills</h4><ul class="clean">'+p.skills.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div>'+
+      '<div><h4>Why it matters</h4><p>'+esc(p.why)+'</p>'+(p.link?'<p style="margin-top:8px"><a href="'+p.link+'">Open the Unit 12 page</a></p>':'')+'</div></div>'+
+      (p.stages?'<div class="stages"><h4>Project stages</h4><ol>'+p.stages.map(x=>{const i=x.indexOf(':');return '<li><b>'+esc(x.slice(0,i))+'</b>'+esc(x.slice(i))+'</li>';}).join('')+'</ol></div>':'')+
+      '<p class="builds"><b>Builds towards:</b> '+esc(p.next)+'</p></div></article>').join('');
+    document.querySelectorAll('#journeySwitch button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.year===y?'true':'false'));
+  }
+  document.querySelectorAll('#journeySwitch button').forEach(b=>b.addEventListener('click',()=>renderJourney(b.dataset.year)));
+  renderJourney('y12');
+
+  // Weekly log guide (from the Year 12 and Year 13 UAL weekly log guides)
+  const PROMPTS = {
+    context:{sub:'Set the scene: the brief, and who it is for', items:[['', ['Outline the task or brief you have been given.','Who is your target audience, and why have you chosen them specifically?','Link to demographic research covering that group.','Use that research to explain how you will use the right language, style and interests to attract and hold them.']]]},
+    research:{sub:'Technical, story and stylistic, with the evidence attached', items:[
+      ['Technical',['Which equipment and software are you using, and why?','What would the alternative have been? Why is your choice better?','Link to reviews, manuals and spec sheets.']],
+      ['Story',['What is your interpretation of the brief, and how will you approach it?','Which sources will you use, and why those?','How do you know they are reliable? Link to reviews or papers on how trustworthy they are.','How did different sources tell the story, and how did you see past their angles?']],
+      ['Stylistic',['What is the inspiration for this project?','Refer back to your audience: "bearing this in mind, I am basing this on a Capital / LBC / Heart show" or "a Newsround report".','Link your examples, and make sure what you make resembles them.']]]},
+    ethics:{sub:'How you treated people, and the planet', items:[
+      ['Ethics',['What ethical considerations did you have when choosing your subject, sources and contributors?','How did you make sure you treated them safely, fairly and professionally?']],
+      ['Sustainability',['How did you prioritise sustainability?','How did you choose the least wasteful option?','What were you trying to avoid when it comes to environmental damage?']]]},
+    problem:{sub:'Think about the whole process, then match them up', items:[['',['List three problems you ran into.','Then the three solutions you found, matched to each problem.']]]},
+    planning:{sub:'Organise under these four headings, with screenshots, recordings and photos', items:[['',['Pre-production / planning: everything you did to prepare for filming or recording.','Production: how you filmed and recorded, with a diagram of your set-up and why you designed it that way.','Post-production: how you turned raw footage into a finished piece.','Distribution: how you published your work, and why that way.']]]},
+    practical:{sub:'The hands-on evidence, annotated and dated', items:[['',['Annotated screenshots and screen recordings of how you edited.','The moments you made decisions or corrections.','Links to how-to guides for the studio, equipment and software.','Photos of your camera set-up and lighting, and a diagram.','If you made changes, show them side by side so we can see how things evolved.']]]},
+    evaluation:{sub:'Look back honestly, then look forward', items:[['',['How close did your final product get to the one you set out to make?','Are you happy with it? How have things evolved or adapted?','What did the whole process teach you?','Three things that went well, and three things you will do better. Carry these forward to later logs.']]]},
+    website:{sub:'Is your website suitable, clear and easy to navigate?', items:[['',['Is it a good user experience (UX) and interface (UI)?','Is every piece of content embedded correctly, and does it play with one click?','Check both video and audio.']]]},
+    presentation:{sub:'Why this format, for these people', items:[['',['How did you choose to communicate this to your audience?','What were the options?','Why is this the best fit for the people you are trying to reach?']]]}
+  };
+  let logYear = 'y12';
+  try{ const y = localStorage.getItem('sm-year'); if(y==='y12'||y==='y13') logYear = y; }catch(e){}
+  function renderGuide(){
+    document.getElementById('guideList').innerHTML = LogCheck.sectionsFor(logYear).map((s,i)=>{
+      const p = PROMPTS[s.key];
+      return '<li><span class="num">'+String(i+1).padStart(2,'0')+'</span><div class="gb"><b>'+esc(s.label)+'</b><em>'+esc(p.sub)+'</em>'+
+        p.items.map(([h,list])=>(h?'<h5>'+esc(h)+'</h5>':'')+'<ul>'+list.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>').join('')+'</div></li>';
+    }).join('');
+    document.querySelectorAll('#logSwitch button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.y===logYear?'true':'false'));
+  }
+  document.querySelectorAll('#logSwitch button').forEach(b=>b.addEventListener('click',()=>{ logYear=b.dataset.y; try{localStorage.setItem('sm-year',logYear)}catch(e){} renderGuide(); run(); }));
+
+  // Checker
+  const ta = document.getElementById('logText'), out = document.getElementById('report');
+  const SAMPLE = "Week 7 (example)\nContext\nThe brief is a studio package about grassroots women's football in Hayes for our station's 16-25 audience, because most of them have never heard these players' stories. Ofcom's Media Nations report https://www.ofcom.org.uk shows this age group mostly listens on demand.\nResearch\nTechnical: I used Adobe Audition rather than Audacity because it has multitrack and spectral repair https://helpx.adobe.com/audition/using/multitrack-editing.html. Story: participation figures from https://www.thefa.com.\nProblem solving\nProblem 1: wind noise on the interview. Solution 1: a dead cat on the second recording.\nPlanning and production\nPre-production: I wrote a script and booked Studio 4. Production: I recorded my links on the studio mic.\nPractical skills\nI cut and levelled the links in Audition.\nEvaluation and reflection\nWent well: my links sounded confident. Do better: the music bed was too loud because I did not duck it. Next time I will use keyframes.";
+  function run(){
+    const t = ta.value.trim();
+    if(!t){ out.innerHTML = '<p class="empty">Paste your log on the left, then press Check my log. You will see each of the eight sections for your year marked strong, solid, thin or missing, the before-you-submit checks, and a short list of what to do next.</p>'; return; }
+    LogCheck.render(LogCheck.analyse(t, logYear), out);
+  }
+  document.getElementById('runCheck').addEventListener('click', run);
+  document.getElementById('loadSample').addEventListener('click', ()=>{ ta.value = SAMPLE; run(); });
+  document.getElementById('clearLog').addEventListener('click', ()=>{ ta.value=''; run(); try{localStorage.removeItem('sm-log')}catch(e){} });
+  ta.addEventListener('input', ()=>{ try{localStorage.setItem('sm-log', ta.value)}catch(e){} });
+  try{ const saved = localStorage.getItem('sm-log'); if(saved) ta.value = saved; }catch(e){}
+  if(!ta.value) ta.value = SAMPLE;
+  renderGuide(); run();
+
+  // Units year switch
+  document.querySelectorAll('#unitSwitch button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#unitSwitch button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+    document.getElementById('u12').hidden = b.dataset.u!=='u12'; document.getElementById('u13').hidden = b.dataset.u!=='u13';
+  }));
+  // Grading year switch
+  document.querySelectorAll('#gradeSwitch button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#gradeSwitch button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+    document.getElementById('g12').hidden = b.dataset.g!=='g12'; document.getElementById('g13').hidden = b.dataset.g!=='g13';
+  }));
+
+  // Routing
+  const views = [...document.querySelectorAll('[data-view]')].map(v=>v.dataset.view);
+  function route(){
+    const h = location.hash.slice(1); const v = views.includes(h) ? h : 'home';
+    document.querySelectorAll('[data-view]').forEach(s=>s.hidden = s.dataset.view !== v);
+    document.querySelectorAll('.strip a').forEach(a=>{ const t = a.getAttribute('href').slice(1); if(t===v || (v==='tracker' && t.startsWith('tracker'))) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  }
+  addEventListener('hashchange', ()=>{ route(); window.scrollTo({top:0}); });
+  route();
+})();
+</script>
+
+<script>
+window.JOBS_SNAPSHOT={"updated": "2026-11-09T18:20:00Z", "jobs": [{"title": "Content Creator Apprenticeship L3 – BBC Sounds Social Media (Music)", "org": "BBC", "category": "Apprenticeship", "sector": "Radio & audio", "location": "London (W1A)", "pay": "£24,650 + £5,441 London weighting", "closes": "2026-11-24", "summary": "A 15-month paid apprenticeship making social video, audio and written content for BBC Sounds' music channels, ideal for students who already post music content.", "requirements": "18+ by Sept 2027; 3 years' UK residence; GCSE English & maths grade 4 if under 19; no prior experience needed", "url": "https://careers.bbc.co.uk/job/Content-Creator-Apprenticeship-Level-3-BBC-Sounds-Social-Media-Music-London/55941-en_GB", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Content Creator Apprenticeship L3 – BBC Local Radio (24 stations)", "org": "BBC", "category": "Apprenticeship", "sector": "Radio & audio", "location": "Across England (e.g. BBC Radio Derby)", "pay": "£24,650", "closes": "2026-11-24", "summary": "Around 24 BBC local radio stations are each hiring a content creator apprentice for 15 months, suiting students who want to make radio, social and web content in their local area.", "requirements": "18+ by Sept 2027; 3 years' UK residence; no prior learning required", "url": "https://careers.bbc.co.uk/job/Content-Creator-Apprenticeship-Level-3-BBC-Radio-Derby-Derby/55635-en_GB", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Content Creator Apprenticeship L3 – BBC Radio Leeds Sport", "org": "BBC", "category": "Apprenticeship", "sector": "Sport", "location": "Leeds", "pay": "£24,650", "closes": "2026-11-24", "summary": "A 15-month apprenticeship creating audio, video and written sport content for BBC Radio Leeds, a good fit for sport-mad students willing to move to Leeds.", "requirements": "18+ by Sept 2027; GCSE English & maths grade 4 if under 19; 3 years' UK residence", "url": "https://careers.bbc.co.uk/job/Content-Creator-Apprenticeship-Level-3-BBC-Radio-Leeds-Sport-Leeds/56082-en_GB", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Junior Production Coordinator Apprenticeship L4 – News & Current Affairs", "org": "BBC", "category": "Apprenticeship", "sector": "News & journalism", "location": "Salford (MediaCityUK)", "pay": "£24,650", "closes": "2026-11-24", "summary": "A Level 4 apprenticeship learning production management on BBC news programmes, suited to organised students who like the business side of making TV.", "requirements": "18+ by Sept 2027; 3 years' UK residence; no existing qualification at the same level in this subject", "url": "https://careers.bbc.co.uk/job/Junior-Production-Coordinator-Apprenticeship-Level-4-News-&-Current-Affairs-Salford/56065-en_GB", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Broadcast and Media Systems Technical Operator Apprenticeship L3", "org": "BBC Public Service", "category": "Apprenticeship", "sector": "TV & film", "location": "London (W1A)", "pay": "£24,650", "closes": "2026-11-24", "summary": "A technical apprenticeship operating BBC broadcast and media systems, ideal for students who enjoy the kit, studio and tech side of production.", "requirements": "Apprenticeship eligibility rules; see listing for GCSE requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000061989", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Production Assistant Apprenticeship – BBC Sport", "org": "BBC", "category": "Apprenticeship", "sector": "Sport", "location": "Belfast", "pay": "£24,650", "closes": "2026-11-24", "summary": "A 13-month Level 3 production assistant apprenticeship with BBC Sport in Belfast; the BBC's 2027 apprenticeship round closes on 24 November, so confirm the date on BBC Careers.", "requirements": "18+ by start; 3 years' UK residence; right to work in the UK", "url": "https://www.grapevinejobs.co.uk/mediajobs/74095,Production_Assistant_Apprenticeship_BBC_Sport_Belfast_BBC.html", "source": "Grapevine Jobs", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Edit Assistant Apprenticeship 2027 (Post Production Technical Operator L4)", "org": "Sky", "category": "Apprenticeship", "sector": "TV & film", "location": "Osterley, West London", "pay": "£30,000", "closes": "rolling", "summary": "A 15-month paid apprenticeship in Sky's post-production team supporting editors across entertainment, drama, sport and news; Sky shows 'Dec 2026' on the listing, so apply early. It is very close to Hayes.", "requirements": "No experience needed; must meet apprenticeship funding rules and have the right to work in the UK", "url": "https://careers.sky.com/earlycareers/apprenticeships/content/edit-assistant", "source": "Web search (Sky Early Careers)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Journalism Apprentice (Talent Scheme)", "org": "The i Paper (dmg media)", "category": "Apprenticeship", "sector": "News & journalism", "location": "London (national newsroom)", "pay": "Fixed salary for two years", "closes": "2026-12-07", "summary": "A two-year national newsroom apprenticeship with a journalism diploma, aimed at school and college leavers from under-represented backgrounds.", "requirements": "A-levels and/or BTEC Level 3; no journalism experience needed", "url": "https://www.dmgmedia.co.uk/careers/jobs/apprentice/?gh_jid=8300260", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Multi-Channel Marketer Apprenticeship L3 (Social Media Executive)", "org": "Newsquest", "category": "Apprenticeship", "sector": "Digital & social", "location": "Basildon, Essex", "pay": "£15,600", "closes": "2026-12-21", "summary": "A two-year apprenticeship growing the social media of Newsquest's Essex magazines, suited to students who are confident on TikTok, Instagram and Facebook and can film video.", "requirements": "Willing to study for the apprenticeship qualification; strong social media knowledge", "url": "https://careers.newsquest.co.uk/en/postings/d11e1ed7-83de-4b60-9f1f-69963d79e1ce", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Content Creator Apprenticeship (Cafea)", "org": "Ignite Sport UK", "category": "Apprenticeship", "sector": "Sport", "location": "Dunstable (LU5)", "pay": "£20,000", "closes": "2026-11-16", "summary": "A Level 3 content creator apprenticeship making sport and brand content, starting 23 November; it is a good fit for students who shoot and edit their own content.", "requirements": "See listing for GCSE requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000063021", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Digital Content Creator & Marketing Apprentice", "org": "On Air Suspension", "category": "Apprenticeship", "sector": "Brands & in-house media", "location": "Essex (CM5)", "pay": "£16,640", "closes": "2026-11-22", "summary": "An in-house content creator apprenticeship (Level 3) making social and marketing content for an automotive brand.", "requirements": "See listing for GCSE requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000060957", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Advertising & Media Apprentice (2 vacancies)", "org": "What's Possible Marketing Group", "category": "Apprenticeship", "sector": "Digital & social", "location": "London (N1)", "pay": "£15,600–£16,640", "closes": "2026-11-16", "summary": "A Level 3 Advertising and Media Executive apprenticeship at a London marketing agency, suited to students interested in ads, campaigns and media planning.", "requirements": "See listing for GCSE requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000060492", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Marketing Executive Apprentice – Brand & Digital", "org": "EducationScape", "category": "Apprenticeship", "sector": "Brands & in-house media", "location": "London (W12, White City)", "pay": "£24,102", "closes": "2026-11-16", "summary": "A Level 4 marketing apprenticeship running brand and digital content for an education company in White City, an easy commute from Hayes.", "requirements": "See listing for entry requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000058763", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Multi-Channel Marketing Apprentice", "org": "Better Society Capital", "category": "Apprenticeship", "sector": "Brands & in-house media", "location": "London (EC1Y)", "pay": "£29,000", "closes": "2026-11-16", "summary": "A well-paid Level 3 in-house marketing and comms apprenticeship at a social-impact investor, suited to students interested in content for good causes.", "requirements": "See listing for GCSE requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000063147", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Marketing Apprentice (Fixed Term)", "org": "Amazon UK", "category": "Apprenticeship", "sector": "Brands & in-house media", "location": "London (EC2A, Worship Street)", "pay": "Competitive", "closes": "2027-02-01", "summary": "A Level 3 multi-channel marketing apprenticeship at Amazon's London office, for students interested in brand marketing and digital campaigns.", "requirements": "See listing for entry requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000063269", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Marketing Assistant Apprentice", "org": "Cafea UK", "category": "Apprenticeship", "sector": "Brands & in-house media", "location": "Dunstable, Beds (LU5)", "pay": "£20,000", "closes": "2026-12-04", "summary": "A Level 3 multi-channel marketer apprenticeship supporting a food and drink brand's marketing and social channels.", "requirements": "See listing for GCSE requirements", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000062647", "source": "GOV.UK Find an apprenticeship search", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Trainee Apprentice Content Creator", "org": "Explode Social Media", "category": "Apprenticeship", "sector": "Digital & social", "location": "Birmingham (B1)", "pay": "£15,600–£24,784 depending on age", "closes": "2026-11-21", "summary": "A Level 3 content creator apprenticeship at a social agency making and editing Instagram, TikTok and Facebook content.", "requirements": "GCSE English & maths grade 4 plus three other GCSEs at grade 4", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000060122", "source": "Web search / GOV.UK Find an apprenticeship", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Trainee Apprentice Digital Marketing Executive", "org": "Explode Social Media", "category": "Apprenticeship", "sector": "Digital & social", "location": "Birmingham (B1)", "pay": "£15,600–£24,784 depending on age", "closes": "2026-11-21", "summary": "A Level 3 multi-channel marketer apprenticeship covering social campaigns, influencer work and analytics.", "requirements": "Five GCSEs at grade 4 including English & maths", "url": "https://www.findapprenticeship.service.gov.uk/apprenticeship/VAC2000060074", "source": "Web search / GOV.UK Find an apprenticeship", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Edit Assistant, YouTube (4Studio)", "org": "Channel 4", "category": "Entry-level job", "sector": "Digital & social", "location": "Leeds / London / Manchester", "pay": "£28,656", "closes": "2026-11-18", "summary": "An entry-level edit assistant role cutting YouTube content for Channel 4's 4Studio channels, suited to confident Premiere Pro editors with a portfolio.", "requirements": "Premiere Pro/Adobe skills; social or online video experience helpful; no degree stated", "url": "https://www.grapevinejobs.co.uk/mediajobs/74090,Edit_Assistant_YouTube_Channel_4.html", "source": "Grapevine Jobs", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Junior Video Producer", "org": "National Youth Orchestra", "category": "Entry-level job", "sector": "Brands & in-house media", "location": "Holborn, London (hybrid)", "pay": "£28,644", "closes": "2026-11-30", "summary": "A junior filmmaking and editing role making video with young orchestral musicians, suited to students with a strong shooting and editing portfolio.", "requirements": "Portfolio of personal, voluntary or professional work; no degree stated", "url": "https://opportunities.creativeaccess.org.uk/job/junior-video-producer-47849", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Drama Team Production Assistant", "org": "ITV", "category": "Entry-level job", "sector": "TV & film", "location": "London", "pay": "", "closes": "2026-11-10", "summary": "An entry-level production assistant role supporting ITV's drama team. It closes tomorrow, so it only suits school leavers ready to apply now.", "requirements": "Not checked: ITV's own page could not be opened", "url": "https://www.grapevinejobs.co.uk/mediajobs/74097,Drama_Team_Production_Assistant_ITV.html", "source": "Grapevine Jobs", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Community Video Reporter, Hammersmith & Fulham", "org": "Newsquest", "category": "Entry-level job", "sector": "News & journalism", "location": "Hammersmith & Fulham, West London", "pay": "", "closes": "2026-11-11", "summary": "An entry-level reporter role filming and editing vertical news video on a phone for a new local news site, for confident on-camera presenters who live in or near the borough.", "requirements": "Entry level; mobile filming and editing, on-camera presenting; no degree or NCTJ stated", "url": "https://careers.newsquest.co.uk/postings/0ac91deb-9aa1-4407-8b0a-71c45f435764", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Junior Studio Operative", "org": "Must Have Ideas", "category": "Entry-level job", "sector": "TV & film", "location": "Aylesford, Kent", "pay": "Competitive", "closes": "rolling", "summary": "An entry-level role operating cameras, sound and lighting in a broadcast studio, ideal for technically minded students.", "requirements": "Technical interest across camera, sound and lighting; experience beneficial but not essential", "url": "https://www.grapevinejobs.co.uk/mediajobs/73983,Junior_Studio_Operative_Must_Have_Ideas_Ltd.html", "source": "Grapevine Jobs", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Journalists – Talent Network", "org": "LADbible Group", "category": "Freelance & talent pools", "sector": "Digital & social", "location": "Manchester (hybrid)", "pay": "", "closes": "rolling", "summary": "A talent pool for fast-turnaround writers across LADbible, UNILAD, SPORTbible and Tyla; it suits school leavers who already write about viral news and pop culture.", "requirements": "All levels from junior up; no degree or years of experience listed", "url": "https://jobs.ladbiblegroup.com/jobs/8161176-journalists-talent-network", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Be Part of the Story – UK Talent Network", "org": "Future plc", "category": "Freelance & talent pools", "sector": "Digital & social", "location": "London (W2, Paddington)", "pay": "", "closes": "rolling", "summary": "An entry-level talent network for future content, production and tech roles at the publisher of magazines and websites such as TechRadar.", "requirements": "Entry level; no specific requirements listed", "url": "https://builtinlondon.uk/job/be-part-story-join-our-uk-talent-network/7359643", "source": "Web search (Future talent network)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Social Media & Content Creation Trainee", "org": "Hackney Empire (with Good Chance)", "category": "Work experience & insight", "sector": "Brands & in-house media", "location": "Hackney, East London", "pay": "", "closes": "2026-11-23", "summary": "A paid trainee role creating social media content for a historic theatre, specifically for someone with lived experience of forced displacement.", "requirements": "Lived experience of forced displacement; CV and supporting statement", "url": "https://www.hackneyempire.co.uk/jobs/social-media-content-creation-trainee", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "FT World Desk Fellowship", "org": "Financial Times", "category": "Graduate schemes (for later)", "sector": "News & journalism", "location": "London", "pay": "£2,500 per month bursary (6 months)", "closes": "2026-11-15", "summary": "A paid six-month fellowship on the FT's World News desk for Black candidates aiming to become foreign correspondents; best after uni or some experience.", "requirements": "Designed for Black candidates; right to work in the UK; no degree stated", "url": "https://job-boards.eu.greenhouse.io/financialtimes33/jobs/5013194101", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Freelance Journalist (Aziz Foundation internship)", "org": "Religion Media Centre / Aziz Foundation", "category": "Graduate schemes (for later)", "sector": "News & journalism", "location": "Not stated", "pay": "Paid (rate not stated)", "closes": "2026-12-14", "summary": "A paid journalism placement covering British Muslim communities, starting February 2027; it is for trained journalists, so it is one to aim for later.", "requirements": "Trained journalist with relevant qualifications and news-writing experience", "url": "https://www.azizfoundation.org.uk/internships/", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "TV Scheduling & Navigation (On-Air) Placement 2027", "org": "Hearst Networks", "category": "Graduate schemes (for later)", "sector": "TV & film", "location": "London (Hammersmith)", "pay": "", "closes": "2026-12-31", "summary": "A 10-month on-air presentation placement building TV schedules, graphics and voiceovers; it is only for undergraduates on a sandwich year, so it is for after starting uni.", "requirements": "Undergraduate on a sandwich course; graduates not eligible", "url": "https://higherin.com/jobs/46400/hearst-networks/tv-scheduling-and-navigation-on-air-placement-2027", "source": "The Media Mentor (media jobs page)", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "YouTube Video Editor", "org": "Peloton Social Ventures", "category": "Freelance & talent pools", "sector": "Digital & social", "location": "Remote (Dublin preferred)", "pay": "€10–€25 an hour", "closes": "rolling", "summary": "Edit long-form YouTube videos (voiceover, interviews, animation, B-roll, vox pops) for a growing channel; part-time and remote options.", "requirements": "Long-form editing experience in Premiere Pro, DaVinci Resolve or Final Cut, plus sound and colour correction. A strong portfolio counts.", "url": "https://ie.indeed.com/viewjob?jk=ac195fc98ed9b160", "source": "Indeed alert", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Freelance Video Editor", "org": "Instareel", "category": "Freelance & talent pools", "sector": "Brands & in-house media", "location": "Remote", "pay": "", "closes": "rolling", "summary": "Join a freelance network editing short-form, UGC and social video for brands.", "requirements": "Freelance; build a short-form social reel first. Check the age requirement on the listing.", "url": "https://uk.indeed.com/viewjob?jk=8812725d5178dfae", "source": "Indeed alert", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "GiveMeSport Video Lead", "org": "Valnet (GiveMeSport)", "category": "Industry roles to aim for", "sector": "Sport", "location": "Remote", "pay": "", "closes": "rolling", "summary": "Lead video output for a major sports news brand. A senior role, listed to show where sports video editing can take you.", "requirements": "Experienced editors; strong Premiere Pro and a sports content portfolio.", "url": "https://uk.indeed.com/viewjob?jk=6a647bd5bcc3ab27", "source": "Indeed alert", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Crime Correspondent", "org": "Sky News", "category": "Industry roles to aim for", "sector": "News & journalism", "location": "London", "pay": "", "closes": "rolling", "summary": "An on-screen correspondent role at Sky News. A senior journalism job, listed to show the career path.", "requirements": "Experienced broadcast journalists.", "url": "https://uk.indeed.com/viewjob?jk=1da3e9a27d7fa047", "source": "Indeed alert", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Venue Technical Manager", "org": "Aztec Event Services (Olympia London)", "category": "Industry roles to aim for", "sector": "Brands & in-house media", "location": "London W14", "pay": "£40,000–£45,000 a year", "closes": "rolling", "summary": "Runs AV and technical production at a major events venue: proof that live sound, lighting and video skills lead to well-paid roles outside broadcasting.", "requirements": "Experienced AV and live-events technicians.", "url": "https://uk.indeed.com/viewjob?jk=fb42cb7a3cc5407a", "source": "Indeed alert", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}, {"title": "Video Production Specialist (AI trainer, freelance)", "org": "Meridial", "category": "Industry roles to aim for", "sector": "Digital & social", "location": "London / remote", "pay": "£8–£65 an hour", "closes": "rolling", "summary": "Freelance work using video production knowledge to train AI models. A new kind of media job.", "requirements": "Video production experience; rate depends on expertise.", "url": "https://uk.indeed.com/viewjob?jk=852e483a244f3d71", "source": "Indeed alert", "addedAt": "2026-11-09T18:20:00Z", "checkedAt": "2026-11-09T18:20:00Z"}]};
+(function(){
+  const CATS=['Apprenticeship','Entry-level job','Freelance & talent pools','Work experience & insight','Industry roles to aim for','Graduate schemes (for later)'];
+  let jobs=(window.JOBS_SNAPSHOT||{}).jobs||[], updated=(window.JOBS_SNAPSHOT||{}).updated||'';
+  let cat='All', sector='All';
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const today=new Date(new Date().toDateString());
+  function closesInfo(c){
+    if(!c||!/^\d{4}-\d{2}-\d{2}$/.test(c)) return {txt:c?('Closes: '+c):'Closing date not stated', open:true, soon:false, t:9e15};
+    const d=new Date(c+'T23:59:59'); const days=Math.ceil((d-today)/864e5);
+    return {txt:'Closes '+d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+(days<=0?' · today':days<=14?' · '+days+' day'+(days===1?'':'s')+' left':''), open:d>=today, soon:days<=14, t:d.getTime()};
+  }
+  function chips(el, vals, cur, set){
+    el.innerHTML=['All',...vals].map(v=>'<button type="button" aria-pressed="'+(v===cur)+'">'+esc(v)+'</button>').join('');
+    el.querySelectorAll('button').forEach(b=>b.onclick=()=>{set(b.textContent);render();});
+  }
+  function render(){
+    const live=jobs.filter(j=>closesInfo(j.closes).open);
+    const cats=CATS.filter(c=>live.some(j=>j.category===c));
+    const sectors=[...new Set(live.map(j=>j.sector).filter(Boolean))].sort();
+    chips(document.getElementById('jbCat'),cats,cat,v=>cat=v);
+    chips(document.getElementById('jbSector'),sectors,sector,v=>sector=v);
+    const shown=live.filter(j=>(cat==='All'||j.category===cat)&&(sector==='All'||j.sector===sector));
+    const out=document.getElementById('jbList');
+    if(!jobs.length){out.innerHTML='<p class="empty">This week\'s list is on its way. Check back soon.</p>';return;}
+    if(!shown.length){out.innerHTML='<p class="empty">Nothing open in this filter right now. Try another.</p>';return;}
+    out.innerHTML=CATS.filter(c=>shown.some(j=>j.category===c)).map(c=>{
+      const list=shown.filter(j=>j.category===c).sort((a,b)=>closesInfo(a.closes).t-closesInfo(b.closes).t);
+      return '<div class="jb-group"><h3 class="grp">'+esc(c)+' · '+list.length+'</h3><div class="jb-grid">'+list.map(j=>{const ci=closesInfo(j.closes);return '<article class="jb" data-cat="'+esc(j.category)+'"><h3>'+esc(j.title)+'</h3><div class="org">'+esc(j.org)+'</div><div class="meta">'+[j.sector,j.location,j.pay].filter(Boolean).map(x=>'<span class="chip">'+esc(x)+'</span>').join('')+'</div><p>'+esc(j.summary)+'</p>'+(j.requirements?'<p class="req">'+esc(j.requirements)+'</p>':'')+'<div class="foot"><span class="closes'+(ci.soon?' soon':'')+'">'+esc(ci.txt)+'</span>'+'<span class="actions"><button type="button" class="cvbtn" data-job="'+jobs.indexOf(j)+'">Check my CV</button>'+(j.url?'<a class="apply" href="'+esc(j.url)+'" target="_blank" rel="noopener">View and apply</a>':'')+'</span></div></article>';}).join('')+'</div></div>';
+    }).join('');
+    out.querySelectorAll('.cvbtn').forEach(b=>b.onclick=()=>openCV(jobs[+b.dataset.job]));
+  }
+
+  /* ---------- CV checker (stand-alone: on-page check + optional deeper check in the student's own AI) ---------- */
+  let cvText='', cvName='';
+  const loadScript=src=>new Promise((res,rej)=>{ if(document.querySelector('script[src="'+src+'"]')) return res(); const t=document.createElement('script'); t.src=src; t.onload=res; t.onerror=()=>rej(new Error('load')); document.head.appendChild(t); });
+  const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', PDFW='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js', MAMMOTH='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+  async function readFile(f){
+    const n=f.name.toLowerCase(), buf=await f.arrayBuffer();
+    if(n.endsWith('.pdf')){
+      await loadScript(PDFJS); const lib=window.pdfjsLib; lib.GlobalWorkerOptions.workerSrc=PDFW;
+      const doc=await lib.getDocument({data:buf}).promise; let t='';
+      for(let i=1;i<=Math.min(doc.numPages,6);i++){ const pg=await doc.getPage(i); const c=await pg.getTextContent(); t+=c.items.map(x=>x.str+(x.hasEOL?'\n':' ')).join('')+'\n'; }
+      return t;
+    }
+    if(n.endsWith('.docx')){ await loadScript(MAMMOTH); const r=await window.mammoth.extractRawText({arrayBuffer:buf}); return r.value; }
+    if(n.endsWith('.txt')||n.endsWith('.md')) return new TextDecoder().decode(buf);
+    throw new Error('type');
+  }
+
+  // Skills vocabulary: [label, regex for the CV, regex for the job advert, what to add if missing]
+  const SKILLS=[
+    ['Adobe Premiere Pro',/premiere/i,/premiere|video edit|edit(or|ing)? video|post.?production|edit assistant/i,'Name Premiere Pro and what you cut in it, e.g. "Barnsley v Man Utd U21 highlights package with 0.25x slow-motion replays".'],
+    ['Adobe Audition',/audition/i,/audition|audio edit|sound edit|radio|podcast/i,'Name Adobe Audition and the audio you edited, e.g. "Premier League audio highlights package (2–3 min MP3)".'],
+    ['After Effects / motion graphics',/after effects|motion graphic|animation|animated/i,/after effects|motion|animation|graphics/i,'Add your motion graphics work, e.g. "animated scorebug and matchday intro (Canva)".'],
+    ['Photoshop / design',/photoshop|illustrator|indesign|graphic design/i,/photoshop|illustrator|design|graphic/i,'List the design software you use and one piece you made with it.'],
+    ['Canva',/canva/i,/canva|graphic|social/i,'Add Canva and a social graphic you designed, e.g. "7-slide matchday story pack".'],
+    ['DaVinci Resolve / Final Cut',/davinci|resolve|final cut|fcpx/i,/davinci|resolve|final cut|fcpx/i,'If you have used DaVinci Resolve or Final Cut, name it; if not, say which editor you use instead.'],
+    ['Camera / filming',/camera|filming|filmed|shoot|videograph|lighting|three-point/i,/camera|film(ing)?|shoot|videograph|self.?shoot|lighting/i,'Describe a shoot you did: camera, framing, three-point lighting, location sound.'],
+    ['Social media content',/social media|tiktok|instagram|reels?|shorts|youtube|content creat/i,/social|tiktok|instagram|reels?|shorts|youtube|content creat|community/i,'Add social content you made or ran, with numbers if you have them (posts, views, followers).'],
+    ['Writing / journalism',/writ(e|ing|ten)|journalis|article|report(ed|ing)?|blog|script/i,/writ(e|ing)|journalis|copy|report(er|ing)|article|editorial|news/i,'Add something you wrote for an audience: a news story, match report, script or blog post, with a link.'],
+    ['Radio / audio production',/radio|podcast|bulletin|zetta|studio|presenter|presenting/i,/radio|podcast|audio|bulletin|presenter|studio/i,'Add your radio work, e.g. "wrote, voiced and played out a 3-minute sports bulletin on Youths Choice using RCS Zetta".'],
+    ['Presenting / on-camera',/present(ing|er|ed)|host(ed|ing)?|on.?camera|voice.?over|interview(ed|ing)?/i,/present|host|on.?(air|camera)|voice|interview/i,'Add any presenting, hosting, voice-over or interviewing you have done.'],
+    ['Marketing',/marketing|campaign|brand|audience research|analytics/i,/marketing|campaign|brand|advertis|analytics|seo/i,'Add your branded-content brief or any campaign you worked on, and who it was for.'],
+    ['Teamwork / deadlines',/team|deadline|organis|collaborat|press day/i,/team|deadline|fast.?paced|organis|pressure|collaborat/i,'Give one example of working to a deadline or in a team, e.g. the press day interview simulation.'],
+    ['Microsoft Office / admin',/excel|word|powerpoint|google (docs|sheets)|spreadsheet/i,/excel|office|spreadsheet|admin|coordinat|schedul/i,'Add the office tools you use (Excel/Sheets, Word, PowerPoint) if the role involves admin or scheduling.'],
+    ['Driving licence',/driving licen[cs]e|full licen[cs]e/i,/driving licen[cs]e|own transport|must drive/i,'This role asks for a driving licence. If you have one, put it on your CV.']
+  ];
+  const SECTOR_TIPS={
+    'Sport':'Lead with your sports work: highlights packages, match social posts, the scorebug graphic and the sports bulletin.',
+    'Radio & audio':'Lead with your audio: the Youths Choice bulletin played out on Zetta, the audio highlights package and any studio work.',
+    'TV & film':'Lead with your video: highlights edits, the interview shoot and your camera and lighting work, with links to watch them.',
+    'News & journalism':'Lead with your writing and news judgement: bulletin scripts, rewriting wire copy for radio, and any published stories.',
+    'Digital & social':'Lead with your social content: Canva graphics, story packs, short-form video, and any accounts or numbers you can show.',
+    'Brands & in-house media':'Lead with the branded-content live brief and anything you made for a client or real audience.'
+  };
+  const words=t=>(t.match(/[A-Za-z0-9'’-]+/g)||[]).length;
+  function localCheck(j,cv){
+    const jt=[j.title,j.summary,j.requirements].join(' ');
+    const wanted=SKILLS.filter(s=>s[2].test(jt)), has=wanted.filter(s=>s[1].test(cv)), miss=wanted.filter(s=>!s[1].test(cv));
+    const barriers=[];
+    if(/\b(18|eighteen)\s*\+|aged? 18|over 18|18 or over|at least 18/i.test(jt)) barriers.push('You must be 18 or over. Check you will be by the start date.');
+    if(/degree|graduate|graduat(e|ing) in|university|uni\b/i.test(jt) && !/no degree|without a degree|degree not required/i.test(jt)) barriers.push('The advert mentions a degree or graduates. Unless you have one, this is one to aim for later rather than now.');
+    if(/(\d+|two|three|four|five)\+?\s*years?'?\s*(of\s*)?experience/i.test(jt)) barriers.push('The advert asks for years of professional experience. Your course work alone is unlikely to be enough.');
+    if(/right to work|eligible to work/i.test(jt)) barriers.push('You need the right to work in the UK.');
+    if(/senior|lead\b|manager|correspondent/i.test(j.title) || j.category==='Industry roles to aim for') barriers.push('This is a senior role. Use it to see what to build towards, not to apply now.');
+    if(/driving licen[cs]e/i.test(jt) && !/driving licen[cs]e/i.test(cv)) barriers.push('A driving licence is required and your CV does not show one.');
+    const basics=[];
+    if(!/[\w.+-]+@[\w-]+\.[\w.]+/.test(cv)) basics.push('No email address. Put your email and phone number at the top.');
+    if(!/(\+44|0)\s?7\d{3}\s?\d{3}\s?\d{3}|\b0\d{3,4}\s?\d{3}\s?\d{3,4}\b/.test(cv)) basics.push('No phone number found. Add it next to your email.');
+    if(!/https?:\/\/|www\.|sites\.google|wordpress|\.com|\.co\.uk|portfolio/i.test(cv)) basics.push('No portfolio link. For a media job this is the most important line on your CV: put your website link at the top.');
+    const w=words(cv);
+    if(w<180) basics.push('Your CV is very short ('+w+' words). Add a profile, your projects with one line each on what you did, and your skills.');
+    if(w>900) basics.push('Your CV is long ('+w+' words). Cut it to one page, about 400–600 words: the best and most relevant work first.');
+    if(!/profile|about me|personal statement|summary/i.test(cv)) basics.push('Add a 2–3 line profile at the top saying who you are and the kind of media work you want.');
+    if(!/education|qualification|gcse|a.?level|btec|ual|diploma/i.test(cv)) basics.push('Add an Education section: your UAL Level 3 course and GCSEs (especially English and Maths).');
+    if(!/\d/.test(cv.replace(/(\+44|0)\s?7[\d\s]{9,}|20\d\d|19\d\d/g,''))) basics.push('Use numbers to show results: clip lengths, views, followers, number of stories, deadlines met.');
+    if(/\bi\s(am|have|was)\b/.test(cv)) basics.push('Write "I" as a capital letter. Small errors like this get CVs rejected.');
+    const ratio=wanted.length?has.length/wanted.length:0.5;
+    let score=Math.round(ratio*65 + Math.max(0,35-basics.length*6));
+    const hard=barriers.some(b=>/degree|years of professional|senior role|driving licence is required/.test(b));
+    if(hard) score=Math.min(score,35);
+    score=Math.max(5,Math.min(95,score));
+    const verdict= hard ? 'Not suitable yet' : score>=75 ? 'Strong match' : score>=55 ? 'Worth applying' : score>=35 ? 'Stretch' : 'Not suitable yet';
+    const summary = verdict==='Strong match' ? 'Your CV shows most of what this job asks for. Fix the small things below and apply.'
+      : verdict==='Worth applying' ? 'You have a fair amount of what they want, but the gaps below will count against you. Make the edits first, then apply.'
+      : verdict==='Stretch' ? 'Your CV does not yet show enough of what this role asks for. You can apply, but expect to be up against people with more evidence.'
+      : hard ? 'There is a hard requirement you do not currently meet. Do not spend time on this application; use it as a target.'
+      : 'As it stands your CV would not get you shortlisted for this. Use the list below to build it up.';
+    const add=miss.map(s=>s[3]);
+    if(SECTOR_TIPS[j.sector]) add.push(SECTOR_TIPS[j.sector]);
+    const build=miss.slice(0,3).map(s=>'You have no evidence of '+s[0].toLowerCase()+'. Make one short piece that shows it and add it to your portfolio.');
+    return {verdict,score,summary,eligibility:barriers,strengths:has.map(s=>s[0]+' is on your CV and the job asks for it.'),gaps:miss.map(s=>s[0]),add_to_cv:add.slice(0,6),build_this:build,cv_basics:basics.slice(0,5),
+      next_step: hard ? 'Look for an apprenticeship or entry-level role on this page instead, and keep this one as a goal.' : verdict==='Strong match' ? 'Apply now, after a final check of spelling and links.' : 'Make the edits above, then apply before the closing date.'};
+  }
+  function aiPrompt(j,cv){
+    return 'You are a blunt but fair careers adviser for UK media students aged 16–19. Check whether my CV makes me suitable for this job RIGHT NOW. Be honest and straightforward: do not flatter me, do not soften a "no", and judge only on what my CV actually shows. Use plain British English and keep every point short and specific.\n\n'+
+      'JOB\nTitle: '+j.title+'\nOrganisation: '+j.org+'\nType: '+j.category+'\nLocation: '+(j.location||'not stated')+'\nPay: '+(j.pay||'not stated')+'\nCloses: '+(j.closes||'not stated')+'\nWhat it is: '+(j.summary||'')+'\nRequirements: '+(j.requirements||'see the listing')+'\nListing: '+(j.url||'')+'\n\n'+
+      'MY CV\n"""\n'+cv.slice(0,12000)+'\n"""\n\n'+
+      'Give me: 1) a verdict (Strong match / Worth applying / Stretch / Not suitable yet) and a score out of 100; 2) any hard barriers (age, degree, licence, location); 3) what already fits; 4) what is missing; 5) up to 6 concrete edits to my CV, using only things I have really done; 6) up to 3 things to build in the next few weeks; 7) one sentence on my next step.';
+  }
+  function openCV(j){
+    if(!j) return;
+    const w=document.createElement('div'); w.className='cvwrap'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true'); w.setAttribute('aria-label','CV checker');
+    w.innerHTML='<div class="cvbox"><div class="row" style="justify-content:space-between;align-items:start"><div><span class="kicker">CV checker</span><h3>'+esc(j.title)+'</h3><div class="sub">'+esc(j.org)+(j.location?' · '+esc(j.location):'')+'</div></div><button type="button" class="ghost" data-x>Close</button></div>'+
+      '<p class="note">Upload your CV (PDF or Word) or paste it below. You get an honest verdict on whether you fit this role right now, and what to add. Your CV stays on your device: it is checked in your browser and is not uploaded or saved anywhere.</p>'+
+      '<div class="row"><input type="file" accept=".pdf,.docx,.txt" aria-label="Upload your CV"><span class="note" data-fn></span></div>'+
+      '<textarea placeholder="…or paste your CV text here" aria-label="CV text"></textarea>'+
+      '<div class="row"><button type="button" class="go">Check my CV</button><span class="note" data-st></span></div>'+
+      '<div class="cvres" aria-live="polite"></div>'+
+      '<div class="blk" data-ai hidden style="border-top:1px solid var(--rule);padding-top:12px"><h4 style="margin:0 0 6px;font:700 13px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--accent)">Want a deeper check?</h4><p class="note" style="margin:0 0 8px">This copies a ready-made prompt with the job and your CV. Paste it into Claude, ChatGPT or Gemini on your own account for a more detailed, personal read. It is free on their free plans.</p><div class="row"><button type="button" class="go" data-copy>Copy prompt</button><a class="ghost" href="https://claude.ai/new" target="_blank" rel="noopener" style="text-decoration:none">Open Claude</a><a class="ghost" href="https://chatgpt.com/" target="_blank" rel="noopener" style="text-decoration:none">Open ChatGPT</a><span class="note" data-cp></span></div><textarea data-pt hidden readonly aria-label="Prompt to copy" style="min-height:90px"></textarea></div></div>';
+    document.body.appendChild(w); document.body.style.overflow='hidden';
+    const q=x=>w.querySelector(x), ta=q('textarea'), go=q('.go'), st=q('[data-st]'), res=q('.cvres');
+    if(cvText){ ta.value=cvText; q('[data-fn]').textContent=cvName?('Using '+cvName):''; }
+    const close=()=>{ w.remove(); document.body.style.overflow=''; };
+    q('[data-x]').onclick=close; w.addEventListener('click',e=>{ if(e.target===w) close(); }); w.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+    q('input[type=file]').onchange=async e=>{
+      const f=e.target.files[0]; if(!f) return; st.textContent='Reading '+f.name+'…';
+      try{ const t=(await readFile(f)).replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+        if(t.length<150){ st.textContent='I could only read a little text from that file (it may be an image). Paste your CV text into the box instead.'; ta.value=t; return; }
+        ta.value=t; cvName=f.name; q('[data-fn]').textContent='Using '+f.name; st.textContent='CV loaded. Check it reads correctly, then press Check my CV.'; }
+      catch(err){ st.textContent = err.message==='type' ? 'Upload a PDF, Word (.docx) or text file, or paste your CV.' : 'That file could not be read. Paste your CV text into the box instead.'; }
+    };
+    go.onclick=()=>{
+      const cv=ta.value.trim(); cvText=cv;
+      if(cv.length<150){ st.textContent='Add your CV first: upload it or paste at least a few lines.'; return; }
+      st.textContent=''; showResult(res,localCheck(j,cv)); q('[data-ai]').hidden=false;
+      const pt=q('[data-pt]'); pt.value=aiPrompt(j,cv);
+      q('[data-copy]').onclick=async()=>{
+        try{ await navigator.clipboard.writeText(pt.value); q('[data-cp]').textContent='Copied. Paste it into the AI and press send.'; }
+        catch(e){ pt.hidden=false; pt.focus(); pt.select(); q('[data-cp]').textContent='Select all the text in the box below and copy it.'; }
+      };
+    };
+    setTimeout(()=>q('input[type=file]').focus(),50);
+  }
+  function showResult(el,r){
+    const v=String(r.verdict||''), cls=/strong/i.test(v)?'v-strong':/worth/i.test(v)?'v-worth':/stretch/i.test(v)?'v-stretch':'v-not';
+    const list=(t,a)=>Array.isArray(a)&&a.length?'<div class="blk"><h4>'+t+'</h4><ul>'+a.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>':'';
+    el.innerHTML='<div class="cvverdict '+cls+'"><span class="score">'+esc(r.score)+'<small style="font-size:14px">/100</small></span><div><strong>'+esc(v)+'</strong><div>'+esc(r.summary||'')+'</div></div></div>'+
+      list('Barriers to check',r.eligibility)+list('What already fits',r.strengths)+list('What is missing',r.gaps)+list('Add to your CV',r.add_to_cv)+list('Build this next',r.build_this)+list('CV basics',r.cv_basics)+
+      (r.next_step?'<div class="blk"><h4>Next step</h4><p style="margin:0">'+esc(r.next_step)+'</p></div>':'')+
+      '<p class="note">This is an automatic check that matches your CV against the job listing; it cannot judge quality. Read the full advert, and ask Mark to look over your CV before you apply.</p>';
+  }
+  function stamp(){ document.getElementById('jbUpdated').textContent = updated ? 'Last updated '+new Date(updated).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : ''; }
+  render(); stamp();
+  fetch('jobs.json?'+Date.now()).then(r=>r.ok?r.json():null).then(d=>{ if(d&&Array.isArray(d.jobs)&&d.jobs.length){ jobs=d.jobs; updated=d.updated||updated; render(); stamp(); } }).catch(()=>{});
+})();
+</script>
+
+
+</body>
+</html>
