@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Year 12 Skills Check</title>
-<meta name="description" content="Global Academy Year 12 Sports Media: 50-question skills check on radio, football highlights, Audition, Premiere Pro and filming.">
+<meta name="description" content="Global Academy Year 12 Sports Media: 80-question skills check on radio, football highlights, Audition, Premiere Pro and filming.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
@@ -82,7 +82,7 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
 <body>
 <header class="mast"><div class="wrap">
   <span class="k">Global Academy · Year 12 Sports Media</span>
-  <h1>Skills check: 50 questions</h1>
+  <h1>Skills check: 80 questions</h1>
   <p>Radio, bulletins and highlights, Adobe Audition, Premiere Pro, and filming and graphics. <a href="./">Back to the course site</a></p>
 </div></header>
 
@@ -90,7 +90,7 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
   <section class="card" id="start">
     <h2>Before you start</h2>
     <ol class="rules">
-      <li>There are 5 sections of 10 questions. Do them in any order.</li>
+      <li>There are 5 sections of 16 questions. Do them in any order.</li>
       <li>Every answer needs <b>a couple of full sentences, at least 12 words</b>. One-word answers don't count.</li>
       <li>Some questions show diagrams. Pick the correct set-up, then explain why it's right.</li>
       <li>Type your own answers. Pasting is switched off.</li>
@@ -175,7 +175,14 @@ function wave(kind) {
 }
 function blocks(list) {
   let b = '', x = 8; const w = (240 - 16 - (list.length - 1) * 4) / list.length;
-  list.forEach(([l, c]) => { b += R(x, 22, w, 40, c || 'var(--g3)') + T(x + w / 2, 46, l, { s: 10, f: '#fff' }); x += w + 4; });
+  list.forEach(([l, c]) => {
+    b += R(x, 22, w, 40, c || 'var(--g3)');
+    const parts = l.split(' '); let lines = [l];
+    if (l.length * 5.6 > w - 4 && parts.length > 1) { const h = Math.ceil(parts.length / 2); lines = [parts.slice(0, h).join(' '), parts.slice(h).join(' ')]; }
+    const longest = Math.max(...lines.map(t => t.length)), fs = Math.max(7, Math.min(10, (w - 6) / (longest * 0.56)));
+    lines.forEach((t, i) => { b += T(x + w / 2, 46 + (i - (lines.length - 1) / 2) * (fs + 1), t, { s: fs.toFixed(1), f: '#fff' }); });
+    x += w + 4;
+  });
   b += `<path d="M8 74 H232" stroke="var(--muted)" marker-end="url(#ar)"/>` + T(120, 88, 'time →', { s: 10, w: 500, f: 'var(--muted)' });
   return S(240, 94, `<defs><marker id="ar" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6z" fill="var(--muted)"/></marker></defs>` + b);
 }
@@ -248,6 +255,36 @@ function safe(kind) {
   return S(240, 132, b + T(42, 18, 'app top bar', { s: 9, w: 500, f: 'var(--muted)' }) + T(42, 120, 'reply bar', { s: 9, w: 500, f: 'var(--muted)' }));
 }
 
+
+function fades(kind) {
+  let b = R(10, 24, 220, 44, 'var(--soft)');
+  let p;
+  if (kind === 'good') p = 'M16 46 L34 30 L206 30 L224 46 L206 62 L34 62 Z';
+  else if (kind === 'chop') p = 'M16 30 L224 30 L224 62 L16 62 Z';
+  else p = 'M16 46 L120 30 L224 46 L120 62 Z';
+  b += `<path d="${p}" fill="var(--g3)" opacity=".85"/>`;
+  if (kind === 'good') b += T(25, 20, 'fade in', { s: 9, a: 'start' }) + T(215, 20, 'fade out', { s: 9, a: 'end' });
+  if (kind === 'chop') b += T(16, 20, 'starts mid-word', { s: 9, a: 'start', f: 'var(--bad)' }) + T(224, 20, 'ends mid-word', { s: 9, a: 'end', f: 'var(--bad)' });
+  if (kind === 'long') b += T(120, 20, 'fades across the whole voice', { s: 9, f: 'var(--bad)' });
+  return S(240, 76, b + T(120, 50, 'voice link', { s: 10, f: '#fff' }));
+}
+function ramp(kind) {
+  let b = `<line x1="30" y1="10" x2="30" y2="74" stroke="var(--muted)"/><line x1="30" y1="74" x2="230" y2="74" stroke="var(--muted)"/>` + T(26, 22, '100%', { s: 9, a: 'end', f: 'var(--muted)' }) + T(26, 62, '50%', { s: 9, a: 'end', f: 'var(--muted)' }) + T(130, 88, 'time →', { s: 9, w: 500, f: 'var(--muted)' });
+  let pts;
+  if (kind === 'good') pts = 'M30 20 L90 20 C110 20 110 60 130 60 L160 60 C180 60 180 20 200 20 L230 20';
+  else if (kind === 'jump') pts = 'M30 20 L110 20 L110 60 L180 60 L180 20 L230 20';
+  else pts = 'M30 20 L230 20';
+  b += `<path d="${pts}" fill="none" stroke="var(--sweep)" stroke-width="2.6"/>`;
+  return S(240, 94, b + T(12, 46, 'speed', { s: 9, w: 500, f: 'var(--muted)' }));
+}
+function shot(kind) {
+  let b = R(40, 6, 160, 90, '#8fa5ae', 'rx="2"');
+  if (kind === 'wide') b += R(40, 64, 160, 32, 'var(--pitch2)', 'rx="0"') + player(120, 86, .9) + player(80, 80, .6) + player(165, 82, .7);
+  if (kind === 'mid') b += `<path d="M78 96 Q120 46 162 96Z" fill="#2b4b7a"/><circle cx="120" cy="40" r="16" fill="#d9a77c"/>`;
+  if (kind === 'cu') b += `<path d="M60 96 Q120 70 180 96Z" fill="#2b4b7a"/><circle cx="120" cy="50" r="34" fill="#d9a77c"/><circle cx="108" cy="44" r="3" fill="#222"/><circle cx="132" cy="44" r="3" fill="#222"/>`;
+  return S(240, 102, `<clipPath id="s${kind}"><rect x="40" y="6" width="160" height="90"/></clipPath><g clip-path="url(#s${kind})">${b}</g>`);
+}
+
 /* ---------- Questions ---------- */
 const SECTIONS = [
 { id: 'radio', title: 'Radio and Zetta', intro: 'Youths Choice, the one-hour sports show, and building your hour in RCS Zetta.', qs: [
@@ -266,7 +303,17 @@ const SECTIONS = [
     ], a: 2 },
   { q: 'In the VT Seg Editor, explain what trim in, trim out and ducking each do.' },
   { q: 'What is a sweeper, and where in your hour would you use one?' },
-  { q: 'Why must you load and audition the whole log before your show goes out? Name two things you are listening for.' }
+  { q: 'Why must you load and audition the whole log before your show goes out? Name two things you are listening for.' },
+  { q: 'Write an example Link 1 intro of two or three sentences for your own sports show, then say what makes it a good intro.' },
+  { q: 'Which sequence takes listeners from the sports bulletin into the next song correctly? Explain why.', d: [
+      blocks([['Bulletin','#1f7a55'],['Silence','#c8382f'],['Song','#3d7fd1']]),
+      blocks([['Sports opener','#a35f00'],['Bulletin on bed','#1f7a55'],['Sweeper','#a35f00'],['Song','#3d7fd1']]),
+      blocks([['Bulletin','#1f7a55'],['Song vocals on top of bulletin','#3d7fd1']])
+    ], a: 1 },
+  { q: 'Why is the sports news bulletin placed at the half-hour rather than anywhere in the show?' },
+  { q: 'What is the difference between a live link and a pre-recorded (voice-tracked) link? Give one advantage of each.' },
+  { q: 'Your hour is running 90 seconds over. Give two changes you could make in Zetta to bring it back to time.' },
+  { q: 'What is a "tease"? Write one you could use before a song to keep listeners tuned in.' }
 ]},
 { id: 'news', title: 'Bulletins and football highlights', intro: 'The 3-minute sports bulletin and the Premier League audio highlights package.', qs: [
   { q: 'You have eight sports stories and room for five. Using the three ranking questions, explain how you decide which story goes first and which goes last.' },
@@ -282,7 +329,17 @@ const SECTIONS = [
       blocks([['Kick-off','#1f7a55'],['Goal 1','#2e6fa7'],['Full time','#1f7a55'],['Goal 2','#2e6fa7']])
     ], a: 1 },
   { q: 'What is a "dry" version of your highlights package, and why would a radio station ask for one as well as the version with music?' },
-  { q: 'How do you hand in your highlights package, and why is an embedded player on your site better than emailing the MP3 to your teacher?' }
+  { q: 'How do you hand in your highlights package, and why is an embedded player on your site better than emailing the MP3 to your teacher?' },
+  { q: 'Why do you write the IN words, OUT words and length of every clip in your bulletin script?' },
+  { q: 'Which bulletin running order matches the script template? Explain why.', d: [
+      blocks([['1','#2e6fa7'],['2','#2e6fa7'],['3','#2e6fa7'],['4','#2e6fa7'],['5','#2e6fa7'],['Outro','#1f7a55']]),
+      blocks([['Intro','#1f7a55'],['Local story','#a35f00'],['1 + clip','#2e6fa7'],['2 + clip','#2e6fa7'],['3','#2e6fa7'],['Outro','#1f7a55']]),
+      blocks([['Intro','#1f7a55'],['1 + clip','#2e6fa7'],['2 + clip','#2e6fa7'],['3 + clip','#2e6fa7'],['4','#2e6fa7'],['5','#2e6fa7'],['Outro','#1f7a55']])
+    ], a: 2 },
+  { q: 'Why does a sports bulletin sit on a music bed, and how loud should the bed be compared with your voice?' },
+  { q: 'Where should you get the audio clips for your bulletin, and why use official sources such as IRN or Sky rather than random videos online?' },
+  { q: 'In the timed 120-minute Chelsea v Brighton exercise, how would you plan your time? Describe at least two steps in order.' },
+  { q: 'Give two reasons why you must never copy sentences from news websites into your bulletin script.' }
 ]},
 { id: 'audition', title: 'Adobe Audition: right or wrong?', intro: 'Each question describes something a student did in Audition. Say what is right or wrong and how to fix it.', qs: [
   { q: 'What is wrong here, and what should the student do instead?', s: 'Kai is editing commentary in the Waveform editor. To add a music bed, he copies the music and pastes it straight over the speech in the same file.' },
@@ -294,7 +351,13 @@ const SECTIONS = [
   { q: 'What went wrong, and what is the correct way to export a multitrack session?', s: 'Priya built her bulletin in a Multitrack session, then clicked File > Export > File. The MP3 only had one clip in it.' },
   { q: 'Which Audition feature should Josh use, and what loudness should he aim for?', s: 'Josh\'s bulletin sounds much quieter than everyone else\'s when the class plays them back to back.' },
   { q: 'What went wrong, and how should Ella edit out mistakes instead?', s: 'Ella cut out every "um" and every breath from her interview. Now the answers sound rushed and robotic.' },
-  { q: 'Why should you always keep your original raw recordings and save your session (.sesx) file, rather than only keeping the exported MP3?' }
+  { q: 'Why should you always keep your original raw recordings and save your session (.sesx) file, rather than only keeping the exported MP3?' },
+  { q: 'What is the problem, and how should Mo record next time?', s: 'Mo recorded his links in the corridor because the studio was busy. His voice sounds echoey and you can hear doors banging.' },
+  { q: 'Which voice link is trimmed and faded correctly? Explain why.', d: [ fades('chop'), fades('long'), fades('good') ], a: 2 },
+  { q: 'What has gone wrong, and how can it be fixed in Audition?', s: 'Grace plays back her bulletin on headphones and her voice is only in her left ear.' },
+  { q: 'What file type and settings should Zac export for uploading to his site, and why?', s: 'Zac exported his highlights as a 60 MB WAV file and it is too big to upload.' },
+  { q: 'How could Mia use the Essential Sound panel to fix this quickly?', s: 'Mia\'s music bed is as loud as her voice all the way through her package.' },
+  { q: 'What is a sample rate, and which one should you use for audio that will go into a video project?' }
 ]},
 { id: 'premiere', title: 'Premiere Pro: right or wrong?', intro: 'Highlights, replays and social clips in Premiere Pro.', qs: [
   { q: 'What is the problem, and how should the sequence be set up?', s: 'The match footage is 1080p at 25 frames per second. Marcus creates a new 4K, 60 fps sequence and drops the clips into it.' },
@@ -314,7 +377,13 @@ const SECTIONS = [
   { q: 'What export settings should Dev use instead for a 9:16 social clip?', s: 'Dev exports his TikTok highlight and gets a 4 GB file in the wrong shape that won\'t upload.' },
   { q: 'What is the rule for where to cut each clip in a sports highlight, and how long should social clips be?', s: 'In Ruby\'s highlight every clip is cut halfway through a move, so the ball disappears before the shot.' },
   { q: 'Which tools or commands fix this, and how can he stop it happening again?', s: 'Tom moved some clips around and now there are flashes of black between them.' },
-  { q: 'Give two reasons why captions matter on a social highlight, and one thing you must check before you export.' }
+  { q: 'Give two reasons why captions matter on a social highlight, and one thing you must check before you export.' },
+  { q: 'What should Aisha use so the name tag follows the player?', s: 'Aisha adds a name tag to the goalscorer, but it stays still while the player runs across the screen.' },
+  { q: 'Which speed graph shows a smooth speed ramp into slow motion and back? Explain why.', d: [ ramp('jump'), ramp('flat'), ramp('good') ], a: 2 },
+  { q: 'What is a J-cut, and when could you use one in a sports package?' },
+  { q: 'Which Premiere Pro tool should Ben use to fix this, and what should he check first?', s: 'Ben\'s clips come from two different cameras. One looks orange and one looks blue, so they don\'t match when cut together.' },
+  { q: 'Why has this happened, and how does she fix it?', s: 'Lucy moved her project folder to a USB stick. Now her clips show red "Media Offline" screens.' },
+  { q: 'Why should you organise your Project panel into bins? Give an example of the bins you would make for a highlights edit.' }
 ]},
 { id: 'filming', title: 'Filming, graphics and social', intro: 'Shoot Better Content, the story pack, the Crystal Palace social highlight and your weekly log.', qs: [
   { q: 'Which interview shot is framed correctly? Explain what is wrong with the other two.', d: [ frame('head'), frame('good'), frame('cut') ], a: 1 },
@@ -326,7 +395,13 @@ const SECTIONS = [
   { q: 'Which story slide puts the text in a safe place? Explain why.', d: [ safe('top'), safe('good'), safe('tiny') ], a: 1 },
   { q: 'What is a hook, and what should happen in the first two seconds of a social highlight?' },
   { q: 'Explain how to put your animated Canva score graphic over the match footage using a green background and Chroma Key.' },
-  { q: 'What should go in your weekly log for a project to reach Merit or Distinction? Give two examples.' }
+  { q: 'What should go in your weekly log for a project to reach Merit or Distinction? Give two examples.' },
+  { q: 'Which picture is a mid shot? Name the other two shot sizes and say when you would use them.', d: [ shot('cu'), shot('mid'), shot('wide') ], a: 1 },
+  { q: 'When should you use a tripod, and when might handheld filming be the better choice?' },
+  { q: 'Explain the 180-degree rule and what happens to the viewer if you break it when filming a match or interview.' },
+  { q: 'Name three things you should check on the camera before you press record.' },
+  { q: 'Why must you get permission before filming people or brand logos around school?' },
+  { q: 'Give two things that make a broadcast-style line-up graphic easy to read on screen.' }
 ]}
 ];
 const ALL = []; SECTIONS.forEach((s, si) => s.qs.forEach((q, qi) => { q.no = ALL.length + 1; q.si = si; q.qi = qi; q.key = s.id + '-' + qi; ALL.push(q); }));
@@ -341,18 +416,18 @@ const doneIn = si => SECTIONS[si].qs.filter(done).length;
 
 /* ---------- Render ---------- */
 function renderTabs() {
-  $('tabs').innerHTML = SECTIONS.map((s, i) => `<button type="button" class="tab" data-i="${i}" aria-current="${i === st.sec}">${i + 1}. ${esc(s.title)}<span class="n">${doneIn(i)}/10</span></button>`).join('') +
+  $('tabs').innerHTML = SECTIONS.map((s, i) => `<button type="button" class="tab" data-i="${i}" aria-current="${i === st.sec}">${i + 1}. ${esc(s.title)}<span class="n">${doneIn(i)}/${s.qs.length}</span></button>`).join('') +
     `<button type="button" class="tab" data-i="hand" aria-current="false">Hand in</button>`;
   const n = ALL.filter(done).length;
   $('bar').style.width = (n / ALL.length * 100) + '%';
-  $('prog').textContent = `${n} of 50 complete · ${esc(st.name)}${st.cls ? ' · ' + esc(st.cls) : ''}`;
+  $('prog').textContent = `${n} of ${ALL.length} complete · ${esc(st.name)}${st.cls ? ' · ' + esc(st.cls) : ''}`;
 }
 function renderSection() {
   const s = SECTIONS[st.sec];
   $('secHead').innerHTML = `<h2>Section ${st.sec + 1}: ${esc(s.title)}</h2><p style="margin:0;color:var(--muted)">${esc(s.intro)}</p>`;
   $('qs').innerHTML = s.qs.map(q => {
     const opts = q.d ? `<div class="opts" role="radiogroup" aria-label="Choose the correct set-up">${q.d.map((svg, i) => `<label class="opt"><input type="radio" name="p-${q.key}" value="${i}"${st.pick[q.key] === i ? ' checked' : ''}><b>${'ABC'[i]}</b>${svg}</label>`).join('')}</div>` : '';
-    return `<article class="card q" id="q-${q.key}"><span class="num">QUESTION ${q.no} OF 50${q.d ? ' · CHOOSE A, B OR C, THEN EXPLAIN' : ''}</span>
+    return `<article class="card q" id="q-${q.key}"><span class="num">QUESTION ${q.no} OF ${ALL.length}${q.d ? ' · CHOOSE A, B OR C, THEN EXPLAIN' : ''}</span>
       ${q.s ? `<div class="scn">${esc(q.s)}</div>` : ''}<h3>${esc(q.q)}</h3>${opts}
       <textarea data-k="${q.key}" aria-label="Your answer to question ${q.no}" placeholder="${q.d ? 'Which one is right, and why?' : 'Write a couple of full sentences.'}">${esc(st.ans[q.key] || '')}</textarea>
       <span class="wc" data-wc="${q.key}"></span></article>`;
@@ -379,7 +454,7 @@ function show(which) {
 function sheetText() {
   const n = ALL.filter(done).length, dq = ALL.filter(q => q.d), right = dq.filter(q => st.pick[q.key] === q.a).length;
   const mins = st.started ? Math.round((Date.now() - st.started) / 60000) : 0;
-  let t = `GLOBAL ACADEMY · YEAR 12 SPORTS MEDIA · SKILLS CHECK\nName: ${st.name}\nClass: ${st.cls || '-'}\nDate: ${new Date().toLocaleString('en-GB')}\nTime since starting: ${mins} min\nComplete: ${n}/50\nDiagram questions correct: ${right}/${dq.length}\n`;
+  let t = `GLOBAL ACADEMY · YEAR 12 SPORTS MEDIA · SKILLS CHECK\nName: ${st.name}\nClass: ${st.cls || '-'}\nDate: ${new Date().toLocaleString('en-GB')}\nTime since starting: ${mins} min\nComplete: ${n}/${ALL.length}\nDiagram questions correct: ${right}/${dq.length}\n`;
   SECTIONS.forEach((s, si) => {
     t += `\n==== SECTION ${si + 1}: ${s.title.toUpperCase()} ====\n`;
     s.qs.forEach(q => {
@@ -393,8 +468,8 @@ function sheetText() {
 function renderFinish() {
   const n = ALL.filter(done).length, dq = ALL.filter(q => q.d), right = dq.filter(q => st.pick[q.key] === q.a).length;
   const miss = ALL.filter(q => !done(q));
-  $('status').innerHTML = `<div class="row" style="gap:28px"><div><div class="score">${n}/50</div><span class="wc">questions complete</span></div><div><div class="score">${right}/${dq.length}</div><span class="wc">diagram choices correct</span></div></div>` +
-    (miss.length ? `<p style="margin:8px 0 4px"><b>Still to finish:</b></p><ul class="missing">${miss.slice(0, 12).map(q => `<li><a href="#" data-go="${q.key}">Question ${q.no}</a>${words(st.ans[q.key]) ? ' (too short)' : ''}</li>`).join('')}${miss.length > 12 ? `<li>and ${miss.length - 12} more</li>` : ''}</ul>` : '<p style="margin:8px 0 0;color:var(--good)"><b>All 50 complete.</b> Download your answer sheet and upload it to Showbie.</p>');
+  $('status').innerHTML = `<div class="row" style="gap:28px"><div><div class="score">${n}/${ALL.length}</div><span class="wc">questions complete</span></div><div><div class="score">${right}/${dq.length}</div><span class="wc">diagram choices correct</span></div></div>` +
+    (miss.length ? `<p style="margin:8px 0 4px"><b>Still to finish:</b></p><ul class="missing">${miss.slice(0, 12).map(q => `<li><a href="#" data-go="${q.key}">Question ${q.no}</a>${words(st.ans[q.key]) ? ' (too short)' : ''}</li>`).join('')}${miss.length > 12 ? `<li>and ${miss.length - 12} more</li>` : ''}</ul>` : '<p style="margin:8px 0 0;color:var(--good)"><b>All ${ALL.length} complete.</b> Download your answer sheet and upload it to Showbie.</p>');
   $('sheet').textContent = sheetText();
 }
 
