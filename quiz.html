@@ -51,6 +51,7 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
 .sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ground);padding-block:10px;border-bottom:1px solid var(--rule)}
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
 .tab{font:600 13px var(--display);border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.tab:disabled{opacity:.5;cursor:not-allowed}
 .tab[aria-current="true"]{background:var(--g3);border-color:var(--g3);color:#fff}
 .tab .n{font:500 11px var(--mono);opacity:.8;margin-left:4px}
 .bar{height:8px;border-radius:4px;background:var(--soft);overflow:hidden;margin-top:8px}
@@ -90,8 +91,8 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
   <section class="card" id="start">
     <h2>Before you start</h2>
     <ol class="rules">
-      <li>There are 5 sections of 16 questions. Do them in any order.</li>
-      <li>Every answer needs <b>a couple of full sentences, at least 12 words</b>. One-word answers don't count.</li>
+      <li>There are 80 questions in 5 sections. You answer them one at a time, in order.</li>
+      <li>Every answer needs <b>a couple of full sentences, at least 12 words</b>. The <b>Next</b> button stays locked until your answer is long enough.</li>
       <li>Some questions show diagrams. Pick the correct set-up, then explain why it's right.</li>
       <li>Type your own answers. Pasting is switched off.</li>
       <li>Your work saves on this computer as you go. When you finish, download your answer sheet and upload it to Showbie.</li>
@@ -113,9 +114,10 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
     <div id="secHead" class="card" style="margin-top:14px"></div>
     <div id="qs" style="display:grid;gap:14px;margin-top:14px"></div>
     <div class="nav" style="margin-top:14px">
-      <button class="btn ghost" id="prev" type="button">← Previous section</button>
-      <button class="btn" id="next" type="button">Next section →</button>
+      <button class="btn ghost" id="prev" type="button">← Previous question</button>
+      <button class="btn" id="next" type="button">Next question →</button>
     </div>
+    <p class="msg" id="lockMsg" style="color:var(--warn);text-align:right"></p>
   </div>
 
   <section class="card done" id="finish" hidden>
@@ -404,37 +406,56 @@ const SECTIONS = [
   { q: 'Give two things that make a broadcast-style line-up graphic easy to read on screen.' }
 ]}
 ];
-const ALL = []; SECTIONS.forEach((s, si) => s.qs.forEach((q, qi) => { q.no = ALL.length + 1; q.si = si; q.qi = qi; q.key = s.id + '-' + qi; ALL.push(q); }));
+// Stable ids from the original position, then put each section in a teaching order.
+const ORDER = {
+  radio:    [0, 10, 15, 12, 13, 6, 3, 4, 2, 1, 7, 8, 11, 5, 14, 9],
+  news:     [13, 0, 11, 15, 1, 2, 10, 3, 12, 4, 6, 7, 14, 5, 8, 9],
+  audition: [10, 2, 12, 15, 0, 11, 3, 4, 8, 5, 1, 14, 7, 6, 13, 9],
+  premiere: [15, 14, 0, 7, 8, 12, 1, 3, 2, 11, 5, 10, 13, 4, 9, 6],
+  filming:  [13, 14, 10, 11, 0, 1, 12, 2, 3, 4, 5, 6, 15, 8, 7, 9]
+};
+SECTIONS.forEach(s => { s.qs.forEach((q, i) => { q.key = s.id + '-' + i; }); const o = ORDER[s.id]; if (o && o.length === s.qs.length) s.qs = o.map(i => s.qs[i]); });
+const ALL = []; SECTIONS.forEach((s, si) => s.qs.forEach((q, qi) => { q.no = ALL.length + 1; q.si = si; q.qi = qi; ALL.push(q); }));
 
 /* ---------- State ---------- */
-let st = { name: '', cls: '', ans: {}, pick: {}, sec: 0, started: 0 };
+let st = { name: '', cls: '', ans: {}, pick: {}, cur: 0, started: 0 };
 try { const raw = localStorage.getItem(KEY); if (raw) st = Object.assign(st, JSON.parse(raw)); } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
 const words = t => (String(t || '').trim().match(/[A-Za-z0-9'’-]+/g) || []).length;
 const done = q => words(st.ans[q.key]) >= MINW && (!q.d || st.pick[q.key] != null);
 const doneIn = si => SECTIONS[si].qs.filter(done).length;
+// The furthest question a student may open: the first one not yet complete.
+const reach = () => { const i = ALL.findIndex(q => !done(q)); return i < 0 ? ALL.length - 1 : i; };
+const allDone = () => ALL.every(done);
+st.cur = Math.max(0, Math.min(st.cur || 0, reach()));
 
 /* ---------- Render ---------- */
 function renderTabs() {
-  $('tabs').innerHTML = SECTIONS.map((s, i) => `<button type="button" class="tab" data-i="${i}" aria-current="${i === st.sec}">${i + 1}. ${esc(s.title)}<span class="n">${doneIn(i)}/${s.qs.length}</span></button>`).join('') +
-    `<button type="button" class="tab" data-i="hand" aria-current="false">Hand in</button>`;
+  const r = reach();
+  $('tabs').innerHTML = SECTIONS.map((s, i) => {
+    const first = s.qs[0].no - 1, open = first <= r, here = ALL[st.cur].si === i && !$('quiz').dataset.hand;
+    return `<button type="button" class="tab" data-i="${i}" aria-current="${here}"${open ? '' : ' disabled title="Finish the earlier questions first"'}>${open ? '' : '🔒 '}${i + 1}. ${esc(s.title)}<span class="n">${doneIn(i)}/${s.qs.length}</span></button>`;
+  }).join('') + `<button type="button" class="tab" data-i="hand" aria-current="${!!$('quiz').dataset.hand}">Hand in</button>`;
   const n = ALL.filter(done).length;
   $('bar').style.width = (n / ALL.length * 100) + '%';
-  $('prog').textContent = `${n} of ${ALL.length} complete · ${esc(st.name)}${st.cls ? ' · ' + esc(st.cls) : ''}`;
+  $('prog').textContent = `${n} of ${ALL.length} complete · ${st.name}${st.cls ? ' · ' + st.cls : ''}`;
 }
-function renderSection() {
-  const s = SECTIONS[st.sec];
-  $('secHead').innerHTML = `<h2>Section ${st.sec + 1}: ${esc(s.title)}</h2><p style="margin:0;color:var(--muted)">${esc(s.intro)}</p>`;
-  $('qs').innerHTML = s.qs.map(q => {
-    const opts = q.d ? `<div class="opts" role="radiogroup" aria-label="Choose the correct set-up">${q.d.map((svg, i) => `<label class="opt"><input type="radio" name="p-${q.key}" value="${i}"${st.pick[q.key] === i ? ' checked' : ''}><b>${'ABC'[i]}</b>${svg}</label>`).join('')}</div>` : '';
-    return `<article class="card q" id="q-${q.key}"><span class="num">QUESTION ${q.no} OF ${ALL.length}${q.d ? ' · CHOOSE A, B OR C, THEN EXPLAIN' : ''}</span>
+function renderQuestion() {
+  const q = ALL[st.cur], s = SECTIONS[q.si];
+  $('secHead').innerHTML = `<h2>Section ${q.si + 1}: ${esc(s.title)}</h2><p style="margin:0;color:var(--muted)">${esc(s.intro)} Question ${q.qi + 1} of ${s.qs.length} in this section.</p>`;
+  const opts = q.d ? `<div class="opts" role="radiogroup" aria-label="Choose the correct set-up">${q.d.map((svg, i) => `<label class="opt"><input type="radio" name="p-${q.key}" value="${i}"${st.pick[q.key] === i ? ' checked' : ''}><b>${'ABC'[i]}</b>${svg}</label>`).join('')}</div>` : '';
+  $('qs').innerHTML = `<article class="card q" id="q-${q.key}"><span class="num">QUESTION ${q.no} OF ${ALL.length}${q.d ? ' · CHOOSE A, B OR C, THEN EXPLAIN' : ''}</span>
       ${q.s ? `<div class="scn">${esc(q.s)}</div>` : ''}<h3>${esc(q.q)}</h3>${opts}
       <textarea data-k="${q.key}" aria-label="Your answer to question ${q.no}" placeholder="${q.d ? 'Which one is right, and why?' : 'Write a couple of full sentences.'}">${esc(st.ans[q.key] || '')}</textarea>
       <span class="wc" data-wc="${q.key}"></span></article>`;
-  }).join('');
-  s.qs.forEach(q => updWC(q.key));
-  $('prev').disabled = st.sec === 0;
-  $('next').textContent = st.sec === SECTIONS.length - 1 ? 'Go to hand in →' : 'Next section →';
+  updWC(q.key); updNav();
+}
+function updNav() {
+  const q = ALL[st.cur], ok = done(q), last = st.cur === ALL.length - 1;
+  $('prev').disabled = st.cur === 0;
+  $('next').disabled = !ok;
+  $('next').textContent = last ? 'Go to hand in →' : 'Next question →';
+  $('lockMsg').textContent = ok ? '' : 'Answer this question properly to unlock the next one.';
 }
 function updWC(k) {
   const el = document.querySelector(`[data-wc="${k}"]`); if (!el) return;
@@ -444,11 +465,14 @@ function updWC(k) {
   el.textContent = `${w} words${w < MINW ? ` · needs at least ${MINW}` : ' ✓'}${needPick ? ' · choose A, B or C' : ''}`;
 }
 function show(which) {
-  $('start').hidden = which !== 'start'; $('quiz').hidden = which !== 'quiz'; $('finish').hidden = which !== 'finish';
-  if (which === 'finish') { $('quiz').hidden = false; $('qs').hidden = true; $('secHead').hidden = true; document.querySelector('.nav').hidden = true; renderFinish(); }
-  else if (which === 'quiz') { $('qs').hidden = false; $('secHead').hidden = false; document.querySelector('.nav').hidden = false; renderSection(); }
-  renderTabs(); window.scrollTo(0, 0);
+  $('start').hidden = which !== 'start'; $('finish').hidden = which !== 'finish'; $('quiz').hidden = which === 'start';
+  const hand = which === 'finish'; if (hand) $('quiz').dataset.hand = '1'; else delete $('quiz').dataset.hand;
+  $('qs').hidden = hand; $('secHead').hidden = hand; document.querySelector('.nav').hidden = hand; $('lockMsg').hidden = hand;
+  if (hand) renderFinish(); else if (which === 'quiz') renderQuestion();
+  if (which !== 'start') renderTabs();
+  window.scrollTo(0, 0);
 }
+function go(i) { st.cur = Math.max(0, Math.min(i, reach())); save(); show('quiz'); const t = document.querySelector('#qs textarea'); if (t) t.focus({ preventScroll: true }); }
 
 /* ---------- Hand in ---------- */
 function sheetText() {
@@ -469,7 +493,7 @@ function renderFinish() {
   const n = ALL.filter(done).length, dq = ALL.filter(q => q.d), right = dq.filter(q => st.pick[q.key] === q.a).length;
   const miss = ALL.filter(q => !done(q));
   $('status').innerHTML = `<div class="row" style="gap:28px"><div><div class="score">${n}/${ALL.length}</div><span class="wc">questions complete</span></div><div><div class="score">${right}/${dq.length}</div><span class="wc">diagram choices correct</span></div></div>` +
-    (miss.length ? `<p style="margin:8px 0 4px"><b>Still to finish:</b></p><ul class="missing">${miss.slice(0, 12).map(q => `<li><a href="#" data-go="${q.key}">Question ${q.no}</a>${words(st.ans[q.key]) ? ' (too short)' : ''}</li>`).join('')}${miss.length > 12 ? `<li>and ${miss.length - 12} more</li>` : ''}</ul>` : '<p style="margin:8px 0 0;color:var(--good)"><b>All ${ALL.length} complete.</b> Download your answer sheet and upload it to Showbie.</p>');
+    (miss.length ? `<p style="margin:8px 0 4px"><b>Still to finish:</b></p><ul class="missing">${`<li><a href="#" data-go="${miss[0].key}">Carry on from question ${miss[0].no}</a></li>`}${miss.length > 1 ? `<li>${miss.length} questions left to answer</li>` : ''}</ul>` : '<p style="margin:8px 0 0;color:var(--good)"><b>All ${ALL.length} complete.</b> Download your answer sheet and upload it to Showbie.</p>');
   $('sheet').textContent = sheetText();
 }
 
@@ -481,19 +505,24 @@ $('go').addEventListener('click', () => {
   if (!$('cls').value) { $('startMsg').textContent = 'Choose your class.'; return; }
   st.name = nm; st.cls = $('cls').value; if (!st.started) st.started = Date.now(); save(); show('quiz');
 });
-$('tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (!b) return; if (b.dataset.i === 'hand') { show('finish'); return; } st.sec = +b.dataset.i; save(); show('quiz'); });
-$('prev').addEventListener('click', () => { if (st.sec > 0) { st.sec--; save(); show('quiz'); } });
-$('next').addEventListener('click', () => { if (st.sec < SECTIONS.length - 1) { st.sec++; save(); show('quiz'); } else show('finish'); });
-$('back').addEventListener('click', () => show('quiz'));
+$('tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if (!b || b.disabled) return;
+  if (b.dataset.i === 'hand') { show('finish'); return; }
+  const s = SECTIONS[+b.dataset.i], firstOpen = s.qs.find(q => !done(q)) || s.qs[0];
+  go(firstOpen.no - 1);
+});
+$('prev').addEventListener('click', () => go(st.cur - 1));
+$('next').addEventListener('click', () => { if (!done(ALL[st.cur])) return; if (st.cur === ALL.length - 1) show('finish'); else go(st.cur + 1); });
+$('back').addEventListener('click', () => go(reach()));
 $('qs').addEventListener('input', e => {
   const t = e.target;
   if (t.matches('textarea')) { st.ans[t.dataset.k] = t.value; updWC(t.dataset.k); }
   else if (t.matches('input[type=radio]')) { const k = t.name.slice(2); st.pick[k] = +t.value; updWC(k); }
-  save(); renderTabs();
+  save(); updNav(); renderTabs();
 });
-$('qs').addEventListener('change', e => { const t = e.target; if (t.matches('input[type=radio]')) { const k = t.name.slice(2); st.pick[k] = +t.value; updWC(k); save(); renderTabs(); } });
+$('qs').addEventListener('change', e => { const t = e.target; if (t.matches('input[type=radio]')) { const k = t.name.slice(2); st.pick[k] = +t.value; updWC(k); save(); updNav(); renderTabs(); } });
 ['paste', 'drop'].forEach(ev => $('qs').addEventListener(ev, e => { if (e.target.matches('textarea')) { e.preventDefault(); const k = e.target.dataset.k, el = document.querySelector(`[data-wc="${k}"]`); if (el) { el.className = 'wc short'; el.textContent = 'Pasting is switched off. Type your own answer.'; } } }));
-$('status').addEventListener('click', e => { const a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); const q = ALL.find(x => x.key === a.dataset.go); st.sec = q.si; save(); show('quiz'); setTimeout(() => { const el = $('q-' + q.key); if (el) { el.scrollIntoView({ block: 'start' }); el.querySelector('textarea').focus(); } }, 50); });
+$('status').addEventListener('click', e => { const a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); const q = ALL.find(x => x.key === a.dataset.go); go(q.no - 1); });
 $('dl').addEventListener('click', () => {
   const blob = new Blob([sheetText()], { type: 'text/plain' }), a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = `Y12_${st.name.split(' ').pop()}_SkillsCheck.txt`; document.body.appendChild(a); a.click(); a.remove();
