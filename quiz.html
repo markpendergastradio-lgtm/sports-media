@@ -99,7 +99,6 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
     </ol>
     <div class="who">
       <label class="f">Full name<input type="text" id="name" autocomplete="name" maxlength="60"></label>
-      <label class="f">Class<select id="cls"><option value="">Choose…</option><option>12A</option><option>12B</option><option>12C</option><option>Other</option></select></label>
     </div>
     <p class="msg" id="startMsg"></p>
     <div class="row"><button class="btn" id="go" type="button">Start the quiz</button></div>
@@ -438,7 +437,7 @@ function renderTabs() {
   }).join('') + `<button type="button" class="tab" data-i="hand" aria-current="${!!$('quiz').dataset.hand}">Hand in</button>`;
   const n = ALL.filter(done).length;
   $('bar').style.width = (n / ALL.length * 100) + '%';
-  $('prog').textContent = `${n} of ${ALL.length} complete · ${st.name}${st.cls ? ' · ' + st.cls : ''}`;
+  $('prog').textContent = `${n} of ${ALL.length} complete · ${st.name}`;
 }
 function renderQuestion() {
   const q = ALL[st.cur], s = SECTIONS[q.si];
@@ -478,7 +477,7 @@ function go(i) { st.cur = Math.max(0, Math.min(i, reach())); save(); show('quiz'
 function sheetText() {
   const n = ALL.filter(done).length, dq = ALL.filter(q => q.d), right = dq.filter(q => st.pick[q.key] === q.a).length;
   const mins = st.started ? Math.round((Date.now() - st.started) / 60000) : 0;
-  let t = `GLOBAL ACADEMY · YEAR 12 SPORTS MEDIA · SKILLS CHECK\nName: ${st.name}\nClass: ${st.cls || '-'}\nDate: ${new Date().toLocaleString('en-GB')}\nTime since starting: ${mins} min\nComplete: ${n}/${ALL.length}\nDiagram questions correct: ${right}/${dq.length}\n`;
+  let t = `GLOBAL ACADEMY · YEAR 12 SPORTS MEDIA · SKILLS CHECK\nName: ${st.name}\nDate: ${new Date().toLocaleString('en-GB')}\nTime since starting: ${mins} min\nComplete: ${n}/${ALL.length}\nDiagram questions correct: ${right}/${dq.length}\n`;
   SECTIONS.forEach((s, si) => {
     t += `\n==== SECTION ${si + 1}: ${s.title.toUpperCase()} ====\n`;
     s.qs.forEach(q => {
@@ -498,12 +497,11 @@ function renderFinish() {
 }
 
 /* ---------- Events ---------- */
-$('name').value = st.name; $('cls').value = st.cls;
+$('name').value = st.name;
 $('go').addEventListener('click', () => {
   const nm = $('name').value.trim().replace(/\s+/g, ' ');
   if (nm.split(' ').length < 2) { $('startMsg').textContent = 'Type your first name and surname.'; return; }
-  if (!$('cls').value) { $('startMsg').textContent = 'Choose your class.'; return; }
-  st.name = nm; st.cls = $('cls').value; if (!st.started) st.started = Date.now(); save(); show('quiz');
+  st.name = nm; if (!st.started) st.started = Date.now(); save(); show('quiz');
 });
 $('tabs').addEventListener('click', e => {
   const b = e.target.closest('.tab'); if (!b || b.disabled) return;
@@ -534,7 +532,7 @@ $('copy').addEventListener('click', async () => {
 });
 $('print').addEventListener('click', () => window.print());
 
-if (st.name && st.cls) show('quiz'); else show('start');
+if (st.name) show('quiz'); else show('start');
 })();
 </script>
 </body>
