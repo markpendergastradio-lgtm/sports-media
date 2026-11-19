@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Year 12 Skills Check</title>
-<meta name="description" content="Global Academy Year 12 Sports Media: 80-question skills check on radio, football highlights, Audition, Premiere Pro and filming.">
+<meta name="description" content="Global Academy Year 12 Sports Media: 100-question skills check on radio, football highlights, Audition, Premiere Pro and filming.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
@@ -83,7 +83,7 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
 <body>
 <header class="mast"><div class="wrap">
   <span class="k">Global Academy · Year 12 Sports Media</span>
-  <h1>Skills check: 80 questions</h1>
+  <h1>Skills check: 100 questions</h1>
   <p>Radio, bulletins and highlights, Adobe Audition, Premiere Pro, and filming and graphics. <a href="./">Back to the course site</a></p>
 </div></header>
 
@@ -91,7 +91,7 @@ pre.sheet{white-space:pre-wrap;background:var(--ground);border:1px solid var(--r
   <section class="card" id="start">
     <h2>Before you start</h2>
     <ol class="rules">
-      <li>There are 80 questions in 5 sections. You answer them one at a time, in order.</li>
+      <li>There are 100 questions in 5 sections. You answer them one at a time, in order.</li>
       <li>Every answer needs <b>a couple of full sentences, at least 12 words</b>. The <b>Next</b> button stays locked until your answer is long enough.</li>
       <li>Some questions show diagrams. Pick the correct set-up, then explain why it's right.</li>
       <li>Type your own answers. Pasting is switched off.</li>
@@ -286,6 +286,29 @@ function shot(kind) {
   return S(240, 102, `<clipPath id="s${kind}"><rect x="40" y="6" width="160" height="90"/></clipPath><g clip-path="url(#s${kind})">${b}</g>`);
 }
 
+
+function meters(kind) {
+  const v = { good: [-6, -20], loud: [-12, -4], red: [0, 0] }[kind];
+  const y = db => 14 + (-db) / 40 * 76;
+  let b = `<line x1="60" x2="200" y1="${y(0)}" y2="${y(0)}" stroke="var(--bad)" stroke-dasharray="3 2"/>` + T(56, y(0) + 3, '0', { s: 9, a: 'end', f: 'var(--bad)' }) + T(56, y(-6) + 3, '−6', { s: 9, a: 'end', f: 'var(--muted)' }) + T(56, y(-20) + 3, '−20', { s: 9, a: 'end', f: 'var(--muted)' }) + T(56, y(-40) + 3, '−40', { s: 9, a: 'end', f: 'var(--muted)' });
+  [['Voice', v[0], 90], ['Music', v[1], 150]].forEach(([l, d, x]) => { b += R(x, 14, 26, 76, 'var(--soft)') + R(x, y(d), 26, 90 - y(d), d >= -1 ? 'var(--bad)' : 'var(--g3)') + T(x + 13, 104, l, { s: 10 }); });
+  return S(240, 110, b);
+}
+function aspect(kind) {
+  const d = { tall: [52, 92, '1080 × 1920'], wide: [150, 84, '1920 × 1080'], sq: [84, 84, '1080 × 1080'] }[kind];
+  const x = 120 - d[0] / 2, y = 8 + (92 - d[1]) / 2;
+  return S(240, 118, R(x, y, d[0], d[1], 'var(--g3)', 'rx="4"') + T(120, y + d[1] / 2 + 4, kind === 'tall' ? '9:16' : kind === 'wide' ? '16:9' : '1:1', { s: 13, w: 700, f: '#fff' }) + T(120, 112, d[2], { s: 11 }));
+}
+function rig(kind) {
+  const lamp = (x, y, l, lx, ly, an) => `<rect x="${x - 8}" y="${y - 6}" width="16" height="12" rx="2" fill="#f4d35e" stroke="#a57f00"/>` + T(lx ?? x, ly ?? y + 20, l, { s: 9, a: an || 'middle' });
+  let b = `<circle cx="120" cy="58" r="12" fill="#d9a77c"/>` + T(136, 62, 'subject', { s: 9, a: 'start', f: 'var(--muted)' });
+  b += `<rect x="110" y="100" width="20" height="12" rx="2" fill="#444"/>` + T(104, 110, 'camera', { s: 9, a: 'end', f: 'var(--muted)' });
+  if (kind === 'good') b += lamp(62, 84, 'key') + lamp(184, 90, 'fill') + lamp(150, 20, 'back', 166, 24, 'start');
+  if (kind === 'behind') b += lamp(86, 22, 'light', 86, 12) + lamp(120, 22, 'light', 120, 12) + lamp(154, 22, 'light', 154, 12);
+  if (kind === 'flat') b += lamp(148, 106, 'one light', 162, 110, 'start');
+  return S(240, 126, b);
+}
+
 /* ---------- Questions ---------- */
 const SECTIONS = [
 { id: 'radio', title: 'Radio and Zetta', intro: 'Youths Choice, the one-hour sports show, and building your hour in RCS Zetta.', qs: [
@@ -314,7 +337,11 @@ const SECTIONS = [
   { q: 'Why is the sports news bulletin placed at the half-hour rather than anywhere in the show?' },
   { q: 'What is the difference between a live link and a pre-recorded (voice-tracked) link? Give one advantage of each.' },
   { q: 'Your hour is running 90 seconds over. Give two changes you could make in Zetta to bring it back to time.' },
-  { q: 'What is a "tease"? Write one you could use before a song to keep listeners tuned in.' }
+  { q: 'What is a "tease"? Write one you could use before a song to keep listeners tuned in.' },
+  { q: 'What is a running order, and why should you fill it in before you record your links?' },
+  { q: 'You stumble over a word halfway through recording a link. What should you do, and why?' },
+  { q: 'Should you talk to "all of you out there" or to one listener when you present? Explain why.' },
+  { q: 'What is station imaging (jingles, idents, sweepers) for, and why should every show use it the same way?' }
 ]},
 { id: 'news', title: 'Bulletins and football highlights', intro: 'The 3-minute sports bulletin and the Premier League audio highlights package.', qs: [
   { q: 'You have eight sports stories and room for five. Using the three ranking questions, explain how you decide which story goes first and which goes last.' },
@@ -340,7 +367,11 @@ const SECTIONS = [
   { q: 'Why does a sports bulletin sit on a music bed, and how loud should the bed be compared with your voice?' },
   { q: 'Where should you get the audio clips for your bulletin, and why use official sources such as IRN or Sky rather than random videos online?' },
   { q: 'In the timed 120-minute Chelsea v Brighton exercise, how would you plan your time? Describe at least two steps in order.' },
-  { q: 'Give two reasons why you must never copy sentences from news websites into your bulletin script.' }
+  { q: 'Give two reasons why you must never copy sentences from news websites into your bulletin script.' },
+  { q: 'What is the difference between a sports news story and an opinion piece? Which one belongs in your bulletin?' },
+  { q: 'Why must every player and club name be pronounced correctly, and how can you check a pronunciation before you record?' },
+  { q: 'Give two ways to make your bulletin read sound confident and natural rather than like you are reading from a page.' },
+  { q: 'Why do highlights packages usually keep the commentator\'s full goal call, even when it is long?' }
 ]},
 { id: 'audition', title: 'Adobe Audition: right or wrong?', intro: 'Each question describes something a student did in Audition. Say what is right or wrong and how to fix it.', qs: [
   { q: 'What is wrong here, and what should the student do instead?', s: 'Kai is editing commentary in the Waveform editor. To add a music bed, he copies the music and pastes it straight over the speech in the same file.' },
@@ -358,7 +389,11 @@ const SECTIONS = [
   { q: 'What has gone wrong, and how can it be fixed in Audition?', s: 'Grace plays back her bulletin on headphones and her voice is only in her left ear.' },
   { q: 'What file type and settings should Zac export for uploading to his site, and why?', s: 'Zac exported his highlights as a 60 MB WAV file and it is too big to upload.' },
   { q: 'How could Mia use the Essential Sound panel to fix this quickly?', s: 'Mia\'s music bed is as loud as her voice all the way through her package.' },
-  { q: 'What is a sample rate, and which one should you use for audio that will go into a video project?' }
+  { q: 'What is a sample rate, and which one should you use for audio that will go into a video project?' },
+  { q: 'What is the difference between destructive editing in the Waveform editor and non-destructive editing in a Multitrack session?' },
+  { q: 'Which effect should Noah use, and what does it do?', s: 'Noah\'s voice has harsh, hissing "s" sounds all the way through his link.' },
+  { q: 'How should Omar fix this in Audition?', s: 'Omar\'s bulletin has long silences between stories, so it drags and runs over time.' },
+  { q: 'Which meters show a good balance between voice and music? Explain what is wrong with the other two.', d: [ meters('good'), meters('loud'), meters('red') ], a: 0 }
 ]},
 { id: 'premiere', title: 'Premiere Pro: right or wrong?', intro: 'Highlights, replays and social clips in Premiere Pro.', qs: [
   { q: 'What is the problem, and how should the sequence be set up?', s: 'The match footage is 1080p at 25 frames per second. Marcus creates a new 4K, 60 fps sequence and drops the clips into it.' },
@@ -384,7 +419,11 @@ const SECTIONS = [
   { q: 'What is a J-cut, and when could you use one in a sports package?' },
   { q: 'Which Premiere Pro tool should Ben use to fix this, and what should he check first?', s: 'Ben\'s clips come from two different cameras. One looks orange and one looks blue, so they don\'t match when cut together.' },
   { q: 'Why has this happened, and how does she fix it?', s: 'Lucy moved her project folder to a USB stick. Now her clips show red "Media Offline" screens.' },
-  { q: 'Why should you organise your Project panel into bins? Give an example of the bins you would make for a highlights edit.' }
+  { q: 'Why should you organise your Project panel into bins? Give an example of the bins you would make for a highlights edit.' },
+  { q: 'What are the Razor tool and the Selection tool used for in Premiere Pro? Give their keyboard shortcuts if you know them.' },
+  { q: 'What should Sofia do, and what level should her audio peak at?', s: 'Sofia\'s audio meters in Premiere keep hitting red when the crowd cheers.' },
+  { q: 'What is a keyframe? Give one example of how you would use keyframes in a sports edit.' },
+  { q: 'Which frame size is right for a YouTube highlights video? Say where you would use the other two.', d: [ aspect('tall'), aspect('wide'), aspect('sq') ], a: 1 }
 ]},
 { id: 'filming', title: 'Filming, graphics and social', intro: 'Shoot Better Content, the story pack, the Crystal Palace social highlight and your weekly log.', qs: [
   { q: 'Which interview shot is framed correctly? Explain what is wrong with the other two.', d: [ frame('head'), frame('good'), frame('cut') ], a: 1 },
@@ -402,16 +441,20 @@ const SECTIONS = [
   { q: 'Explain the 180-degree rule and what happens to the viewer if you break it when filming a match or interview.' },
   { q: 'Name three things you should check on the camera before you press record.' },
   { q: 'Why must you get permission before filming people or brand logos around school?' },
-  { q: 'Give two things that make a broadcast-style line-up graphic easy to read on screen.' }
+  { q: 'Give two things that make a broadcast-style line-up graphic easy to read on screen.' },
+  { q: 'What does white balance do, and what happens to your footage if it is set wrong?' },
+  { q: 'Why should you record 10 to 20 seconds of room tone or crowd atmosphere when you film on location?' },
+  { q: 'What is a piece to camera (PTC)? Give two tips for doing one well.' },
+  { q: 'Which plan shows three-point lighting set up correctly? Explain what each light does.', d: [ rig('good'), rig('behind'), rig('flat') ], a: 0 }
 ]}
 ];
 // Stable ids from the original position, then put each section in a teaching order.
 const ORDER = {
-  radio:    [0, 10, 15, 12, 13, 6, 3, 4, 2, 1, 7, 8, 11, 5, 14, 9],
-  news:     [13, 0, 11, 15, 1, 2, 10, 3, 12, 4, 6, 7, 14, 5, 8, 9],
-  audition: [10, 2, 12, 15, 0, 11, 3, 4, 8, 5, 1, 14, 7, 6, 13, 9],
-  premiere: [15, 14, 0, 7, 8, 12, 1, 3, 2, 11, 5, 10, 13, 4, 9, 6],
-  filming:  [13, 14, 10, 11, 0, 1, 12, 2, 3, 4, 5, 6, 15, 8, 7, 9]
+  radio:    [0, 10, 15, 18, 12, 13, 16, 6, 17, 3, 4, 2, 1, 7, 8, 19, 11, 5, 14, 9],
+  news:     [16, 13, 0, 11, 15, 1, 17, 2, 10, 3, 12, 18, 4, 6, 19, 7, 14, 5, 8, 9],
+  audition: [10, 2, 12, 15, 16, 0, 11, 3, 4, 8, 18, 5, 17, 1, 14, 19, 7, 6, 13, 9],
+  premiere: [15, 14, 0, 16, 7, 8, 12, 1, 3, 2, 18, 11, 5, 10, 13, 17, 4, 19, 9, 6],
+  filming:  [13, 16, 14, 17, 10, 11, 0, 1, 12, 2, 19, 3, 18, 4, 5, 6, 15, 8, 7, 9]
 };
 SECTIONS.forEach(s => { s.qs.forEach((q, i) => { q.key = s.id + '-' + i; }); const o = ORDER[s.id]; if (o && o.length === s.qs.length) s.qs = o.map(i => s.qs[i]); });
 const ALL = []; SECTIONS.forEach((s, si) => s.qs.forEach((q, qi) => { q.no = ALL.length + 1; q.si = si; q.qi = qi; ALL.push(q); }));
