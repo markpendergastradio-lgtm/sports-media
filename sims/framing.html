@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shot Size Trainer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css"></head><body>
+<header class="top"><div class="in"><div><h1>Shot size and framing trainer</h1><p>Zoom, pan and tilt the camera to frame the player for each job. Then check your frame for shot size, headroom, eye line and looking room.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="cv" width="960" height="540" aria-label="Camera viewfinder showing a footballer in a stadium"></canvas>
+  <div class="row" style="margin-top:10px"><label class="small"><input type="checkbox" id="grid" checked> Rule of thirds grid</label><span class="small">Drag on the picture to pan and tilt.</span></div>
+  <div class="readout"><div><span>Shot size</span><b id="shot">–</b></div><div><span>Focal length</span><b id="mm">–</b></div><div><span>Headroom</span><b id="head">–</b></div><div><span>Looking room</span><b id="lead">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task" id="task"></div>
+  <div class="ctl">
+    <label>Zoom <output id="zoomOut"></output><input type="range" id="zoom" min="0" max="100" value="0"></label>
+    <label>Pan (left / right) <output id="panOut"></output><input type="range" id="pan" min="0" max="1000" value="500"></label>
+    <label>Tilt (up / down) <output id="tiltOut"></output><input type="range" id="tilt" min="0" max="1000" value="500"></label>
+  </div>
+  <div class="row" style="margin-top:12px"><button id="check">Check my frame</button><button class="ghost" id="next">Next job</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / <span id="total">0</span></p>
+  <div class="tip">The player is looking to the left of frame, so give him space on that side: put him on the right-hand third line.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const cv=$('#cv'), ctx=cv.getContext('2d'), W=1600, H=900;
+const P={x:800, foot:800, h:240}; const u=P.h/8;
+const L={top:P.foot-8.2*u, eye:P.foot-7.55*u, chin:P.foot-7.05*u, chest:P.foot-5.9*u, waist:P.foot-4.1*u, knee:P.foot-2*u};
+const SIZES=[['NONE','Player not in frame'],['ELS','Extreme long shot'],['LS','Long shot'],['MLS','Medium long shot'],['MS','Mid shot'],['MCU','Medium close-up'],['CU','Close-up'],['ECU','Extreme close-up']];
+const JOBS=[
+ {size:'ELS',text:'<b>Establishing shot.</b> Show the whole stadium so viewers know where we are. The player should be small in the frame.',eyes:false,lead:false},
+ {size:'LS',text:'<b>Walk-out shot.</b> Long shot: the whole player from head to boots, with a little headroom.',eyes:false,lead:true},
+ {size:'MS',text:'<b>Post-match interview.</b> Mid shot cut at the waist, eyes on the top third line, looking room on the left.',eyes:true,lead:true},
+ {size:'MCU',text:'<b>Interview question.</b> Medium close-up cut at the chest, eyes on the top third line, looking room on the left.',eyes:true,lead:true},
+ {size:'CU',text:'<b>Emotional reaction.</b> Close-up of the face, cut just below the chin. Keep the eyes on the top third.',eyes:true,lead:false},
+ {size:'ECU',text:'<b>Promo detail.</b> Extreme close-up on the eyes only.',eyes:false,lead:false}];
+let job=0, score=0, done=new Set();
+const zoomEl=bindRange('zoom',v=>Math.round(24*Math.pow(36,v/100))+' mm',draw), panEl=bindRange('pan',v=>Math.round(v/10-50),draw), tiltEl=bindRange('tilt',v=>Math.round(50-v/10),draw);
+function fov(){const z=Math.pow(36,zoomEl.value/100); return {z, FW:W/z, FH:H/z, mm:Math.round(24*z)};}
+function view(){const {FW,FH}=fov(); const cx=FW/2+(W-FW)*panEl.value/1000, cy=FH/2+(H-FH)*tiltEl.value/1000; return {l:cx-FW/2,t:cy-FH/2,FW,FH};}
+function classify(v){
+  const b=v.t+v.FH, FH=v.FH;
+  if(FH>650) return 'ELS';
+  if(P.x<v.l||P.x>v.l+v.FW||L.eye<v.t||L.eye>b) return 'NONE';
+  if(b>=P.foot-2) return 'LS';
+  if(b>=L.knee-10) return 'MLS';
+  if(b>=L.waist-12) return 'MS';
+  if(b>=L.chest-10) return 'MCU';
+  if(b>=L.chin-4) return 'CU';
+  return 'ECU';
+}
+function metrics(){
+  const v=view(), size=classify(v);
+  const inX=P.x>v.l && P.x<v.l+v.FW;
+  const headroom=(L.top-v.t)/v.FH;
+  const eyeRel=(L.eye-v.t)/v.FH;
+  const xRel=(P.x-v.l)/v.FW;
+  return {v,size,inX,headroom,eyeRel,xRel};
+}
+function draw(){
+  const v=view(), s=cv.width/v.FW;
+  ctx.setTransform(s,0,0,s,-v.l*s,-v.t*s);
+  drawStadium(ctx,W,H,560);
+  ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(0,700); ctx.lineTo(W,700); ctx.stroke();
+  drawPlayer(ctx,420,640,80,'#2d6ea6','#fff','#e0b08c',1);
+  drawPlayer(ctx,1250,660,90,'#2d6ea6','#fff','#7a5236',-1);
+  drawPlayer(ctx,P.x,P.foot,P.h,'#c8382f','#fff','#b07a55',-1);
+  ctx.setTransform(1,0,0,1,0,0);
+  if($('#grid').checked){ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=1.5; ctx.beginPath(); for(const f of [1/3,2/3]){ctx.moveTo(cv.width*f,0);ctx.lineTo(cv.width*f,cv.height);ctx.moveTo(0,cv.height*f);ctx.lineTo(cv.width,cv.height*f);} ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.lineWidth=2; ctx.strokeRect(cv.width*.05,cv.height*.05,cv.width*.9,cv.height*.9);
+  ctx.fillStyle='#e33'; ctx.beginPath(); ctx.arc(24,24,7,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='600 16px Poppins,Arial'; ctx.fillText('REC  '+fov().mm+'mm',38,30);
+  const m=metrics();
+  $('#shot').textContent=SIZES.find(x=>x[0]===m.size)[1];
+  $('#mm').textContent=fov().mm+' mm';
+  $('#head').textContent=m.inX&&m.headroom>-0.5&&m.headroom<1?Math.round(m.headroom*100)+'%':'–';
+  $('#lead').textContent=m.inX?(m.xRel>0.5?'Left side '+Math.round(m.xRel*100)+'%':'Right side '+Math.round((1-m.xRel)*100)+'%'):'–';
+}
+function showJob(){ const j=JOBS[job]; $('#task').innerHTML=(job+1)+' of '+JOBS.length+': '+j.text; $('#checks').innerHTML=''; $('#total').textContent=JOBS.length; }
+$('#check').onclick=()=>{
+  const j=JOBS[job], m=metrics(), items=[];
+  items.push([m.size===j.size, 'Shot size is '+SIZES.find(x=>x[0]===j.size)[1].toLowerCase()+(m.size===j.size?'':' (yours: '+SIZES.find(x=>x[0]===m.size)[1].toLowerCase()+')')]);
+  if(j.size!=='ELS') items.push([m.inX && m.xRel>0.15 && m.xRel<0.9, 'The player is in frame']);
+  if(['LS','MS','MCU'].includes(j.size)) items.push([m.headroom>0.02&&m.headroom<0.2,'Headroom between 2% and 20% (yours '+Math.round(m.headroom*100)+'%)']);
+  if(j.eyes) items.push([Math.abs(m.eyeRel-1/3)<0.07,'Eyes on the top third line']);
+  if(j.lead) items.push([m.xRel>0.55&&m.xRel<0.75,'Looking room: player on the right third, facing into the space']);
+  const okN=setChecks($('#checks'),items);
+  if(okN===items.length && !done.has(job)){ done.add(job); score++; $('#score').textContent=score; }
+};
+$('#next').onclick=()=>{ job=(job+1)%JOBS.length; showJob(); };
+$('#grid').onchange=draw;
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,p:+panEl.value,t:+tiltEl.value}; cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{ if(!drag) return; const r=cv.getBoundingClientRect(), v=view();
+  const dx=(e.clientX-drag.x)/r.width*v.FW, dy=(e.clientY-drag.y)/r.height*v.FH;
+  const sx=W-v.FW||1, sy=H-v.FH||1;
+  panEl.value=clamp(drag.p-dx/sx*1000,0,1000); tiltEl.value=clamp(drag.t-dy/sy*1000,0,1000);
+  panEl.dispatchEvent(new Event('input')); tiltEl.dispatchEvent(new Event('input')); });
+cv.addEventListener('pointerup',()=>drag=null);
+showJob(); draw(); document.fonts && document.fonts.ready.then(draw);
+</script></body></html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Colour Correction Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css">
+<style>.scopes{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:8px;margin-top:10px}.scopes figure{margin:0}.scopes figcaption{font-size:.75rem;color:var(--muted)}</style></head><body>
+<header class="top"><div class="in"><div><h1>Colour correction lab</h1><p>This pitchside shot was recorded with the wrong white balance and exposure. Use the controls and the scopes to make the white lines white, the grass natural and the skin tones healthy.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="cv" width="640" height="360" aria-label="Video frame of a footballer on the pitch"></canvas>
+  <div class="scopes"><figure><canvas id="wf" width="512" height="200" aria-label="Luma waveform"></canvas><figcaption>Waveform: brightness across the picture (0 at the bottom, 100 at the top)</figcaption></figure><figure><canvas id="vs" width="200" height="200" aria-label="Vectorscope"></canvas><figcaption>Vectorscope: neutral sits in the centre, the line is the skin tone line</figcaption></figure></div>
+  <div class="readout"><div><span>White line (R G B)</span><b id="wl">–</b></div><div><span>Brightest whites</span><b id="pk">–</b></div><div><span>Darkest blacks</span><b id="bk">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Correct the shot</h2>
+  <div class="ctl">
+    <label>Temperature (blue ↔ warm) <output id="tOut"></output><input type="range" id="t" min="-150" max="150" value="0"></label>
+    <label>Tint (green ↔ magenta) <output id="gOut"></output><input type="range" id="g" min="-100" max="100" value="0"></label>
+    <label>Exposure <output id="eOut"></output><input type="range" id="e" min="-200" max="200" value="0"></label>
+    <label>Contrast <output id="cOut"></output><input type="range" id="c" min="-50" max="50" value="0"></label>
+    <label>Saturation <output id="sOut"></output><input type="range" id="s" min="-60" max="60" value="0"></label>
+  </div>
+  <div class="row" style="margin-top:12px"><button id="check">Check my grade</button><button class="ghost" id="new">New shot</button><button class="ghost" id="ref">Compare with reference</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Shots corrected: <span class="score" id="score">0</span></p>
+  <div class="tip">Fix exposure and white balance first, then contrast, then saturation. On the vectorscope a colour cast pulls everything away from the centre in one direction.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const cv=$('#cv'),ctx=cv.getContext('2d'),W=640,H=360;
+const src=document.createElement('canvas');src.width=W;src.height=H;const sctx=src.getContext('2d');
+// build the clean reference frame
+drawStadium(sctx,W,H,150);
+const gg=sctx.createLinearGradient(0,150,0,H);gg.addColorStop(0,'#3f8f45');gg.addColorStop(1,'#2f7a36');sctx.fillStyle=gg;sctx.fillRect(0,150,W,H-150);
+for(let i=0;i<8;i++){sctx.fillStyle=i%2?'rgba(255,255,255,.04)':'rgba(0,0,0,.05)';sctx.fillRect(i*80,150,80,H-150);}
+sctx.strokeStyle='#ECEDEA';sctx.lineWidth=7;sctx.beginPath();sctx.moveTo(0,300);sctx.lineTo(W,280);sctx.stroke();sctx.lineWidth=5;sctx.beginPath();sctx.moveTo(470,150);sctx.lineTo(560,H);sctx.stroke();
+drawPlayer(sctx,300,350,230,'#C8382F','#F2F2F0','#C68E6A',1);
+sctx.fillStyle='#f2f2f2';sctx.beginPath();sctx.arc(360,338,9,0,7);sctx.fill();
+const REF=sctx.getImageData(0,0,W,H);const WL={x:80,y:296};
+let err;
+function newErr(){const r=Math.random,sg=()=>r()<0.5?-1:1;err={t:sg()*(0.5+r()*0.8),g:sg()*(0.2+r()*0.5),e:sg()*(0.4+r()*0.8),s:0.75+r()*0.5};}
+const v=id=>+$('#'+id).value;
+for(const [id,f] of [['t',x=>(x/100).toFixed(2)],['g',x=>(x/100).toFixed(2)],['e',x=>(x/100>0?'+':'')+(x/100).toFixed(2)+' stops'],['c',x=>x+'%'],['s',x=>x+'%']]) bindRange(id,f,render);
+function grade(r,g,b,p){ // p: {t,g,e,c,s}
+  const m=Math.pow(2,p.e);r*=m*Math.exp(p.t*0.2);b*=m*Math.exp(-p.t*0.2);g*=m*Math.exp(p.g*0.15);
+  const L=0.2126*r+0.7152*g+0.0722*b;r=L+(r-L)*p.s;g=L+(g-L)*p.s;b=L+(b-L)*p.s;
+  const k=1+p.c;r=(r-0.5)*k+0.5;g=(g-0.5)*k+0.5;b=(b-0.5)*k+0.5;return [r,g,b];}
+let showRef=false,lastOut;
+function render(){
+  const out=ctx.createImageData(W,H),d=out.data,s=REF.data;
+  const fix={t:v('t')/100,g:v('g')/100,e:v('e')/100,c:v('c')/100,s:1+v('s')/100};
+  for(let i=0;i<d.length;i+=4){let r=s[i]/255,g=s[i+1]/255,b=s[i+2]/255;
+    if(!showRef){[r,g,b]=grade(r,g,b,{t:err.t,g:err.g,e:err.e,c:0,s:err.s});[r,g,b]=grade(r,g,b,fix);}
+    d[i]=clamp(r,0,1)*255;d[i+1]=clamp(g,0,1)*255;d[i+2]=clamp(b,0,1)*255;d[i+3]=255;}
+  ctx.putImageData(out,0,0);lastOut=out;scopes(out);
+  const j=(WL.y*W+WL.x)*4;$('#wl').textContent=d[j]+' '+d[j+1]+' '+d[j+2];
+}
+function scopes(img){const d=img.data,wf=$('#wf').getContext('2d'),vs=$('#vs').getContext('2d');
+  wf.fillStyle='#0b1214';wf.fillRect(0,0,512,200);wf.strokeStyle='rgba(255,255,255,.15)';for(const y of [0,50,100,150,200]){wf.beginPath();wf.moveTo(0,y);wf.lineTo(512,y);wf.stroke();}
+  const acc=new Uint16Array(512*200);let mx=0,mn=1;
+  for(let y=0;y<H;y+=2)for(let x=0;x<W;x+=1){const i=(y*W+x)*4,L=(0.2126*d[i]+0.7152*d[i+1]+0.0722*d[i+2])/255;mx=Math.max(mx,L);mn=Math.min(mn,L);const X=Math.floor(x*512/W),Y=199-Math.floor(clamp(L,0,1)*199);acc[Y*512+X]++;}
+  const im=wf.getImageData(0,0,512,200);for(let k=0;k<acc.length;k++)if(acc[k]){const a=Math.min(255,60+acc[k]*25);im.data[k*4]=120;im.data[k*4+1]=255;im.data[k*4+2]=140;im.data[k*4+3]=a;}wf.putImageData(im,0,0);
+  wf.fillStyle='rgba(255,255,255,.6)';wf.font='10px sans-serif';wf.fillText('100',2,10);wf.fillText('0',2,196);
+  vs.fillStyle='#0b1214';vs.fillRect(0,0,200,200);vs.strokeStyle='rgba(255,255,255,.25)';vs.beginPath();vs.arc(100,100,90,0,7);vs.stroke();vs.beginPath();vs.moveTo(100,100);vs.lineTo(100+90*Math.cos(-2.15),100+90*Math.sin(-2.15));vs.strokeStyle='rgba(255,200,150,.6)';vs.stroke();
+  const vi=vs.getImageData(0,0,200,200);
+  for(let k=0;k<d.length;k+=4*7){const r=d[k]/255,g=d[k+1]/255,b=d[k+2]/255,Y=0.2126*r+0.7152*g+0.0722*b,U=(b-Y)*1.6,V=(r-Y)*1.6;const X=Math.round(100+U*90),Yy=Math.round(100-V*90);if(X>=0&&X<200&&Yy>=0&&Yy<200){const q=(Yy*200+X)*4;vi.data[q]=Math.min(255,vi.data[q]+30);vi.data[q+1]=Math.min(255,vi.data[q+1]+60);vi.data[q+2]=Math.min(255,vi.data[q+2]+30);vi.data[q+3]=255;}}
+  vs.putImageData(vi,0,0);vs.fillStyle='#fff';vs.fillRect(98,98,4,4);
+  $('#pk').textContent=Math.round(mx*100)+' IRE';$('#bk').textContent=Math.round(mn*100)+' IRE';}
+let score=0,solved=false;
+$('#check').onclick=()=>{  const d=lastOut.data,j=(WL.y*W+WL.x)*4,[r,g,b]=[d[j],d[j+1],d[j+2]],spread=Math.max(r,g,b)-Math.min(r,g,b);
+  const eOk=Math.abs(err.e+v('e')/100)<0.25, sOk=Math.abs(err.s*(1+v('s')/100)-1)<0.15;
+  let mx=0;for(let i=0;i<d.length;i+=4)mx=Math.max(mx,d[i],d[i+1],d[i+2]);
+  const items=[[spread<=14,'White line is neutral: R, G and B within 14 of each other ('+r+' '+g+' '+b+')'],[eOk,'Exposure corrected (whites sit high without blowing out)'],[mx<255||eOk,'Whites are not clipped at 100'],[sOk,'Saturation looks natural (kit and grass not dull or neon)']];
+  const n=setChecks($('#checks'),items);if(n===items.length&&!solved){solved=true;score++;$('#score').textContent=score;}};
+$('#new').onclick=()=>{newErr();solved=false;for(const id of ['t','g','e','c','s']){$('#'+id).value=0;$('#'+id).dispatchEvent(new Event('input'));}$('#checks').innerHTML='';render();};
+$('#ref').onpointerdown=()=>{showRef=true;render();};$('#ref').onpointerup=$('#ref').onpointerleave=()=>{if(showRef){showRef=false;render();}};
+$('#ref').textContent='Hold to see the reference';
+newErr();render();
+</script></body></html>

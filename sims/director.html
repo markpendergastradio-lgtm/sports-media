@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gallery Director</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css">
+<style>
+.gal{background:#101719;padding:12px;display:grid;gap:10px}
+.pv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pv figure{margin:0;cursor:pointer;border:3px solid #2b3b40;position:relative}
+.pv figure.live{border-color:#e63946}
+.pv figcaption{position:absolute;left:0;top:0;background:rgba(0,0,0,.65);color:#fff;font:600 12px Poppins,Arial;padding:2px 6px}
+.pgm{border:3px solid #e63946;position:relative}
+.pgm span{position:absolute;left:0;top:0;background:#e63946;color:#fff;font:700 12px Poppins,Arial;padding:2px 8px}
+#cue{position:absolute;right:0;top:0;background:#ffd166;color:#111;font:600 13px Poppins,Arial;padding:3px 8px}
+.log{max-height:180px;overflow:auto;font-size:.8rem;margin:6px 0 0;padding-left:18px}
+</style></head><body>
+<header class="top"><div class="in"><div><h1>Gallery director simulator</h1><p>You are directing a live match. Watch the four camera previews and cut to the right one at the right moment with the keys 1 to 4 or by clicking a preview. You will be scored on every second of the programme.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <div class="gal">
+    <div class="pgm"><canvas id="pgm" width="960" height="430" aria-label="Programme output"></canvas><span>PROGRAMME</span><div id="cue"></div></div>
+    <div class="pv" id="pv"></div>
+  </div>
+  <div class="row" style="margin-top:10px"><button id="go">▶ Start the match (75 seconds)</button><span class="small">Keys: <kbd>1</kbd> wide <kbd>2</kbd> tight <kbd>3</kbd> player close-up <kbd>4</kbd> crowd</span></div>
+</section>
+<aside class="card">
+  <h2>Director's rules</h2>
+  <ul class="checks" style="margin-top:0">
+    <li>Live play: stay on the <b>wide</b> (1). Go <b>tight</b> (2) only when the ball is in the final third.</li>
+    <li>Goal: be on the <b>wide</b> when the shot goes in.</li>
+    <li>Celebration: the <b>scorer close-up</b> (3), then the <b>crowd</b> (4).</li>
+    <li>Foul or injury: go <b>tight</b> (2) or <b>close-up</b> (3) on the incident.</li>
+    <li>Never go to the crowd while the ball is in play.</li>
+    <li>Hold each shot at least 2 seconds.</li>
+  </ul>
+  <h3>Score</h3>
+  <p><span class="score" id="score">–</span> <span class="small" id="grade"></span></p>
+  <ul class="checks" id="report"></ul>
+  <h3>Cut log</h3>
+  <ol class="log" id="log"></ol>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const DUR=75, CAMS=['Wide','Tight','Player close-up','Crowd'];
+const BALL=[[0,52,34],[4,40,30],[8,55,20],[12,72,12],[16,86,10],[19,95,24],[21,97,33],[22,105,35],[34,105,35],[35,52,34],[40,44,42],[45,58,52],[50,70,46],[56,70,46],[60,64,30],[65,80,28],[70,62,38],[75,52,34]];
+const PHASES=[[0,13,'play',[0],[1]],[13,21.5,'attack',[0,1],[]],[21.5,23,'goal',[0],[]],[23,30,'celebrate',[2],[1]],[30,34,'crowd',[3],[2]],[34,40,'restart',[0],[]],[40,49,'play',[0],[1]],[49,56,'foul',[1,2],[0]],[56,64,'play',[0],[1]],[64,68,'attack',[0,1],[]],[68,75,'play',[0],[1]]];
+const CUE={attack:'Ball in the final third',goal:'SHOT!',celebrate:'GOAL! Celebration',crowd:'Fans going wild',restart:'Kick-off',foul:'Foul: player down',play:'Open play'};
+function phaseAt(t){return PHASES.find(p=>t>=p[0]&&t<p[1])||PHASES[PHASES.length-1];}
+function ballAt(t){for(let i=0;i<BALL.length-1;i++){const [t0,x0,y0]=BALL[i],[t1,x1,y1]=BALL[i+1];if(t>=t0&&t<=t1){const k=(t-t0)/(t1-t0||1),e=k*k*(3-2*k);return [lerp(x0,x1,e),lerp(y0,y1,e)];}}return [52,34];}
+const FORM=[[10,34],[25,12],[22,28],[22,42],[25,58],[40,20],[38,34],[40,50],[55,16],[55,34],[55,52]];
+function players(t){const [bx,by]=ballAt(t),r=[];
+  for(let team=0;team<2;team++){const dir=team?-1:1;for(let i=0;i<11;i++){let [fx,fy]=FORM[i];if(team){fx=105-fx;fy=68-fy;}
+    const pull=i?0.35:0.08; let x=fx+(bx-52)*pull*(team?1:1)+Math.sin(t*0.6+i*1.7+team)*2, y=fy+(by-fy)*0.18+Math.cos(t*0.5+i)*2;
+    r.push({x:clamp(x,1,104),y:clamp(y,1,67),team,gk:i===0});}}
+  // nearest attacker to ball takes it
+  let best=null,bd=1e9;for(const p of r){if(p.team!==0||p.gk)continue;const d=Math.hypot(p.x-bx,p.y-by);if(d<bd){bd=d;best=p;}}if(best&&bd<12){best.x=bx-1.2;best.y=by;}
+  return r;}
+/* perspective projection of the pitch from the main stand */
+function proj(x,y,camX,zoom,W,H){const depth=(68-y)/68; const sc=lerp(1,0.55,depth)*zoom; const sx=W/2+(x-camX)*W/105*1.6*sc; const sy=H*0.95-(1-Math.pow(1-depth,1))*H*0.75*Math.min(zoom,1.6)+ (zoom>1?H*0.1:0); return [sx,sy,sc];}
+function drawPitchView(c,W,H,t,zoom,focusBall){
+  const [bx,by]=ballAt(t), camX=clamp(bx,zoom>1?10:30,zoom>1?95:75);
+  drawStadium(c,W,H,H*0.18);
+  c.fillStyle='#127a37';c.beginPath();const a=proj(0,68,camX,zoom,W,H),b=proj(105,68,camX,zoom,W,H),d=proj(105,0,camX,zoom,W,H),e=proj(0,0,camX,zoom,W,H);
+  c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.closePath();c.fill();
+  c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=Math.max(1,W/480);c.stroke();
+  const ln=(x1,y1,x2,y2)=>{const p=proj(x1,y1,camX,zoom,W,H),q=proj(x2,y2,camX,zoom,W,H);c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();};
+  ln(52.5,0,52.5,68);ln(0,13.84,16.5,13.84);ln(16.5,13.84,16.5,54.16);ln(16.5,54.16,0,54.16);ln(105,13.84,88.5,13.84);ln(88.5,13.84,88.5,54.16);ln(88.5,54.16,105,54.16);
+  for(const gx of [0,105]){const p=proj(gx,30.3,camX,zoom,W,H),q=proj(gx,37.7,camX,zoom,W,H);c.strokeStyle='#fff';c.lineWidth=W/240;c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(p[0],p[1]-12*p[2]*W/480);c.lineTo(q[0],q[1]-12*q[2]*W/480);c.lineTo(q[0],q[1]);c.stroke();}
+  const ps=players(t).sort((p,q)=>q.y-p.y);
+  for(const p of ps.concat([{ball:true,x:bx,y:by}]).sort((p,q)=>q.y-p.y)){const [sx,sy,sc]=proj(p.x,p.y,camX,zoom,W,H);if(sx<-20||sx>W+20)continue;
+    if(p.ball){c.fillStyle='#fff';c.beginPath();c.arc(sx,sy-2,Math.max(1.5,3*sc*W/960),0,7);c.fill();continue;}
+    drawPlayer(c,sx,sy,22*sc*W/960,p.gk?'#2a9d8f':p.team?'#2d6ea6':'#c8382f','#fff','#a87450',1);}
+}
+function drawClose(c,W,H,t){const ph=phaseAt(t)[2];const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#3b4d66');g.addColorStop(1,'#12301e');c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.save();c.filter='blur(6px)';drawStadium(c,W,H*0.7,H*0.55);c.restore();
+  const bob=ph==='celebrate'?Math.sin(t*9)*H*0.03:0;
+  drawPlayer(c,W*0.55,H*2.05+bob,H*1.9,ph==='foul'?'#2d6ea6':'#c8382f','#fff','#a87450',-1);
+  if(ph==='celebrate'){c.fillStyle='#a87450';c.save();c.translate(W*0.42,H*0.45+bob);c.rotate(-0.9);c.fillRect(0,0,W*0.04,H*0.35);c.restore();c.save();c.translate(W*0.66,H*0.42+bob);c.rotate(0.9);c.fillRect(-W*0.04,0,W*0.04,H*0.35);c.restore();}
+  if(ph==='foul'){c.fillStyle='rgba(255,255,255,.85)';c.font=`600 ${H*0.07}px Poppins,Arial`;c.fillText('Player down',W*0.06,H*0.15);} }
+function drawCrowd(c,W,H,t){const ph=phaseAt(t)[2];const jump=(ph==='celebrate'||ph==='crowd')?1:0.1;c.fillStyle='#1b2b45';c.fillRect(0,0,W,H);const r=rnd(3);
+  for(let row=0;row<6;row++)for(let i=0;i<14;i++){const x=i*W/13+(row%2)*W/26,y=H*0.15+row*H*0.15+Math.sin(t*8+i+row)*H*0.03*jump;c.fillStyle=['#c8382f','#e8e8e8','#c8382f','#333'][Math.floor(r()*4)];c.fillRect(x-W*0.025,y,W*0.05,H*0.14);c.fillStyle='#b07a55';c.beginPath();c.arc(x,y-H*0.03,W*0.018,0,7);c.fill();
+    if(jump>0.5&&(i+row)%3===0){c.fillStyle='#b07a55';c.fillRect(x-W*0.03,y-H*0.12+Math.sin(t*8+i)*H*0.02,W*0.01,H*0.1);}}}
+const OFF=document.createElement('canvas');OFF.width=1920;OFF.height=860;const oc=OFF.getContext('2d');
+function drawTight(c,W,H,t){drawPitchView(oc,1920,860,t,1);const [bx,by]=ballAt(t),camX=clamp(bx,30,75);const [sx,sy]=proj(bx,by,camX,1,1920,860);const cw=1920/2.8,ch=860/2.8;const x=clamp(sx-cw/2,0,1920-cw),y=clamp(sy-ch*0.6,0,860-ch);c.drawImage(OFF,x,y,cw,ch,0,0,W,H);}
+const RENDER=[(c,W,H,t)=>drawPitchView(c,W,H,t,1),drawTight,drawClose,drawCrowd];
+$('#pv').innerHTML=CAMS.map((n,i)=>`<figure data-i="${i}"><canvas width="320" height="180"></canvas><figcaption>${i+1} ${n}</figcaption></figure>`).join('');
+const pvc=$$('#pv canvas').map(c=>c.getContext('2d')), pg=$('#pgm').getContext('2d');
+let t=0,running=false,live=0,lastCut=-10,cuts=[],tot=0,pts=0,fast=0,crowdInPlay=0,goalOnWide=false,startAt=0;
+function cut(i){if(!running||i===live)return;if(t-lastCut<2)fast++;live=i;lastCut=t;cuts.push([t,i]);$('#log').insertAdjacentHTML('beforeend',`<li>${t.toFixed(1)} s → ${i+1} ${CAMS[i]}</li>`);$('#log').scrollTop=1e5;$$('#pv figure').forEach((f,k)=>f.classList.toggle('live',k===live));}
+$$('#pv figure').forEach(f=>f.onclick=()=>cut(+f.dataset.i));
+addEventListener('keydown',e=>{if(['1','2','3','4'].includes(e.key))cut(+e.key-1);});
+function frame(now){
+  if(running){t=(now-startAt)/1000; if(t>=DUR){t=DUR;running=false;finish();}
+    const ph=phaseAt(t),[, , name,best,okay]=ph; const [bx]=ballAt(t);
+    let s=best.includes(live)?1:okay.includes(live)?0.5:0;
+    if(name==='play'&&live===1&&(bx>70||bx<35))s=Math.max(s,0.8);
+    if(['play','attack','foul','restart'].includes(name)&&live===3){s=0;crowdInPlay+=1/60;}
+    if(name==='goal'&&live===0&&t>21.9&&t<22.2)goalOnWide=true;
+    tot++;pts+=s;}
+  for(let i=0;i<4;i++)RENDER[i](pvc[i],320,180,t);
+  RENDER[live](pg,960,430,t);
+  // score bug and clock
+  pg.fillStyle='rgba(10,20,25,.85)';pg.fillRect(20,20,250,38);pg.fillStyle='#fff';pg.font='700 18px Poppins,Arial';pg.fillText('GA  '+(t>=22?1:0)+' - 0  OPP',32,46);pg.font='600 15px Poppins,Arial';pg.fillText(`${String(Math.floor((t*60/75)+52)).padStart(2,'0')}:${String(Math.floor((t*48)%60)).padStart(2,'0')}`,205,45);
+  $('#cue').textContent=running||t>0?CUE[phaseAt(t)[2]]:'';
+  if(running)$('#score').textContent=Math.round(pts/Math.max(1,tot)*100)+'%';
+  requestAnimationFrame(frame);
+}
+function finish(){const pc=Math.round(pts/Math.max(1,tot)*100);$('#score').textContent=pc+'%';$('#grade').textContent=pc>=80?'Broadcast ready':pc>=60?'Getting there':'Keep practising';
+  setChecks($('#report'),[[goalOnWide,'On the wide shot when the goal went in'],[crowdInPlay<0.5,'Never on the crowd while the ball was in play'+(crowdInPlay>=0.5?' ('+crowdInPlay.toFixed(1)+' s)':'')],[fast===0,'Every shot held for at least 2 seconds'+(fast?' ('+fast+' quick cuts)':'')],[cuts.length>=5,'Used enough cuts to follow the story ('+cuts.length+')']]);
+  $('#go').disabled=false;$('#go').textContent='▶ Play again';}
+$('#go').onclick=()=>{t=0;live=0;lastCut=-10;cuts=[];tot=0;pts=0;fast=0;crowdInPlay=0;goalOnWide=false;$('#log').innerHTML='';$('#report').innerHTML='';$('#grade').textContent='';$$('#pv figure').forEach((f,k)=>f.classList.toggle('live',k===0));startAt=performance.now();running=true;$('#go').disabled=true;};
+$$('#pv figure')[0].classList.add('live');
+requestAnimationFrame(frame);
+</script></body></html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mic Placement Simulator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css"></head><body>
+<header class="top"><div class="in"><div><h1>Microphone choice and placement</h1><p>You are recording a player in the noisy stadium tunnel. Choose a mic, then drag it into position and aim it (drag the white dot) to get the cleanest voice over the crowd and PA.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="cv" width="960" height="560" aria-label="Top-down view of the tunnel, the player, the noise sources and the microphone"></canvas>
+  <div class="row" style="margin-top:10px"><button id="listen">▶ Listen</button><button class="ghost" id="stop" disabled>■ Stop</button><span class="small">Grid squares are 1 metre. The player faces the bottom of the plan.</span></div>
+  <div class="readout"><div><span>Voice level</span><b id="vl">–</b></div><div><span>Noise level</span><b id="nl">–</b></div><div><span>Signal to noise</span><b id="snr">–</b></div><div><span>Mic to mouth</span><b id="dist">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task" id="task"></div>
+  <div class="ctl"><label>Microphone <output id="micOut"></output><select id="mic">
+    <option value="hand">Handheld dynamic (cardioid)</option><option value="shot">Shotgun on a boom (supercardioid)</option><option value="lav">Lavalier clip-on (omni)</option><option value="cam">On-camera mic (cardioid)</option></select></label></div>
+  <div class="row" style="margin-top:12px"><button id="check">Check my set-up</button><button class="ghost" id="next">Next job</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / 4</p>
+  <div class="tip">Every time you halve the distance to the mouth the voice gets 6 dB louder, but the background barely changes. Directional mics also reject sound from behind and the sides.</div>
+</aside>
+</main>
+<script src="sim.js"></script><script src="audio.js"></script>
+<script>
+const cv=$('#cv'), ctx=cv.getContext('2d'), M=80; // 80 px per metre
+const mouth={x:480,y:250}, cam={x:480,y:470};
+const NOISE=[{name:'Crowd (tunnel mouth)',x:30,y:250,lvl:2.2},{name:'PA speaker',x:880,y:60,lvl:1.4}];
+const PAT={hand:{a:0.5,p:1,name:'Handheld'},shot:{a:0.3,p:3,name:'Shotgun'},lav:{a:1,p:1,name:'Lavalier'},cam:{a:0.5,p:1,name:'On-camera'}};
+const START={hand:{x:480,y:330,a:-Math.PI/2},shot:{x:600,y:360,a:-2.4},lav:{x:480,y:290,a:-Math.PI/2},cam:{x:480,y:470,a:-Math.PI/2}};
+let mic={type:'hand',...START.hand};
+const gain=(t,th)=>{const P=PAT[t];return Math.pow(Math.abs(P.a+(1-P.a)*Math.cos(th)),P.p);};
+const diffuse=t=>{let s=0,n=0;for(let i=0;i<360;i+=5)for(let j=-90;j<=90;j+=10){const th=Math.acos(Math.cos(i*Math.PI/180)*Math.cos(j*Math.PI/180)),w=Math.cos(j*Math.PI/180);s+=gain(t,th)**2*w;n+=w;}return s/n;};
+const DIFF={}; for(const k in PAT) DIFF[k]=diffuse(k);
+function angTo(px,py){let da=Math.atan2(py-mic.y,px-mic.x)-mic.a;return Math.abs(Math.atan2(Math.sin(da),Math.cos(da)));}
+function model(){
+  const d=Math.max(0.05,Math.hypot(mic.x-mouth.x,mic.y-mouth.y)/M);
+  // voice radiates forward (down the plan): directivity of the mouth
+  const fwd=Math.atan2(mic.y-mouth.y,mic.x-mouth.x)-Math.PI/2, mouthDir=0.55+0.45*Math.cos(fwd);
+  const v=(0.3/d)*mouthDir*gain(mic.type,angTo(mouth.x,mouth.y)) * (mic.type==='lav'?0.8:1);
+  let n2=0; for(const s of NOISE){const dn=Math.hypot(mic.x-s.x,mic.y-s.y)/M; const g=gain(mic.type,angTo(s.x,s.y)); n2+=(s.lvl/Math.max(dn,1)*g*0.12)**2;}
+  n2+=(0.05**2)*DIFF[mic.type]; // diffuse reverb and chatter
+  const n=Math.sqrt(n2);
+  return {d,v,n,snr:db(v/n)};
+}
+function draw(){
+  ctx.fillStyle='#2b2f33';ctx.fillRect(0,0,960,560);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;for(let x=0;x<960;x+=M){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,560);ctx.stroke();}for(let y=0;y<560;y+=M){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(960,y);ctx.stroke();}
+  ctx.fillStyle='#3d4a52';ctx.fillRect(0,0,960,40);ctx.fillRect(0,520,960,40);
+  ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='600 13px Poppins,Arial';ctx.fillText('TUNNEL WALL',420,26);ctx.fillText('TUNNEL WALL',420,546);
+  // noise sources
+  for(const s of NOISE){ctx.fillStyle='#C8382F';ctx.beginPath();ctx.arc(s.x,s.y,14,0,7);ctx.fill();ctx.strokeStyle='rgba(200,56,47,.5)';for(let r=26;r<90;r+=18){ctx.beginPath();ctx.arc(s.x,s.y,r,0,7);ctx.stroke();}ctx.fillStyle='#fff';ctx.fillText(s.name,Math.min(s.x+18,800),s.y+(s.y<100?40:-24));}
+  // camera
+  ctx.fillStyle='#555';ctx.fillRect(cam.x-22,cam.y-12,44,24);ctx.fillStyle='#ccc';ctx.fillText('Camera',cam.x+30,cam.y+5);
+  ctx.strokeStyle='rgba(255,255,255,.25)';ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(cam.x,cam.y);ctx.lineTo(mouth.x-60,mouth.y-40);ctx.moveTo(cam.x,cam.y);ctx.lineTo(mouth.x+60,mouth.y-40);ctx.stroke();ctx.setLineDash([]);
+  // player (top-down)
+  ctx.fillStyle='#c8382f';ctx.beginPath();ctx.ellipse(mouth.x,mouth.y-30,46,26,0,0,7);ctx.fill();
+  ctx.fillStyle='#b07a55';ctx.beginPath();ctx.arc(mouth.x,mouth.y-24,17,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(mouth.x-6,mouth.y-10);ctx.lineTo(mouth.x+6,mouth.y-10);ctx.lineTo(mouth.x,mouth.y-1);ctx.fill();
+  ctx.fillStyle='#fff';ctx.fillText('Player',mouth.x+52,mouth.y-30);
+  // reporter
+  ctx.fillStyle='#2d6ea6';ctx.beginPath();ctx.ellipse(mouth.x+90,mouth.y+70,34,20,0,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.fillText('Reporter',mouth.x+128,mouth.y+76);
+  // mic polar pattern
+  if(mic.type!=='cam'){ctx.fillStyle='rgba(100,185,152,.25)';ctx.strokeStyle='#64B998';ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=72;i++){const th=i*5*Math.PI/180,r=60*gain(mic.type,th),x=mic.x+Math.cos(mic.a+th)*r,y=mic.y+Math.sin(mic.a+th)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fill();ctx.stroke();}
+  else {mic.x=cam.x;mic.y=cam.y-14;mic.a=-Math.PI/2;}
+  ctx.fillStyle='#64B998';ctx.beginPath();ctx.arc(mic.x,mic.y,8,0,7);ctx.fill();
+  mic.h=[mic.x+Math.cos(mic.a)*62,mic.y+Math.sin(mic.a)*62];
+  if(mic.type!=='cam'){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(mic.h[0],mic.h[1],7,0,7);ctx.fill();}
+  const m=model();
+  $('#vl').textContent=db(m.v).toFixed(1)+' dB';$('#nl').textContent=db(m.n).toFixed(1)+' dB';$('#snr').textContent=m.snr.toFixed(1)+' dB';$('#dist').textContent=Math.round(m.d*100)+' cm';
+  if(ac){vG.gain.setTargetAtTime(Math.min(4,m.v*1.4),ac.currentTime,0.05);nG.gain.setTargetAtTime(Math.min(4,m.n*1.4),ac.currentTime,0.05);}
+}
+let drag=null;
+cv.addEventListener('pointerdown',e=>{if(mic.type==='cam')return;const p=canvasPointer(cv,e);if(Math.hypot(p.x-mic.h[0],p.y-mic.h[1])<14)drag='rot';else if(Math.hypot(p.x-mic.x,p.y-mic.y)<20)drag='mv';if(drag)cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const p=canvasPointer(cv,e);if(drag==='mv'){mic.x=clamp(p.x,10,950);mic.y=clamp(p.y,45,515);if(mic.type==='lav'){mic.x=clamp(mic.x,mouth.x-30,mouth.x+30);mic.y=clamp(mic.y,mouth.y-20,mouth.y+40);}}else mic.a=Math.atan2(p.y-mic.y,p.x-mic.x);draw();});
+cv.addEventListener('pointerup',()=>drag=null);
+$('#mic').onchange=()=>{mic={type:$('#mic').value,...START[$('#mic').value]};draw();};
+let ac=null,vG,nG;
+$('#listen').onclick=async()=>{if(ac)return;ac=new (window.AudioContext||window.webkitAudioContext)();await ac.resume();vG=ac.createGain();nG=ac.createGain();vG.connect(ac.destination);nG.connect(ac.destination);vG.gain.value=0;nG.gain.value=0;loopSource(ac,voiceBuffer(ac,9,11,125),vG);loopSource(ac,crowdBuffer(ac,9,8),nG);$('#stop').disabled=false;draw();};
+$('#stop').onclick=()=>{if(ac){ac.close();ac=null;$('#stop').disabled=true;}};
+const JOBS=[
+ {t:'<b>Mixed zone grab.</b> The reporter needs a quick answer. Use the handheld and get at least 20 dB of signal over noise.',c:m=>[[mic.type==='hand','Handheld mic chosen'],[m.snr>=20,'Signal to noise 20 dB or more (yours '+m.snr.toFixed(1)+')'],[m.d<=0.35,'Mic within 35 cm of the mouth']]},
+ {t:'<b>Clean interview, no mic in shot.</b> Use the shotgun on a boom: keep it out of the camera\'s view lines, aim it at the mouth and reach 15 dB or more.',c:m=>{const hw=60*(cam.y-mic.y)/(cam.y-(mouth.y-40)); const inShot=mic.y>mouth.y-40&&mic.y<cam.y&&Math.abs(mic.x-mouth.x)<hw+8;return [[mic.type==='shot','Shotgun chosen'],[angTo(mouth.x,mouth.y)<0.3,'Aimed straight at the mouth'],[!inShot,'Outside the camera\'s view lines'],[m.snr>=15,'Signal to noise 15 dB or more (yours '+m.snr.toFixed(1)+')']];}},
+ {t:'<b>Hidden lav.</b> Clip the lavalier to the player\'s chest, 15 to 30 cm below the mouth, and reach 15 dB or more.',c:m=>[[mic.type==='lav','Lavalier chosen'],[m.d>=0.15&&m.d<=0.3,'15–30 cm from the mouth (yours '+Math.round(m.d*100)+' cm)'],[m.snr>=15,'Signal to noise 15 dB or more (yours '+m.snr.toFixed(1)+')']]},
+ {t:'<b>Why not the camera mic?</b> Switch to the on-camera mic and see how far it falls short. Under 10 dB is unusable for broadcast.',c:m=>[[mic.type==='cam','On-camera mic chosen'],[m.snr<10,'Signal to noise is under 10 dB (yours '+m.snr.toFixed(1)+'): too far from the mouth']]}];
+let job=0,score=0,done=new Set();
+function showJob(){$('#task').innerHTML=(job+1)+' of '+JOBS.length+': '+JOBS[job].t;$('#checks').innerHTML='';}
+$('#check').onclick=()=>{const it=JOBS[job].c(model());if(setChecks($('#checks'),it)===it.length&&!done.has(job)){done.add(job);score++;$('#score').textContent=score;}};
+$('#next').onclick=()=>{job=(job+1)%JOBS.length;showJob();};
+showJob();draw();
+</script></body></html>

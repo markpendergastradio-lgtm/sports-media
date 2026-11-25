@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Radio Mixing Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css">
+<style>
+.desk{display:flex;gap:10px;background:#1d2a2e;padding:14px;overflow-x:auto}
+.strip{background:#2b3b40;color:#e8f1f1;padding:10px 8px;display:grid;justify-items:center;gap:8px;min-width:112px;flex:1}
+.strip.master{background:#173b3a}
+.strip h4{margin:0;font-size:.78rem;text-align:center;line-height:1.2;min-height:2.4em}
+.strip .fz{display:flex;gap:8px;align-items:stretch}
+.strip input[type=range]{writing-mode:vertical-lr;direction:rtl;height:220px;width:28px;accent-color:#64B998}
+.strip canvas{width:22px;height:220px;background:#111}
+.strip .val{font:600 .8rem/1 monospace}
+.strip button{padding:5px 8px;font-size:.75rem;color:#e8f1f1;border-color:#8fb5b3}
+.strip button.on{background:#C8382F}
+.big{font-size:1.4rem}
+</style></head><body>
+<header class="top"><div class="in"><div><h1>Radio mixing desk</h1><p>Mix live commentary, crowd effects and a music bed for broadcast. Hit −16 LUFS on the master without peaking over −1 dBFS, and keep the voice clear over everything else.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <div class="row" style="margin-bottom:10px"><button id="start">▶ Start the desk</button><button class="ghost" id="goal" disabled>⚽ Goal! (crowd surge)</button><button class="ghost" id="stop" disabled>■ Stop</button></div>
+  <div class="desk" id="desk"></div>
+  <div class="readout"><div><span>Master loudness (3 s)</span><b id="lufs" class="big">–</b></div><div><span>Master peak (3 s)</span><b id="peak" class="big">–</b></div><div><span>Voice over music</span><b id="vm">–</b></div><div><span>Voice over crowd</span><b id="vc">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task" id="task"></div>
+  <ul class="checks" id="checks"></ul>
+  <div class="row" style="margin-top:12px"><button id="lock" disabled>Lock in my mix</button><button class="ghost" id="next">Next job</button></div>
+  <p class="small" id="lockMsg"></p>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / 3</p>
+  <div class="tip">Ride the faders, don't park them: when the crowd erupts, pull the crowd fader down so the commentary still cuts through. Use headphones or speakers at a sensible volume.</div>
+</aside>
+</main>
+<script src="sim.js"></script><script src="audio.js"></script>
+<script>
+const CH=[{id:'voice',name:'Commentary mic',start:62},{id:'crowd',name:'Crowd effects',start:78},{id:'music',name:'Music bed',start:80}];
+const faderDb=v=>v<=0?-Infinity:-60+v*0.7;
+$('#desk').innerHTML=CH.map(c=>`<div class="strip" data-ch="${c.id}"><h4>${c.name}</h4><div class="fz"><input type="range" min="0" max="100" value="${c.start}" aria-label="${c.name} fader"><canvas width="22" height="220"></canvas></div><span class="val"></span><button class="ghost mute">Mute</button></div>`).join('')+
+ `<div class="strip master" data-ch="master"><h4>Master out</h4><div class="fz"><input type="range" min="0" max="100" value="74" aria-label="Master fader"><canvas width="22" height="220"></canvas></div><span class="val"></span></div>`;
+let ac=null, nodes={}, hist=[], surge=0, running=false;
+function faderVal(id){return +document.querySelector(`[data-ch="${id}"] input`).value;}
+function applyGains(){ if(!ac) return; for(const c of [...CH,{id:'master'}]){ const s=document.querySelector(`[data-ch="${c.id}"]`), m=s.querySelector('.mute'); const muted=m&&m.classList.contains('on'); const g=muted?0:undb(faderDb(+s.querySelector('input').value)); nodes[c.id].gain.setTargetAtTime(isFinite(g)?g:0, ac.currentTime, 0.03);} }
+$$('.strip').forEach(s=>{const i=s.querySelector('input'),v=s.querySelector('.val'); const sh=()=>{const d=faderDb(+i.value);v.textContent=isFinite(d)?(d>0?'+':'')+d.toFixed(1)+' dB':'−∞';}; i.addEventListener('input',()=>{sh();applyGains();}); sh(); const m=s.querySelector('.mute'); if(m) m.onclick=()=>{m.classList.toggle('on');applyGains();};});
+$('#start').onclick=async()=>{
+  if(running) return; ac=new (window.AudioContext||window.webkitAudioContext)(); await ac.resume();
+  const raw={voice:3.2, crowd:0.55, music:0.7};
+  const bufs={voice:voiceBuffer(ac,9,3,118), crowd:crowdBuffer(ac,9,5), music:musicBuffer(ac,8)};
+  nodes.master=ac.createGain(); nodes.master.connect(ac.destination);
+  nodes.masterAn=ac.createAnalyser(); nodes.masterAn.fftSize=2048; nodes.master.connect(nodes.masterAn); nodes.k=kWeight(ac,nodes.master);
+  nodes.surge=ac.createGain();
+  for(const c of CH){ const pre=ac.createGain(); pre.gain.value=raw[c.id]; nodes[c.id]=ac.createGain(); const an=ac.createAnalyser(); an.fftSize=2048; nodes[c.id+'An']=an;
+    loopSource(ac,bufs[c.id],pre); if(c.id==='crowd'){pre.connect(nodes.surge); nodes.surge.connect(nodes[c.id]);} else if(c.id==='voice'){const cp=ac.createDynamicsCompressor(); cp.threshold.value=-20; cp.ratio.value=8; cp.knee.value=4; cp.attack.value=0.002; cp.release.value=0.15; const mk=ac.createGain(); mk.gain.value=2.2; pre.connect(cp); cp.connect(mk); mk.connect(nodes[c.id]);} else pre.connect(nodes[c.id]);
+    nodes[c.id].connect(an); nodes[c.id].connect(nodes.master);}
+  applyGains(); running=true; $('#goal').disabled=false; $('#stop').disabled=false; $('#lock').disabled=false; tick();
+};
+$('#stop').onclick=()=>{ if(ac){ac.close(); ac=null; running=false; hist=[]; $('#goal').disabled=true; $('#stop').disabled=true; $('#lock').disabled=true;} };
+$('#goal').onclick=()=>{ const g=nodes.surge.gain, t=ac.currentTime; g.cancelScheduledValues(t); g.setValueAtTime(g.value,t); g.linearRampToValueAtTime(3.5,t+0.4); g.setValueAtTime(3.5,t+6); g.linearRampToValueAtTime(1,t+8); };
+const tbuf=new Float32Array(2048), kbuf=new Float32Array(4096);
+function tick(){
+  if(!running) return;
+  const now=performance.now(), m=meterRead(nodes.masterAn,tbuf), k=meterRead(nodes.k,kbuf), ch={};
+  for(const c of CH){ ch[c.id]=meterRead(nodes[c.id+'An'],tbuf); }
+  hist.push({t:now,peak:m.peak,ms:k.ms,v:ch.voice.ms,c:ch.crowd.ms,mu:ch.music.ms});
+  while(hist.length&&now-hist[0].t>3000) hist.shift();
+  const avg=key=>hist.reduce((a,h)=>a+h[key],0)/hist.length;
+  const L={lufs:-0.691+10*Math.log10(avg('ms')+1e-12), peak:Math.max(...hist.map(h=>h.peak)), vm:10*Math.log10((avg('v')+1e-12)/(avg('mu')+1e-12)), vc:10*Math.log10((avg('v')+1e-12)/(avg('c')+1e-12))};
+  window.__L=L;
+  $('#lufs').textContent=L.lufs.toFixed(1)+' LUFS'; $('#peak').textContent=L.peak.toFixed(1)+' dBFS';
+  $('#vm').textContent=(L.vm>0?'+':'')+L.vm.toFixed(1)+' dB'; $('#vc').textContent=(L.vc>0?'+':'')+L.vc.toFixed(1)+' dB';
+  $$('.strip').forEach(s=>{const id=s.dataset.ch, cvs=s.querySelector('canvas'), c2=cvs.getContext('2d'); const r=id==='master'?m:ch[id]; drawMeter(c2,0,0,22,220,r.rms,r.peak, id==='master'?-1:undefined);});
+  setChecks($('#checks'),JOBS[job].c(L));
+  requestAnimationFrame(tick);
+}
+const JOBS=[
+ {t:'<b>Match commentary.</b> Get the master to −16 LUFS (within 2) with peaks under −1 dBFS. The commentary must sit at least 10 dB over the music bed.',c:L=>[[Math.abs(L.lufs+16)<=2,'Master −16 LUFS ±2'],[L.peak<-1,'Peaks under −1 dBFS'],[L.vm>=10,'Voice 10 dB or more over the music']]},
+ {t:'<b>Atmosphere matters.</b> Same loudness target, but the crowd must be audible: between 6 and 15 dB under the commentary.',c:L=>[[Math.abs(L.lufs+16)<=2,'Master −16 LUFS ±2'],[L.peak<-1,'Peaks under −1 dBFS'],[L.vc>=6&&L.vc<=15,'Crowd 6–15 dB under the voice']]},
+ {t:'<b>Goal!</b> Press the goal button and ride the crowd fader so the commentary stays at least 6 dB clear and peaks stay under −1 dBFS throughout the surge.',goal:true,c:L=>[[L.peak<-1,'Peaks under −1 dBFS'],[L.vc>=6,'Voice at least 6 dB over the crowd'],[nodes.surge&&nodes.surge.gain.value>2,'The crowd surge is happening now']]}];
+let job=0,score=0,done=new Set();
+function showJob(){$('#task').innerHTML=(job+1)+' of '+JOBS.length+': '+JOBS[job].t;$('#lockMsg').textContent='';}
+$('#lock').onclick=()=>{ const it=JOBS[job].c(window.__L); const ok=it.every(x=>x[0]); $('#lockMsg').textContent=ok?'Locked in. Nice mix.':'Not yet: every line needs a tick when you lock in.'; if(ok&&!done.has(job)){done.add(job);score++;$('#score').textContent=score;} };
+$('#next').onclick=()=>{job=(job+1)%JOBS.length;showJob();};
+showJob(); setChecks($('#checks'),[[null,'Press Start the desk to hear the mix']]);
+</script></body></html>

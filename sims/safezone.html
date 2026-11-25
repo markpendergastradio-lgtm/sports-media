@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Social Safe Zone Checker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css">
+<style>.stage{display:flex;justify-content:center;background:#0d1b1e;padding:12px}#cv{width:auto;max-height:70vh;max-width:100%;background:#000}</style></head><body>
+<header class="top"><div class="in"><div><h1>Aspect ratio and safe-zone checker</h1><p>Lay out a full-time graphic for each platform. The red areas are where the app's buttons, captions and crops will cover your design, so keep every piece of text out of them.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <div class="stage"><canvas id="cv" width="540" height="960" aria-label="Graphic preview with platform interface overlay"></canvas></div>
+  <div class="row" style="margin-top:10px"><label class="small"><input type="checkbox" id="ui" checked> Show the app's buttons and captions</label><label class="small"><input type="checkbox" id="zones" checked> Show unsafe zones</label><label class="small">Your own background image <input type="file" id="bg" accept="image/*"></label></div>
+</section>
+<aside class="card">
+  <h2>Platform</h2>
+  <div class="ctl"><label>Format <output id="fOut"></output><select id="plat">
+    <option value="tiktok">TikTok (9:16)</option><option value="reels">Instagram Reels (9:16)</option><option value="shorts">YouTube Shorts (9:16)</option><option value="feed">Instagram feed post (4:5)</option><option value="tv">TV / YouTube (16:9)</option></select></label>
+    <label>Size of the selected item <output id="szOut"></output><input type="range" id="sz" min="40" max="160" value="100"></label></div>
+  <p class="small">Drag any item on the graphic to move it. Selected: <b id="selName">–</b></p>
+  <div class="row" style="margin-top:12px"><button id="check">Check this layout</button><button class="ghost" id="reset">Reset layout</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Platforms passed: <span class="score" id="score">0</span> / 5</p>
+  <div class="tip">Design 9:16 once and you still need three slightly different layouts: TikTok, Reels and Shorts all put their buttons and captions in different places.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const P={
+ tiktok:{w:1080,h:1920,unsafe:[[0,0,1,0.09,'Top tabs'],[0.85,0.35,1,0.84,'Like, comment, share buttons'],[0,0.79,1,1,'Caption, username and sound']]},
+ reels:{w:1080,h:1920,unsafe:[[0,0,1,0.07,'Top bar'],[0.84,0.45,1,0.9,'Buttons'],[0,0.81,1,1,'Caption and username']]},
+ shorts:{w:1080,h:1920,unsafe:[[0,0,1,0.08,'Top bar'],[0.83,0.38,1,0.86,'Buttons'],[0,0.78,1,1,'Title, channel and subscribe']]},
+ feed:{w:1080,h:1350,unsafe:[[0,0,0.035,1,'Cropped on the 3:4 profile grid'],[0.965,0,1,1,'Cropped on the 3:4 profile grid']]},
+ tv:{w:1920,h:1080,unsafe:[[0,0,1,0.05,'Outside title safe'],[0,0.95,1,1,'Outside title safe'],[0,0,0.05,1,'Outside title safe'],[0.95,0,1,1,'Outside title safe']]}};
+const ITEMS=[{k:'photo',name:'Player photo',text:false},{k:'head',name:'"FULL TIME" headline',text:true},{k:'score',name:'Score',text:true},{k:'cta',name:'"Highlights in bio"',text:true},{k:'spons',name:'Sponsor logo',text:true}];
+// default (deliberately unsafe) layouts, normalised x,y of the item's centre and a base size
+const DEF={photo:[0.5,0.45,1],head:[0.5,0.06,1],score:[0.5,0.62,1],cta:[0.5,0.9,1],spons:[0.92,0.55,1]};
+let plat='tiktok',L={},sel='head',bgImg=null;const done=new Set();
+const cv=$('#cv'),ctx=cv.getContext('2d');
+function reset(){L={};for(const p in P){L[p]={};for(const it of ITEMS)L[p][it.k]=[...DEF[it.k]];}}
+function sizeCanvas(){const p=P[plat],s=Math.min(960/p.h,960/p.w);cv.width=Math.round(p.w*s);cv.height=Math.round(p.h*s);}
+function box(k){const p=P[plat],[x,y,sz]=L[plat][k],W=cv.width,H=cv.height,u=Math.min(W,H);
+  const dims={photo:[0.75*u,0.75*u*1.1],head:[0.8*u,0.13*u],score:[0.7*u,0.17*u],cta:[0.62*u,0.08*u],spons:[0.3*u,0.08*u]}[k];
+  const w=dims[0]*sz,h=dims[1]*sz;return {x:x*W-w/2,y:y*H-h/2,w,h};}
+function draw(){const W=cv.width,H=cv.height,u=Math.min(W,H);
+  if(bgImg){const r=Math.max(W/bgImg.width,H/bgImg.height);ctx.drawImage(bgImg,(W-bgImg.width*r)/2,(H-bgImg.height*r)/2,bgImg.width*r,bgImg.height*r);}
+  else{const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#64B998');g.addColorStop(0.5,'#4AA0AF');g.addColorStop(1,'#3578AB');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+  for(const it of ITEMS){const b=box(it.k);ctx.save();
+    if(it.k==='photo'){ctx.fillStyle='rgba(13,27,30,.35)';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.beginPath();ctx.rect(b.x,b.y,b.w,b.h);ctx.clip();drawPlayer(ctx,b.x+b.w/2,b.y+b.h*1.35,b.h*1.5,'#c8382f','#fff','#a87450',1);}
+    if(it.k==='head'){ctx.fillStyle='#fff';ctx.font=`700 ${b.h*0.8}px Poppins,Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('FULL TIME',b.x+b.w/2,b.y+b.h/2);}
+    if(it.k==='score'){ctx.fillStyle='rgba(13,27,30,.85)';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.fillStyle='#fff';ctx.font=`700 ${b.h*0.55}px Poppins,Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('GA 2 – 1 OPP',b.x+b.w/2,b.y+b.h/2);}
+    if(it.k==='cta'){ctx.fillStyle='#ffd166';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.fillStyle='#14232a';ctx.font=`700 ${b.h*0.5}px Poppins,Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('HIGHLIGHTS IN BIO',b.x+b.w/2,b.y+b.h/2);}
+    if(it.k==='spons'){ctx.fillStyle='#fff';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.fillStyle='#188480';ctx.font=`700 ${b.h*0.45}px Poppins,Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('SPONSOR',b.x+b.w/2,b.y+b.h/2);}
+    if(it.k===sel){ctx.strokeStyle='#ffd166';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.strokeRect(b.x,b.y,b.w,b.h);}
+    ctx.restore();}
+  const p=P[plat];
+  if($('#zones').checked)for(const [x0,y0,x1,y1] of p.unsafe){ctx.fillStyle='rgba(200,56,47,.35)';ctx.fillRect(x0*W,y0*H,(x1-x0)*W,(y1-y0)*H);}
+  if($('#ui').checked)ui(W,H,u);}
+function ui(W,H,u){ctx.save();ctx.fillStyle='#fff';ctx.strokeStyle='#fff';ctx.font=`600 ${u*0.035}px Poppins,Arial`;ctx.textBaseline='middle';
+  if(['tiktok','reels','shorts'].includes(plat)){
+    const col=plat==='tiktok'?0.92:plat==='reels'?0.92:0.915, top=plat==='tiktok'?0.45:plat==='reels'?0.55:0.48;
+    for(let i=0;i<(plat==='tiktok'?5:4);i++){ctx.globalAlpha=0.9;ctx.beginPath();ctx.arc(W*col,H*(top+i*0.07),u*0.045,0,7);ctx.fill();}
+    ctx.globalAlpha=1;ctx.textAlign='left';ctx.fillText(plat==='shorts'?'@gasportsmedia  SUBSCRIBE':'@gasportsmedia',W*0.04,H*0.86);ctx.font=`400 ${u*0.03}px Poppins,Arial`;ctx.fillText('Full time at Hayes! #football #matchday',W*0.04,H*0.9);ctx.fillText('♫ original sound',W*0.04,H*0.94);
+    ctx.textAlign='center';ctx.font=`600 ${u*0.038}px Poppins,Arial`;ctx.fillText(plat==='tiktok'?'Following   For You':plat==='reels'?'Reels':'Shorts',W/2,H*0.045);}
+  if(plat==='feed'){ctx.strokeStyle='rgba(255,255,255,.8)';ctx.setLineDash([8,6]);ctx.strokeRect(W*0.035,0,W*0.93,H);ctx.setLineDash([]);ctx.textAlign='center';ctx.fillText('Profile grid shows 3:4',W/2,H*0.97);}
+  if(plat==='tv'){ctx.strokeStyle='rgba(255,255,255,.7)';ctx.setLineDash([8,6]);ctx.strokeRect(W*0.05,H*0.05,W*0.9,H*0.9);ctx.strokeRect(W*0.035,H*0.035,W*0.93,H*0.93);ctx.setLineDash([]);}
+  ctx.restore();}
+function overlaps(b){const W=cv.width,H=cv.height;return P[plat].unsafe.filter(([x0,y0,x1,y1])=>b.x<x1*W&&b.x+b.w>x0*W&&b.y<y1*H&&b.y+b.h>y0*H).map(z=>z[4]);}
+let drag=null;
+cv.addEventListener('pointerdown',e=>{const pt=canvasPointer(cv,e);for(const it of [...ITEMS].reverse()){const b=box(it.k);if(pt.x>=b.x&&pt.x<=b.x+b.w&&pt.y>=b.y&&pt.y<=b.y+b.h){sel=it.k;drag={dx:pt.x-(b.x+b.w/2),dy:pt.y-(b.y+b.h/2)};cv.setPointerCapture(e.pointerId);break;}}showSel();draw();});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const pt=canvasPointer(cv,e),l=L[plat][sel];l[0]=clamp((pt.x-drag.dx)/cv.width,0,1);l[1]=clamp((pt.y-drag.dy)/cv.height,0,1);draw();});
+cv.addEventListener('pointerup',()=>drag=null);
+function showSel(){$('#selName').textContent=ITEMS.find(i=>i.k===sel).name;$('#sz').value=Math.round(L[plat][sel][2]*100);$('#szOut').textContent=$('#sz').value+'%';}
+bindRange('sz',v=>v+'%',()=>{L[plat][sel][2]=+$('#sz').value/100;draw();});
+$('#plat').onchange=()=>{plat=$('#plat').value;sizeCanvas();showSel();$('#checks').innerHTML='';draw();};
+$('#ui').onchange=$('#zones').onchange=draw;
+$('#reset').onclick=()=>{for(const it of ITEMS)L[plat][it.k]=[...DEF[it.k]];showSel();draw();};
+$('#bg').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{bgImg=im;draw();};im.src=r.result;};r.readAsDataURL(f);};
+$('#check').onclick=()=>{const W=cv.width,H=cv.height,items=[];
+  for(const it of ITEMS.filter(i=>i.text)){const b=box(it.k),o=overlaps(b),off=b.x<0||b.y<0||b.x+b.w>W||b.y+b.h>H;items.push([!o.length&&!off,it.name+(off?': partly off the edge':o.length?': covered by '+o[0].toLowerCase():': clear')]);}
+  const pb=box('photo'),face=pb.y+pb.h*0.25;items.push([face>H*0.1&&face<H*0.75,'The player\'s face is clear of the top bar and captions']);
+  if(setChecks($('#checks'),items)===items.length&&!done.has(plat)){done.add(plat);$('#score').textContent=done.size;}};
+reset();sizeCanvas();showSel();draw();document.fonts&&document.fonts.ready.then(draw);
+</script></body></html>

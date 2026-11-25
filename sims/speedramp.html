@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Speed Ramp Builder</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css"></head><body>
+<header class="top"><div class="in"><div><h1>Speed ramp builder</h1><p>A 6-second clip of a strike into the top corner. Shape the speed curve so the replay slows right down at the moment of contact and speeds back up for the net bulging.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="vid" width="960" height="400" aria-label="Preview of the speed-ramped clip"></canvas>
+  <div class="row" style="margin-top:10px"><button id="play">▶ Play preview</button><span class="small" id="tc">–</span></div>
+  <h3>Speed curve <span class="small">(click to add a point, drag to move, double-click to delete)</span></h3>
+  <canvas id="crv" width="960" height="240" style="background:#fff;border:1px solid var(--rule)" aria-label="Speed curve editor"></canvas>
+  <div class="readout"><div><span>Output length</span><b id="len">–</b></div><div><span>Slowest speed</span><b id="min">–</b></div><div><span>Speed at contact</span><b id="atk">–</b></div><div><span>Smooth frames?</span><b id="smooth">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task"><b>Goal of the month replay.</b> Normal speed for the run-up, ramp down to 20–30% at the moment of contact (2.5 s in the source clip), and back to 100% once the ball hits the net (by 4 s). Ramps must take at least 0.3 s, the replay must run 7 to 12 seconds, and there must be no stuttering frames.</div>
+  <div class="ctl"><label>Source frame rate <output id="fOut"></output><select id="fps"><option value="25">25 fps</option><option value="50" selected>50 fps</option><option value="100">100 fps</option></select></label></div>
+  <div class="row" style="margin-top:12px"><button id="check">Check my ramp</button><button class="ghost" id="reset">Reset curve</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / 1</p>
+  <div class="tip">On a 25 fps timeline you can slow 50 fps footage to 50% and 100 fps footage to 25% before frames start repeating and the motion stutters.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const SRC=6, CONTACT=2.5;
+let K;function resetK(){K=[[0,100],[6,100]];}resetK();
+const speedAt=s=>{for(let i=0;i<K.length-1;i++){const [a,va]=K[i],[b,vb]=K[i+1];if(s>=a&&s<=b)return lerp(va,vb,(s-a)/(b-a||1));}return K[K.length-1][1];};
+function outLen(){let t=0;for(let s=0;s<SRC;s+=0.005)t+=0.005/(Math.max(5,speedAt(s))/100);return t;}
+const vid=$('#vid'),vc=vid.getContext('2d'),crv=$('#crv'),cc=crv.getContext('2d');
+const CX=s=>40+s/SRC*900, CY=v=>220-v/200*200, IX=x=>(x-40)/900*SRC, IY=y=>(220-y)/200*200;
+function drawCurve(){cc.clearRect(0,0,960,240);cc.fillStyle='#E8F3F2';cc.fillRect(CX(2),20,CX(4)-CX(2),200);
+  cc.strokeStyle='#d2e2e3';cc.fillStyle='#5C5C5B';cc.font='12px Poppins,Arial';
+  for(const v of [0,25,50,100,150,200]){cc.beginPath();cc.moveTo(40,CY(v));cc.lineTo(940,CY(v));cc.stroke();cc.fillText(v+'%',2,CY(v)+4);}
+  for(let s=0;s<=6;s++){cc.fillText(s+'s',CX(s)-6,236);}
+  const lim=25/+$('#fps').value*100;cc.strokeStyle='#C8382F';cc.setLineDash([6,5]);cc.beginPath();cc.moveTo(40,CY(lim));cc.lineTo(940,CY(lim));cc.stroke();cc.setLineDash([]);cc.fillStyle='#C8382F';cc.fillText('stutter below '+Math.round(lim)+'%',760,CY(lim)-6);
+  cc.strokeStyle='#188480';cc.beginPath();cc.moveTo(CX(CONTACT),20);cc.lineTo(CX(CONTACT),220);cc.stroke();cc.fillStyle='#188480';cc.fillText('contact',CX(CONTACT)+4,32);
+  cc.strokeStyle='#3578AB';cc.lineWidth=3;cc.beginPath();K.forEach(([s,v],i)=>i?cc.lineTo(CX(s),CY(v)):cc.moveTo(CX(s),CY(v)));cc.stroke();cc.lineWidth=1;
+  for(const [s,v] of K){cc.fillStyle='#3578AB';cc.beginPath();cc.arc(CX(s),CY(v),7,0,7);cc.fill();}
+  const L=outLen(),mn=Math.min(...K.map(k=>k[1]));$('#len').textContent=L.toFixed(1)+' s';$('#min').textContent=Math.round(mn)+'%';$('#atk').textContent=Math.round(speedAt(CONTACT))+'%';$('#smooth').textContent=mn>=lim-0.5?'Yes':'No, frames repeat';}
+let drag=-1;
+crv.addEventListener('pointerdown',e=>{const p=canvasPointer(crv,e);drag=K.findIndex(([s,v])=>Math.hypot(CX(s)-p.x,CY(v)-p.y)<12);
+  if(drag<0){const s=clamp(IX(p.x),0.05,SRC-0.05);K.push([s,clamp(IY(p.y),5,200)]);K.sort((a,b)=>a[0]-b[0]);drag=K.findIndex(k=>k[0]===s);}crv.setPointerCapture(e.pointerId);drawCurve();});
+crv.addEventListener('pointermove',e=>{if(drag<0)return;const p=canvasPointer(crv,e);const k=K[drag];if(drag>0&&drag<K.length-1)k[0]=clamp(IX(p.x),K[drag-1][0]+0.05,K[drag+1][0]-0.05);k[1]=Math.round(clamp(IY(p.y),5,200));drawCurve();});
+crv.addEventListener('pointerup',()=>drag=-1);
+crv.addEventListener('dblclick',e=>{const p=canvasPointer(crv,e);const i=K.findIndex(([s,v])=>Math.hypot(CX(s)-p.x,CY(v)-p.y)<12);if(i>0&&i<K.length-1){K.splice(i,1);drawCurve();}});
+$('#fps').onchange=drawCurve;$('#reset').onclick=()=>{resetK();drawCurve();};
+/* the clip: run-up, strike at 2.5 s, ball into the top corner at 3.3 s, net bulge, celebration */
+function scene(s){const W=960,H=400;vc.fillStyle='#1b2b45';vc.fillRect(0,0,W,140);drawStadium(vc,W,150,120);
+  vc.fillStyle='#127a37';vc.fillRect(0,150,W,H-150);vc.fillStyle='#0f6b2f';for(let i=0;i<12;i+=2)vc.fillRect(i*80,150,80,H-150);
+  // goal
+  vc.strokeStyle='#fff';vc.lineWidth=6;vc.beginPath();vc.moveTo(820,340);vc.lineTo(820,150);vc.lineTo(940,150);vc.stroke();
+  const bulge=s>3.3&&s<4.4?Math.sin((s-3.3)/1.1*Math.PI)*25:0;vc.strokeStyle='rgba(255,255,255,.5)';vc.lineWidth=1;for(let y=150;y<=340;y+=12){vc.beginPath();vc.moveTo(820,y);vc.quadraticCurveTo(880+bulge*(1-Math.abs(y-175)/190),y,940,y);vc.stroke();}
+  // player
+  const px=s<CONTACT?lerp(120,520,s/CONTACT):520+Math.min(1,(s-CONTACT))*40+(s>4?(s-4)*-60:0);
+  drawPlayer(vc,px,350,170,'#c8382f','#fff','#a87450',1);
+  if(s>CONTACT-0.15&&s<CONTACT+0.2){vc.fillStyle='#a87450';vc.save();vc.translate(px+8,300);vc.rotate(-0.9);vc.fillRect(0,0,14,60);vc.restore();}
+  // ball
+  let bx,by;if(s<CONTACT){bx=px+28;by=343;}else if(s<3.3){const k=(s-CONTACT)/0.8;bx=lerp(px+40,905,k);by=lerp(343,175,k)-Math.sin(k*Math.PI)*60;}else{bx=905+bulge*0.6;by=175+Math.min(1,(s-3.3)*2)*150;}
+  vc.fillStyle='#fff';vc.beginPath();vc.arc(bx,by,9,0,7);vc.fill();vc.fillStyle='#222';vc.beginPath();vc.arc(bx+3,by-2,3.5,0,7);vc.fill();
+  vc.fillStyle='rgba(0,0,0,.6)';vc.fillRect(14,14,300,30);vc.fillStyle='#fff';vc.font='600 15px Poppins,Arial';}
+let playing=false,srcT=0,last=0;
+function frame(now){const dt=(now-last)/1000;last=now;if(playing){srcT+=dt*speedAt(srcT)/100;if(srcT>=SRC){srcT=SRC;playing=false;}}
+  const f=+$('#fps').value,shown=Math.floor(srcT*f)/f;scene(shown);vc.fillText('source '+shown.toFixed(2)+'s  speed '+Math.round(speedAt(srcT))+'%',24,35);$('#tc').textContent=playing?'Playing…':'Stopped';requestAnimationFrame(frame);}
+$('#play').onclick=()=>{srcT=0;playing=true;};
+$('#check').onclick=()=>{const lim=25/+$('#fps').value*100,mn=Math.min(...K.map(k=>k[1])),L=outLen();
+  let steep=false;for(let i=0;i<K.length-1;i++){const [a,va]=K[i],[b,vb]=K[i+1];if(Math.abs(vb-va)>30&&b-a<0.3)steep=true;}
+  const pre=[0,0.5,1,1.5].every(s=>speedAt(s)>=95), post=[4,4.5,5,5.5,6].every(s=>speedAt(s)>=95);
+  const items=[[speedAt(CONTACT)>=20&&speedAt(CONTACT)<=30,'20–30% at the moment of contact (yours '+Math.round(speedAt(CONTACT))+'%)'],[pre,'100% for the run-up (until 1.5 s)'],[post,'Back to 100% from 4 s'],[!steep,'Every ramp takes at least 0.3 s'],[L>=7&&L<=12,'Replay runs 7–12 seconds (yours '+L.toFixed(1)+' s)'],[mn>=lim-0.5,'No stuttering: never slower than '+Math.round(lim)+'% at '+$('#fps').value+' fps']];
+  if(setChecks($('#checks'),items)===items.length)$('#score').textContent=1;};
+drawCurve();requestAnimationFrame(t=>{last=t;frame(t);});
+</script></body></html>

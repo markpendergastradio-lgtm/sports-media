@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shutter and Frame Rate Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css"></head><body>
+<header class="top"><div class="in"><div><h1>Shutter speed and frame rate lab</h1><p>A ball is struck across the frame. See how frame rate and shutter speed change motion blur, strobing and how smooth your slow-motion replay looks.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="live" width="960" height="300" aria-label="Playback of the ball moving across the pitch"></canvas>
+  <h3>Six recorded frames in a row</h3>
+  <canvas id="strip" width="960" height="150" aria-label="Six consecutive recorded frames showing motion blur"></canvas>
+  <div class="readout"><div><span>Shutter angle</span><b id="angle">–</b></div><div><span>Blur per frame</span><b id="blur">–</b></div><div><span>Gap between frames</span><b id="gap">–</b></div><div><span>On a 25p timeline</span><b id="slow">–</b></div><div><span>Motion looks</span><b id="look">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task" id="task"></div>
+  <div class="ctl">
+    <label>Frame rate <output id="fpsOut"></output><input type="range" id="fps" min="0" max="4" value="0"></label>
+    <label>Shutter speed <output id="shOut"></output><input type="range" id="sh" min="0" max="10" value="1"></label>
+    <label>Ball speed <output id="spOut"></output><input type="range" id="sp" min="5" max="35" value="25"></label>
+    <label>Playback <output id="pbOut"></output><select id="pb"><option value="rt">Real time</option><option value="tl" selected>Conformed to a 25p timeline</option></select></label>
+  </div>
+  <div class="row" style="margin-top:12px"><button id="check">Check my settings</button><button class="ghost" id="next">Next job</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / 4</p>
+  <div class="tip">The 180° rule: set the shutter to double the frame rate (25 fps → 1/50, 50 fps → 1/100) for natural motion blur. The shutter can never be slower than one frame.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const FPS=[25,50,100,150,200], SH=[25,50,100,200,250,500,1000,2000,4000,8000,10000];
+const lv=$('#live'), lc=lv.getContext('2d'), sv=$('#strip'), sc=sv.getContext('2d');
+const fpsEl=bindRange('fps',v=>FPS[v]+' fps',update), shEl=bindRange('sh',v=>'1/'+SH[v]+' s',update), spEl=bindRange('sp',v=>v+' m/s ('+Math.round(v*3.6)+' km/h)',update);
+$('#pb').onchange=update;
+const WIDTH_M=20; // frame shows 20 m of pitch
+function st(){
+  const fps=FPS[+fpsEl.value]; let shv=SH[+shEl.value];
+  const valid=shv>=fps; const t=1/Math.max(shv,fps);
+  const v=+spEl.value, ang=360*fps*t, blurM=v*t, gapM=v/fps;
+  const slow=$('#pb').value==='tl'?fps/25:1;
+  return {fps,shv,valid,t,v,ang,blurM,gapM,slow};
+}
+function look(s){
+  if(!s.valid) return 'Not possible';
+  if(s.ang>=150&&s.ang<=200) return 'Natural';
+  if(s.ang>200) return 'Smeared';
+  if(s.ang<60) return 'Crisp but strobing';
+  return 'Slightly crisp';
+}
+function update(){
+  const s=st();
+  $('#angle').textContent=s.valid?Math.round(s.ang)+'°':'–';
+  $('#blur').textContent=(s.blurM*100).toFixed(1)+' cm';
+  $('#gap').textContent=(s.gapM*100).toFixed(0)+' cm';
+  $('#slow').textContent=s.slow>1?Math.round(100/s.slow)+'% speed ('+s.slow+'× slower)':'100% (real time)';
+  $('#look').textContent=look(s);
+  $('#shOut').textContent='1/'+SH[+shEl.value]+' s'+(s.valid?'':' (too slow)');
+  drawStrip();
+}
+const m2px=m=>m/WIDTH_M*960;
+function pitch(c,W,H){c.fillStyle='#127a37';c.fillRect(0,0,W,H);c.fillStyle='#0f6b2f';for(let i=0;i<W;i+=96)c.fillRect(i,0,48,H);c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=2;c.beginPath();c.moveTo(0,H*0.8);c.lineTo(W,H*0.8);c.stroke();}
+function ball(c,x,y,r,blurPx){
+  c.save();
+  if(blurPx>1){ const steps=Math.min(40,Math.ceil(blurPx/2)); c.globalAlpha=Math.min(1,2.2/steps*1.0+0.05);
+    for(let i=0;i<=steps;i++){const xx=x-blurPx/2+blurPx*i/steps; c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(xx,y,r,0,7); c.fill();}
+  } else { c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(x,y,r,0,7); c.fill(); c.fillStyle='#222'; c.beginPath(); c.arc(x+r*0.3,y-r*0.2,r*0.35,0,7); c.fill(); }
+  c.restore();
+}
+function drawStrip(){
+  const s=st(), W=960, H=150, fw=W/6;
+  sc.clearRect(0,0,W,H);
+  for(let i=0;i<6;i++){
+    sc.save(); sc.beginPath(); sc.rect(i*fw+3,3,fw-6,H-6); sc.clip(); sc.translate(i*fw+3,3);
+    pitch(sc,fw-6,H-6);
+    const scale=(fw-6)/4, posM=0.4+((i*s.gapM)%3.2);
+    ball(sc,posM*scale,(H-6)*0.5,9,s.valid? s.blurM*scale : 0);
+    sc.fillStyle='#fff'; sc.font='600 12px Poppins,Arial'; sc.fillText('frame '+(i+1),6,16);
+    sc.restore();
+  }
+  sc.fillStyle='rgba(255,255,255,.9)'; sc.font='12px Poppins,Arial';
+}
+let last=performance.now(), simT=0, frameIdx=-1, frameX=0;
+function loop(now){
+  const s=st(); const dt=(now-last)/1000; last=now; simT+=dt/s.slow;
+  const runM=WIDTH_M+6, period=runM/s.v; const tt=simT%period;
+  // sample at recording frame times
+  const fi=Math.floor(tt*s.fps); const sampleT=fi/s.fps; const xM=-3+s.v*sampleT;
+  pitch(lc,960,300);
+  ball(lc,m2px(xM),180,13,s.valid?m2px(s.blurM):0);
+  lc.fillStyle='#fff'; lc.font='600 15px Poppins,Arial';
+  lc.fillText(s.fps+' fps  1/'+s.shv+'  '+(s.slow>1?Math.round(100/s.slow)+'% playback':'real time'),14,26);
+  requestAnimationFrame(loop);
+}
+const JOBS=[
+ {t:'<b>Live match coverage.</b> Shoot 25 fps for real-time playback with natural motion blur (the 180° rule).',c:s=>[[s.fps===25,'25 fps'],[s.valid&&Math.abs(s.ang-180)<1,'Shutter 1/50 (180°)']]},
+ {t:'<b>Super slow-mo replay.</b> The replay must play at 25% speed on the 25p timeline with natural blur.',c:s=>[[$('#pb').value==='tl','Footage conformed to the 25p timeline'],[s.fps===100,'100 fps gives 4× slow motion'],[s.valid&&Math.abs(s.ang-180)<1,'Shutter 1/200 (180°)']]},
+ {t:'<b>Freeze frame for the telestrator.</b> The ball must be pin-sharp when you pause on it: less than 3 cm of blur at 30 m/s.',c:s=>[[+spEl.value===30,'Ball speed set to 30 m/s'],[s.valid&&s.blurM<0.03,'Blur under 3 cm (yours '+(s.blurM*100).toFixed(1)+' cm)']]},
+ {t:'<b>Smooth half-speed replay.</b> Get 50% speed on the 25p timeline without the footage strobing.',c:s=>[[s.fps===50&&$('#pb').value==='tl','50 fps on a 25p timeline'],[s.valid&&s.ang>=150,'Shutter angle at least 150° (1/100)']]}];
+let job=0,score=0,done=new Set();
+function showJob(){$('#task').innerHTML=(job+1)+' of '+JOBS.length+': '+JOBS[job].t;$('#checks').innerHTML='';}
+$('#check').onclick=()=>{const it=JOBS[job].c(st()); if(setChecks($('#checks'),it)===it.length&&!done.has(job)){done.add(job);score++;$('#score').textContent=score;}};
+$('#next').onclick=()=>{job=(job+1)%JOBS.length;showJob();};
+showJob(); update(); requestAnimationFrame(loop);
+</script></body></html>

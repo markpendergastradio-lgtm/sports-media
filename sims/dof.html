@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Depth of Field Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css"></head><body>
+<header class="top"><div class="in"><div><h1>Depth of field and focal length lab</h1><p>Change the lens, aperture and focus distance and see which players stay sharp. Three players stand 3, 10 and 25 metres from the camera, with the crowd 60 metres away.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="cv" width="960" height="540" aria-label="Camera view of three players at different distances"></canvas>
+  <h3>Where the sharp zone falls (1 m to 100 m)</h3>
+  <canvas id="strip" width="960" height="110" aria-label="Distance scale showing the in-focus zone" style="background:#fff;border:1px solid var(--rule)"></canvas>
+  <div class="readout"><div><span>Sharp from</span><b id="near">–</b></div><div><span>Sharp to</span><b id="far">–</b></div><div><span>Depth of field</span><b id="dof">–</b></div><div><span>Hyperfocal</span><b id="hyp">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task" id="task"></div>
+  <div class="ctl">
+    <label>Focal length <output id="flOut"></output><input type="range" id="fl" min="0" max="100" value="30"></label>
+    <label>Aperture <output id="apOut"></output><input type="range" id="ap" min="0" max="10" value="4"></label>
+    <label>Focus distance <output id="fdOut"></output><input type="range" id="fd" min="0" max="100" value="40"></label>
+  </div>
+  <div class="row" style="margin-top:12px"><button id="check">Check my shot</button><button class="ghost" id="next">Next job</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / 4</p>
+  <div class="tip">Three things make the background softer: a wider aperture (smaller f-number), a longer lens, and focusing closer. Full-frame sensor, 0.03 mm circle of confusion.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const STOPS=[1.4,2,2.8,4,5.6,8,11,16,22,32,45];
+const cv=$('#cv'), ctx=cv.getContext('2d'), st=$('#strip'), sx=st.getContext('2d');
+const flv=v=>Math.round(18*Math.pow(200/18,v/100)), fdv=v=>+(1*Math.pow(100,v/100)).toFixed(1);
+const fl=bindRange('fl',v=>flv(v)+' mm',draw), ap=bindRange('ap',v=>'f/'+STOPS[v],draw), fd=bindRange('fd',v=>fdv(v)+' m',draw);
+const OBJ=[{name:'Player at 3 m',d:3,x:-0.15,kit:'#c8382f'},{name:'Player at 10 m',d:10,x:-2,kit:'#2d6ea6'},{name:'Player at 25 m',d:25,x:3,kit:'#f2c14e'}];
+const C=0.03;
+function optics(){
+  const f=flv(+fl.value), N=STOPS[+ap.value], s=fdv(+fd.value)*1000;
+  const H=f*f/(N*C)+f;
+  const near=s*(H-f)/(H+s-2*f), far=s<H? s*(H-f)/(H-s) : Infinity;
+  const blur=d=>{d*=1000; return (f*f/(N*(s-f)))*Math.abs(d-s)/d;};
+  return {f,N,s,H,near:near/1000,far:far/1000,blur};
+}
+const px=mm=>mm/36*960;
+function scaleAt(o,d){return o.f/d/36*960;} // px per metre at distance d
+function draw(){
+  const o=optics(); const W=960,H=540, hz=H/2-28;
+  ctx.filter='none'; ctx.clearRect(0,0,W,H);
+  // background crowd at 60 m
+  const bb=Math.min(px(o.blur(60))/2,30);
+  ctx.save(); ctx.filter=`blur(${bb}px)`; drawStadium(ctx,W,hz+30,hz); ctx.restore();
+  const g=ctx.createLinearGradient(0,hz,0,H); g.addColorStop(0,'#127a37'); g.addColorStop(1,'#0c5a29');
+  ctx.fillStyle=g; ctx.fillRect(0,hz+30,W,H-hz-30);
+  // players far to near; ground y by distance (camera at 1.5 m height)
+  for(const ob of [...OBJ].sort((a,b)=>b.d-a.d)){
+    const k=scaleAt(o,ob.d), foot=H/2+1.5*k, hpx=1.8*k, x=W/2+ob.x*k;
+    const b=Math.min(px(o.blur(ob.d))/2,40);
+    ctx.save(); ctx.filter=`blur(${b}px)`; drawPlayer(ctx,x,foot,hpx,ob.kit,'#fff','#b07a55',1); ctx.restore();
+    ob.blurPx=b; ob.visible = x>-hpx/2 && x<W+hpx/2;
+  }
+  ctx.filter='none'; ctx.fillStyle='#fff'; ctx.font='600 16px Poppins,Arial'; ctx.fillText(o.f+'mm  f/'+o.N+'  focus '+(o.s/1000).toFixed(1)+'m',16,28);
+  $('#near').textContent=o.near.toFixed(1)+' m'; $('#far').textContent=isFinite(o.far)?o.far.toFixed(1)+' m':'infinity';
+  $('#dof').textContent=isFinite(o.far)?(o.far-o.near).toFixed(1)+' m':'to infinity'; $('#hyp').textContent=(o.H/1000).toFixed(1)+' m';
+  // strip
+  const X=d=>20+Math.log10(d)/2*920;
+  sx.clearRect(0,0,960,110); sx.fillStyle='#E8F3F2'; sx.fillRect(20,30,920,40);
+  const a=X(Math.max(1,o.near)), b2=X(Math.min(100,isFinite(o.far)?o.far:100));
+  sx.fillStyle='#64B998'; sx.fillRect(a,30,Math.max(2,b2-a),40);
+  sx.fillStyle='#333'; sx.font='13px Poppins,Arial';
+  for(const d of [1,2,3,5,10,20,30,50,100]){sx.fillRect(X(d),70,1,6); sx.fillText(d+'m',X(d)-8,92);}
+  for(const ob of OBJ){sx.fillStyle=ob.kit; sx.beginPath(); sx.arc(X(ob.d),50,8,0,7); sx.fill();}
+  sx.fillStyle='#555'; sx.fillRect(X(60)-6,42,12,16); sx.fillStyle='#333'; sx.fillText('crowd',X(60)-18,22);
+  sx.strokeStyle='#C8382F'; sx.lineWidth=2; sx.beginPath(); sx.moveTo(X(o.s/1000),24); sx.lineTo(X(o.s/1000),76); sx.stroke(); sx.fillStyle='#C8382F'; sx.fillText('focus',X(o.s/1000)-16,16);
+}
+const sharp=ob=>ob.blurPx<1.2, soft=ob=>ob.blurPx>5;
+const JOBS=[
+ {t:'<b>Pitchside interview.</b> The player at 3 m must be sharp and the player at 25 m clearly out of focus, so the background does not distract.',c:()=>[[sharp(OBJ[0]),'Player at 3 m is sharp'],[soft(OBJ[2]),'Player at 25 m is clearly soft'],[OBJ[0].visible,'Player at 3 m is in frame']]},
+ {t:'<b>Wide team shot.</b> All three players must be sharp at once.',c:()=>OBJ.map(o=>[sharp(o)&&o.visible,o.name+' is sharp and in frame'])},
+ {t:'<b>Pull focus.</b> The player at 10 m is talking. Make them sharp and both other players soft.',c:()=>[[sharp(OBJ[1])&&OBJ[1].visible,'Player at 10 m is sharp'],[soft(OBJ[0]),'Player at 3 m is soft'],[OBJ[2].blurPx>3,'Player at 25 m is soft']]},
+ {t:'<b>Long lens compression.</b> Use 135 mm or longer and get the player at 25 m sharp with the crowd behind them soft.',c:()=>{const o=optics();return [[o.f>=135,'Lens is 135 mm or longer'],[sharp(OBJ[2])&&OBJ[2].visible,'Player at 25 m is sharp and in frame'],[px(o.blur(60))/2>3,'The crowd is soft']];}}];
+let job=0,score=0,done=new Set();
+function showJob(){$('#task').innerHTML=(job+1)+' of '+JOBS.length+': '+JOBS[job].t; $('#checks').innerHTML='';}
+$('#check').onclick=()=>{draw(); const it=JOBS[job].c(); if(setChecks($('#checks'),it)===it.length&&!done.has(job)){done.add(job);score++;$('#score').textContent=score;}};
+$('#next').onclick=()=>{job=(job+1)%JOBS.length;showJob();};
+showJob(); draw(); document.fonts&&document.fonts.ready.then(draw);
+</script></body></html>

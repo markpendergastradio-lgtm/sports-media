@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Running Order Challenge</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css">
+<style>
+.clocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.clocks div{background:#14232a;color:#e8f1f1;padding:10px 12px}
+.clocks span{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#9fb3b8}
+.clocks b{display:block;font:700 1.7rem/1.1 monospace}
+.clocks .warn b{color:#ffd166}.clocks .bad b{color:#ff6b6b}.clocks .good b{color:#64B998}
+.ro-wrap{overflow-x:auto}
+table.ro{width:100%;border-collapse:collapse;font-size:.88rem;min-width:560px}
+.ro th{background:var(--teal);color:#fff;text-align:left;padding:6px 8px}
+.ro td{border-bottom:1px solid var(--rule);padding:6px 8px;vertical-align:middle}
+.ro tr.now{background:#fff3cd}.ro tr.done{color:#8a9a9e}.ro tr.dropped td{text-decoration:line-through;color:#aaa}
+.ro .tag{font-size:.7rem;font-weight:700;color:var(--red)}
+.ro button{padding:3px 7px;font-size:.75rem;margin-right:3px}
+.events{font-size:.85rem;max-height:160px;overflow:auto;padding-left:18px}
+</style></head><body>
+<header class="top"><div class="in"><div><h1>Running order challenge</h1><p>You are producing a 30-minute sports show. Things will overrun and go wrong. Trim, drop and pad items so you come off air at exactly 30:00, without losing anything marked fixed.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <div class="clocks"><div><span>Show clock</span><b id="clk">00:00</b></div><div id="otBox"><span>Expected off-air</span><b id="ot">30:00</b></div><div id="ovBox"><span>Over / under</span><b id="ov">±0:00</b></div><div><span>Current item left</span><b id="left">–</b></div></div>
+  <div class="row" style="margin-bottom:10px"><button id="go">▶ Go live</button><button class="ghost" id="pause" disabled>Pause</button><button class="ghost" id="wrap" disabled>Wrap current item now</button><label class="small">Speed <select id="spd"><option value="10">10×</option><option value="20" selected>20×</option><option value="40">40×</option></select></label></div>
+  <div class="ro-wrap"><table class="ro"><thead><tr><th>Time</th><th>Item</th><th>Planned</th><th>Actual</th><th>Edit</th></tr></thead><tbody id="ro"></tbody></table></div>
+</section>
+<aside class="card">
+  <h2>Gallery talkback</h2>
+  <ol class="events" id="ev"><li>Waiting to go live.</li></ol>
+  <h3>Result</h3>
+  <ul class="checks" id="res"></ul>
+  <p class="small" style="margin-top:12px">Best: <span class="score" id="best">–</span></p>
+  <div class="tip"><b>Back-timing:</b> work out what time each remaining item must start for the show to end on time. Fixed items (news, ads, travel) cannot be cut, so the flexible items take the hit.</div>
+</aside>
+</main>
+<script src="sim.js"></script>
+<script>
+const BASE=[['Intro and headlines',120,1,0],['News bulletin',180,1,1],['Link: weekend preview',120,0,0],['Interview: home manager',360,0,0],['Ad break',120,1,1],['Feature: matchday build-up',300,0,0],['Music track',180,0,0],['Phone-in',300,0,0],['Travel and weather',60,1,1],['Sign-off',60,1,0]];
+const SHOW=1800; let lastRows='',items,cur,clock,itemT,running=false,lastNow=0,events,best=null,offAir=null;
+const fmt=s=>{const neg=s<0;s=Math.abs(Math.round(s));return (neg?'−':'')+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+function reset(){items=BASE.map(([n,p,fix,hard])=>({n,plan:p,act:p,fix:!!fix,hard:!!hard,drop:false,done:false,ran:0}));cur=0;clock=0;itemT=0;offAir=null;
+  // things that will go wrong
+  const r=rnd(Date.now()%9973);
+  events=[{at:'Interview: home manager',over:120+Math.floor(r()*60),msg:'The manager is in full flow. The interview will overrun by about two minutes.'},
+          {at:'News bulletin',over:30,msg:'Breaking story added to the news. It will run 30 seconds long.'},
+          {at:'Phone-in',over:-150,msg:'Only one caller got through. The phone-in will finish about 2:30 early.'}];
+  for(const e of events){const it=items.find(i=>i.n===e.at);it.act=Math.max(30,it.plan+e.over);it.ev=e;}
+  $('#ev').innerHTML='<li>Ready. Press Go live.</li>';$('#res').innerHTML='';render();}
+function remainingExpected(){let s=0;items.forEach((it,i)=>{if(it.drop||it.done)return;if(i===cur)s+=Math.max(0,(it.known?it.act:it.plan)-itemT);else if(i>cur)s+=it.known?it.act:it.plan;});return s;}
+function say(m){$('#ev').insertAdjacentHTML('beforeend',`<li><b>${fmt(clock)}</b> ${m}</li>`);$('#ev').scrollTop=1e5;}
+function render(){
+  let t=0;const rows=items.map((it,i)=>{const start=t;if(!it.drop)t+=it.done?it.ran:(i===cur?Math.max(it.ran,(it.known?it.act:it.plan)):(it.known?it.act:it.plan));
+    const cls=it.drop?'dropped':it.done?'done':i===cur&&running?'now':'';
+    const can=!it.done&&!it.fix&&i>=cur;
+    return `<tr class="${cls}"><td>${it.drop?'–':fmt(start)}</td><td>${it.n} ${it.fix?'<span class="tag">FIXED</span>':''}</td><td>${fmt(it.plan)}</td><td>${it.done?fmt(it.ran):it.known?fmt(it.act):'–'}</td><td>${can&&!it.drop?`<button class="ghost" data-a="trim" data-i="${i}">−30s</button><button class="ghost" data-a="drop" data-i="${i}">Drop</button>`:''}${!it.done&&!it.fix&&i>=cur&&!it.drop?`<button class="ghost" data-a="pad" data-i="${i}">+30s</button>`:''}${it.drop&&i>cur?`<button class="ghost" data-a="undrop" data-i="${i}">Restore</button>`:''}</td></tr>`;}).join('');
+  if(rows!==lastRows){$('#ro').innerHTML=rows;lastRows=rows;}
+  const exp=clock+remainingExpected();$('#clk').textContent=fmt(clock);$('#ot').textContent=fmt(offAir??exp);const d=(offAir??exp)-SHOW;$('#ov').textContent=(d>0?'+':d<0?'−':'±')+fmt(Math.abs(d));
+  const cls=Math.abs(d)<=10?'good':Math.abs(d)<=60?'warn':'bad';$('#ovBox').className=cls;$('#otBox').className=cls;
+  const it=items[cur];$('#left').textContent=it&&running?fmt(Math.max(0,(it.known?it.act:it.plan)-itemT)):'–';
+}
+$('#ro').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const it=items[+b.dataset.i],a=b.dataset.a;
+  if(a==='trim'){const base=it.known?'act':'plan';if(it[base]>60){it[base]-=30;if(base==='plan')it.act-=30;say('Trimmed '+it.n+' by 30 seconds.');}}
+  if(a==='pad'){it.plan+=30;it.act+=30;say('Added 30 seconds to '+it.n+'.');}
+  if(a==='drop'){if(+b.dataset.i===cur){wrap();return;}it.drop=true;say('Dropped '+it.n+'.');}
+  if(a==='undrop'){it.drop=false;say('Restored '+it.n+'.');}
+  render();});
+function advance(){const it=items[cur];it.done=true;it.ran=itemT;itemT=0;do{cur++;}while(cur<items.length&&items[cur].drop);
+  if(cur>=items.length){running=false;offAir=clock;finish();return;}
+  const n=items[cur];say('On air: '+n.n+'.');if(n.ev){n.known=true;say('⚠ '+n.ev.msg);}}
+function wrap(){const it=items[cur];if(!running||it.fix){say(it&&it.fix?it.n+' is fixed and cannot be cut short.':'');return;}it.act=itemT;it.known=true;say('Wrapped '+it.n+' early.');advance();render();}
+function tick(now){if(running){const dt=(now-lastNow)/1000*(+$('#spd').value);clock+=dt;itemT+=dt;const it=items[cur];if(itemT>=(it.known?it.act:it.plan))advance();}lastNow=now;render();if(running)requestAnimationFrame(tick);}
+function finish(){const d=offAir-SHOW,fixedOk=items.every(i=>!i.fix||(!i.drop&&i.ran>=i.plan-1));
+  const n=setChecks($('#res'),[[Math.abs(d)<=10,'Off air within 10 seconds of 30:00 (you: '+fmt(offAir)+')'],[fixedOk,'Every fixed item ran in full'],[!items.some(i=>i.drop&&i.n==='Interview: home manager'),'Kept the manager interview (the best content)']]);
+  if(best===null||n>best){best=n;$('#best').textContent=n+' / 3';}
+  say(Math.abs(d)<=10?'Off air bang on time. Well produced.':'Off air at '+fmt(offAir)+'. '+(d>0?'You crashed into the next programme.':'Dead air until the next show.'));
+  $('#go').disabled=false;$('#go').textContent='▶ Run it again';$('#pause').disabled=true;$('#wrap').disabled=true;}
+$('#go').onclick=()=>{reset();running=true;lastNow=performance.now();items[0].known=true;say('On air: '+items[0].n+'.');$('#go').disabled=true;$('#pause').disabled=false;$('#wrap').disabled=false;requestAnimationFrame(tick);};
+$('#pause').onclick=()=>{running=!running;$('#pause').textContent=running?'Pause':'Resume';if(running){lastNow=performance.now();requestAnimationFrame(tick);}};
+$('#wrap').onclick=wrap;
+reset();
+</script></body></html>

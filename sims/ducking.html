@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ducking and Crossfade Trainer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="sim.css"></head><body>
+<header class="top"><div class="in"><div><h1>Ducking and crossfade trainer</h1><p>A 30-second bulletin intro: two links of speech over a music bed, then a crossfade into the next track. Set the duck and the crossfade, look at the gain lines, then play it back.</p></div><a href="../index.html">← Course site</a></div></header>
+<main>
+<section class="card">
+  <canvas id="cv" width="960" height="380" aria-label="Timeline showing speech clips and music gain envelopes"></canvas>
+  <div class="row" style="margin-top:10px"><button id="play">▶ Play</button><button class="ghost" id="stop" disabled>■ Stop</button><span class="small" id="pos">0.0 s</span></div>
+  <div class="readout"><div><span>Music under speech</span><b id="under">–</b></div><div><span>Ducked before speech?</span><b id="ready">–</b></div><div><span>Crossfade</span><b id="xf">–</b></div></div>
+</section>
+<aside class="card">
+  <h2>Your job</h2>
+  <div class="task" id="task"></div>
+  <div class="ctl">
+    <h3 style="margin:0">Duck (music under speech)</h3>
+    <label>Duck depth <output id="depthOut"></output><input type="range" id="depth" min="0" max="30" value="4"></label>
+    <label>Start the duck before speech by <output id="preOut"></output><input type="range" id="pre" min="0" max="20" value="0"></label>
+    <label>Attack (time to duck down) <output id="attOut"></output><input type="range" id="att" min="1" max="30" value="12"></label>
+    <label>Release (time to come back up) <output id="relOut"></output><input type="range" id="rel" min="1" max="40" value="2"></label>
+    <h3 style="margin:6px 0 0">Crossfade into track B</h3>
+    <label>Crossfade starts at <output id="xsOut"></output><input type="range" id="xs" min="100" max="280" value="205"></label>
+    <label>Crossfade length <output id="xlOut"></output><input type="range" id="xl" min="0" max="60" value="2"></label>
+    <label>Curve <output id="cOut"></output><select id="curve"><option value="lin">Linear</option><option value="eq">Equal power</option></select></label>
+  </div>
+  <div class="row" style="margin-top:12px"><button id="check">Check</button><button class="ghost" id="next">Next job</button></div>
+  <ul class="checks" id="checks"></ul>
+  <p class="small" style="margin-top:12px">Score: <span class="score" id="score">0</span> / 2</p>
+  <div class="tip">A linear crossfade dips in the middle because the two tracks are each at half volume. Equal power keeps the overall level steady.</div>
+</aside>
+</main>
+<script src="sim.js"></script><script src="audio.js"></script>
+<script>
+const T=30, SPEECH=[[4,11],[15,22.5]];
+const v=id=>+$('#'+id).value;
+const P=()=>({depth:v('depth'),pre:v('pre')/20,att:v('att')/20,rel:v('rel')/20,xs:v('xs')/10,xl:v('xl')/10,curve:$('#curve').value});
+const cv=$('#cv'),ctx=cv.getContext('2d');
+for(const [id,f] of [['depth',x=>x+' dB'],['pre',x=>(x/20).toFixed(2)+' s'],['att',x=>(x/20).toFixed(2)+' s'],['rel',x=>(x/20).toFixed(2)+' s'],['xs',x=>(x/10).toFixed(1)+' s'],['xl',x=>(x/10).toFixed(1)+' s']]) bindRange(id,f,draw);
+$('#curve').onchange=draw;
+/* duck gain (dB) for music A/B at time t */
+function duckDb(t,p){let g=0;for(const [a,b] of SPEECH){const s=a-p.pre;let d=0;
+  if(t>=s&&t<s+p.att) d=-p.depth*(t-s)/p.att; else if(t>=s+p.att&&t<b) d=-p.depth; else if(t>=b&&t<b+p.rel) d=-p.depth*(1-(t-b)/p.rel);
+  if(t>=s+p.att&&t<b) d=-p.depth; g=Math.min(g,d);} return g;}
+function xfade(t,p){ if(p.xl<=0) return t<p.xs?[1,0]:[0,1]; const x=clamp((t-p.xs)/p.xl,0,1); return p.curve==='eq'?[Math.cos(x*Math.PI/2),Math.sin(x*Math.PI/2)]:[1-x,x]; }
+const X=t=>40+t/T*900, Yg=(g,top,h)=>top+h*(1-clamp((g+40)/40,0,1));
+let playStart=null;
+function draw(){
+  const p=P(); ctx.fillStyle='#14232a';ctx.fillRect(0,0,960,380);
+  ctx.fillStyle='#9fb3b8';ctx.font='12px Poppins,Arial';for(let t=0;t<=T;t+=5){ctx.fillRect(X(t),360,1,6);ctx.fillText(t+'s',X(t)-8,378);}
+  // lanes
+  const lanes=[['Speech',20,60],['Music A',100,110],['Music B',230,110]];
+  for(const [n,top,h] of lanes){ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(40,top,900,h);ctx.fillStyle='#cfe';ctx.fillText(n,4,top+14);}
+  for(const [a,b] of SPEECH){ctx.fillStyle='#2d6ea6';ctx.fillRect(X(a),26,X(b)-X(a),48);ctx.fillStyle='#fff';ctx.fillText('Link',X(a)+6,54);
+    ctx.fillStyle='rgba(45,110,166,.18)';ctx.fillRect(X(a),100,X(b)-X(a),240);}
+  // crossfade region
+  ctx.fillStyle='rgba(242,193,78,.15)';ctx.fillRect(X(p.xs),100,Math.max(2,X(p.xs+p.xl)-X(p.xs)),240);
+  // gain lines (dB, -40..0)
+  for(const [idx,top,col] of [[0,100,'#64B998'],[1,230,'#E9C46A']]){
+    ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();
+    for(let i=0;i<=600;i++){const t=i/600*T,xf=xfade(t,p)[idx],g=20*Math.log10(Math.max(xf,1e-4))+duckDb(t,p);const y=Yg(g,top+6,98);i?ctx.lineTo(X(t),y):ctx.moveTo(X(t),y);}
+    ctx.stroke(); ctx.fillStyle='#9fb3b8';ctx.fillText('0 dB',944-40,top+12);ctx.fillText('−40',944-30,top+104);
+  }
+  if(playStart!==null&&ac){const t=ac.currentTime-playStart;$('#pos').textContent=t.toFixed(1)+' s';ctx.fillStyle='#fff';ctx.fillRect(X(Math.min(t,T)),10,2,350);}
+  $('#under').textContent='−'+p.depth+' dB'; $('#ready').textContent=p.pre>=p.att-0.001?'Yes':'No, it is still dipping';
+  $('#xf').textContent=p.xl.toFixed(1)+' s '+(p.curve==='eq'?'equal power':'linear');
+}
+let ac=null,raf;
+function loop(){draw(); if(ac&&ac.currentTime-playStart<T) raf=requestAnimationFrame(loop); else stop();}
+async function play(){ if(ac) return; ac=new (window.AudioContext||window.webkitAudioContext)(); await ac.resume(); const p=P();
+  const out=ac.createGain(); out.gain.value=0.8; out.connect(ac.destination);
+  const gA=ac.createGain(), gB=ac.createGain(); gA.connect(out); gB.connect(out);
+  const t0=ac.currentTime+0.1; playStart=t0;
+  for(const [g,idx] of [[gA,0],[gB,1]]){ g.gain.setValueAtTime(0,t0); for(let i=0;i<=300;i++){const t=i/300*T;const lin=xfade(t,p)[idx]*undb(duckDb(t,p));g.gain.linearRampToValueAtTime(lin*0.5,t0+t);} }
+  const a=ac.createBufferSource(); a.buffer=musicBuffer(ac,8,120,0); a.loop=true; a.connect(gA); a.start(t0);
+  const b=ac.createBufferSource(); b.buffer=musicBuffer(ac,8,96,5); b.loop=true; b.connect(gB); b.start(t0);
+  const vb=voiceBuffer(ac,9,21,112);
+  for(const [s,e] of SPEECH){const vs=ac.createBufferSource(); vs.buffer=vb; const vg=ac.createGain(); vg.gain.value=1.1; vs.connect(vg); vg.connect(out); vs.start(t0+s,0.2,e-s);}
+  $('#stop').disabled=false; loop();
+}
+function stop(){ cancelAnimationFrame(raf); if(ac){ac.close();ac=null;} playStart=null; $('#stop').disabled=true; draw(); }
+$('#play').onclick=play; $('#stop').onclick=stop;
+const JOBS=[
+ {t:'<b>Duck the bed under the links.</b> The music should drop 10 to 18 dB, be fully down before each link starts, and come back up smoothly over 0.5 to 2 seconds after it ends.',c:p=>[[p.depth>=10&&p.depth<=18,'Duck depth 10–18 dB (yours '+p.depth+' dB)'],[p.pre>=p.att-0.001,'Fully ducked before the speech starts (start early by at least the attack time)'],[p.att<=1,'Attack 1 second or less'],[p.rel>=0.5&&p.rel<=2,'Release 0.5–2 seconds']]},
+ {t:'<b>Crossfade into track B.</b> Use an equal power crossfade of 1.5 to 4 seconds that does not overlap either link.',c:p=>{const over=SPEECH.some(([a,b])=>p.xs<b+0.01&&p.xs+p.xl>a-p.pre);return [[p.curve==='eq','Equal power curve'],[p.xl>=1.5&&p.xl<=4,'Length 1.5–4 seconds (yours '+p.xl.toFixed(1)+')'],[!over,'Crossfade is clear of the speech']];}}];
+let job=0,score=0,done=new Set();
+function showJob(){$('#task').innerHTML=(job+1)+' of '+JOBS.length+': '+JOBS[job].t;$('#checks').innerHTML='';}
+$('#check').onclick=()=>{const it=JOBS[job].c(P());if(setChecks($('#checks'),it)===it.length&&!done.has(job)){done.add(job);score++;$('#score').textContent=score;}};
+$('#next').onclick=()=>{job=(job+1)%JOBS.length;showJob();};
+showJob(); draw();
+</script></body></html>
