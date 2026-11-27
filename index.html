@@ -338,31 +338,13 @@ footer{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);fo
   <a href="#units">Units</a>
   <a href="#additional-tasks">Additional tasks</a>
   <a href="#lesson-slides">Lesson slides</a>
-  <a href="quiz.html" data-quiz>Skills check ↗</a>
+  <a href="#simulators">Simulators &amp; tools</a>
   <a href="#weekly-log">Weekly log</a>
   <a href="#peer-check">Peer log check</a>
   <a href="#grading">Grading</a>
   <a href="#parents">For parents</a>
   <a href="#next-steps">After the course</a>
   <a href="#jobs">Jobs</a>
-  <a href="telestrator.html" data-tele>Video Analysis ↗</a>
-  <a href="https://sites.google.com/view/ga-match-report-board" target="_blank" rel="noopener">Match Report Board ↗</a>
-  <a href="https://sites.google.com/view/efl-commentary-boards" target="_blank" rel="noopener">EFL Commentary Line Up Board ↗</a>
-  <a href="https://sites.google.com/view/youthschoice-running-order" target="_blank" rel="noopener">Radio Show Planner ↗</a>
-  <a href="https://sites.google.com/view/youths-choice-sports-bulletin" target="_blank" rel="noopener">Sports Bulletin ↗</a>
-  <a href="https://sites.google.com/view/gaproductiontools/camera-exposure-simulator" target="_blank" rel="noopener">Camera Exposure Simulator ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/framing.html" target="_blank" rel="noopener">Framing Trainer ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/dof.html" target="_blank" rel="noopener">Depth of Field Lab ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/shutter.html" target="_blank" rel="noopener">Shutter &amp; Frame Rate Lab ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/multicam.html" target="_blank" rel="noopener">Multi-Camera Planner ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/mixer.html" target="_blank" rel="noopener">Mixing Desk ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/mic.html" target="_blank" rel="noopener">Mic Placement ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/ducking.html" target="_blank" rel="noopener">Ducking &amp; Crossfades ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/director.html" target="_blank" rel="noopener">Gallery Director ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/runningorder.html" target="_blank" rel="noopener">Running Order Challenge ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/colour.html" target="_blank" rel="noopener">Colour Correction Lab ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/speedramp.html" target="_blank" rel="noopener">Speed Ramp Builder ↗</a>
-  <a href="https://markpendergastradio-lgtm.github.io/sports-media/sims/safezone.html" target="_blank" rel="noopener">Safe Zone Checker ↗</a>
 </nav></div></div>
 
 <main class="wrap">
@@ -948,6 +930,90 @@ footer{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);fo
         .catch(function(){ btn.disabled = false; showResult(false); msg('Could not confirm it was sent. Check your internet, or show this screen to your teacher.', true); });
     });
     render();
+  })();
+  </script>
+</section>
+
+<!-- SIMULATORS & TOOLS -->
+<section data-view="simulators" hidden>
+  <style>
+    .st-tabs{display:flex;flex-wrap:wrap;gap:6px}
+    .st-tabs button{font:700 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--rule);background:var(--panel);color:var(--muted);padding:10px 14px;cursor:pointer}
+    .st-tabs button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--navy-ink)}
+    .st-group{display:grid;gap:12px}
+    .st-group h3{font:700 20px/1.2 var(--display);margin:0}
+    .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+    .st-card{background:var(--panel);border:1px solid var(--rule);padding:14px 16px;display:grid;gap:6px;align-content:start;text-decoration:none;color:var(--ink)}
+    .st-card:hover{border-color:var(--accent)}
+    .st-card b{font:700 17px/1.25 var(--display);color:var(--ink)}
+    .st-card span{font-size:15px;color:var(--muted)}
+    .st-card em{font:500 12px/1 var(--mono);font-style:normal;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+  </style>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Practise before you shoot</span>
+    <h2>Simulators &amp; tools</h2>
+    <p class="lede">Try camera, audio and production skills on screen, then use the planning tools for real shows and matches. Each one opens in a new tab.</p>
+  </div>
+  <div class="st-tabs" role="group" aria-label="Choose a group" id="stTabs">
+    <button type="button" data-cat="all" aria-pressed="true">All</button>
+    <button type="button" data-cat="camera" aria-pressed="false">Camera</button>
+    <button type="button" data-cat="audio" aria-pressed="false">Audio</button>
+    <button type="button" data-cat="live" aria-pressed="false">Live production</button>
+    <button type="button" data-cat="edit" aria-pressed="false">Editing</button>
+    <button type="button" data-cat="radio" aria-pressed="false">Radio</button>
+    <button type="button" data-cat="match" aria-pressed="false">Match &amp; commentary</button>
+    <button type="button" data-cat="analysis" aria-pressed="false">Analysis &amp; quiz</button>
+  </div>
+
+  <div class="st-group" data-cat="camera"><h3>Camera</h3><div class="st-grid">
+    <a class="st-card" href="https://sites.google.com/view/gaproductiontools/camera-exposure-simulator" target="_blank" rel="noopener"><b>Camera Exposure Simulator</b><span>Balance aperture, shutter speed and ISO for a correct exposure.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/framing.html" target="_blank" rel="noopener"><b>Framing Trainer</b><span>Zoom, pan and tilt to hit each shot size from extreme wide to close-up.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/dof.html" target="_blank" rel="noopener"><b>Depth of Field Lab</b><span>See how focal length, aperture and focus change what is sharp.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/shutter.html" target="_blank" rel="noopener"><b>Shutter &amp; Frame Rate Lab</b><span>Freeze or blur a moving ball and shoot for slow motion.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/multicam.html" target="_blank" rel="noopener"><b>Multi-Camera Planner</b><span>Place six cameras round a pitch without crossing the 180° line.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <div class="st-group" data-cat="audio"><h3>Audio</h3><div class="st-grid">
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/mixer.html" target="_blank" rel="noopener"><b>Mixing Desk</b><span>Balance commentary, crowd and music to broadcast loudness.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/mic.html" target="_blank" rel="noopener"><b>Mic Placement</b><span>Choose and place the right mic for a clean voice.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/ducking.html" target="_blank" rel="noopener"><b>Ducking &amp; Crossfades</b><span>Duck music under speech and crossfade smoothly between items.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <div class="st-group" data-cat="live"><h3>Live production</h3><div class="st-grid">
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/director.html" target="_blank" rel="noopener"><b>Gallery Director</b><span>Cut live between four cameras as the match unfolds.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/runningorder.html" target="_blank" rel="noopener"><b>Running Order Challenge</b><span>Trim, drop and pad items to come off air on time.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <div class="st-group" data-cat="edit"><h3>Editing</h3><div class="st-grid">
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/colour.html" target="_blank" rel="noopener"><b>Colour Correction Lab</b><span>Fix white balance and exposure using the scopes.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/speedramp.html" target="_blank" rel="noopener"><b>Speed Ramp Builder</b><span>Shape a slow-motion replay without stuttering frames.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://markpendergastradio-lgtm.github.io/sports-media/sims/safezone.html" target="_blank" rel="noopener"><b>Safe Zone Checker</b><span>Keep text and logos clear of app buttons on social and TV.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <div class="st-group" data-cat="radio"><h3>Radio</h3><div class="st-grid">
+    <a class="st-card" href="https://sites.google.com/view/youthschoice-running-order" target="_blank" rel="noopener"><b>Radio Show Planner</b><span>Plan your Youths Choice show link by link.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://sites.google.com/view/youths-choice-sports-bulletin" target="_blank" rel="noopener"><b>Sports Bulletin</b><span>Script template for your 3-minute sports news bulletin.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <div class="st-group" data-cat="match"><h3>Match &amp; commentary</h3><div class="st-grid">
+    <a class="st-card" href="https://sites.google.com/view/ga-match-report-board" target="_blank" rel="noopener"><b>Match Report Board</b><span>Record the pre-match facts and the pattern of play.</span><em>Open ↗</em></a>
+    <a class="st-card" href="https://sites.google.com/view/efl-commentary-boards" target="_blank" rel="noopener"><b>EFL Commentary Line Up Board</b><span>Line-ups and notes to have in front of you on commentary.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <div class="st-group" data-cat="analysis"><h3>Analysis &amp; quiz</h3><div class="st-grid">
+    <a class="st-card" href="telestrator.html" data-tele><b>Video Analysis</b><span>Freeze frames and draw on them like a TV pundit.</span><em>Open ↗</em></a>
+    <a class="st-card" href="quiz.html" data-quiz><b>Skills check</b><span>Quick quiz on the skills from the course.</span><em>Open ↗</em></a>
+  </div></div>
+
+  <script>
+  (function(){
+    var tabs = document.getElementById('stTabs');
+    tabs.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b) return;
+      var c = b.dataset.cat;
+      tabs.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x === b); });
+      document.querySelectorAll('.st-group').forEach(function(g){ g.hidden = c !== 'all' && g.dataset.cat !== c; });
+    });
   })();
   </script>
 </section>
