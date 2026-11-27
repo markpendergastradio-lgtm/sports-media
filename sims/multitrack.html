@@ -153,10 +153,7 @@ function synthLib(a){
   return [
     {name:'Riser (synth)',kind:'Riser',track:1,buf:mk(3,(d,sr)=>{let ph=0;for(let i=0;i<d.length;i++){const t=i/sr,p=t/3;ph+=2*Math.PI*(200+1800*p*p)/sr;d[i]=(Math.sin(ph)*0.5+(Math.random()*2-1)*0.5*p)*p*p;}})},
     {name:'Impact hit (synth)',kind:'Hit',track:1,buf:mk(1.6,(d,sr)=>{let ph=0;for(let i=0;i<d.length;i++){const t=i/sr;ph+=2*Math.PI*(55+120*Math.exp(-t*18))/sr;d[i]=Math.sin(ph)*Math.exp(-t*3.2)+(Math.random()*2-1)*Math.exp(-t*30)*0.8;}})},
-    {name:'Whoosh (synth)',kind:'Whoosh',track:2,buf:mk(1.2,(d,sr)=>{let y=0;for(let i=0;i<d.length;i++){const t=i/sr,e=Math.sin(Math.PI*t/1.2)**2,a=0.02+0.3*e;y+=a*((Math.random()*2-1)-y);d[i]=y*e;}})},
-    {name:'Stinger chime (synth)',kind:'Hit',track:2,buf:mk(2.2,(d,sr)=>{for(let i=0;i<d.length;i++){const t=i/sr;d[i]=(Math.sin(2*Math.PI*880*t)+0.6*Math.sin(2*Math.PI*1320*t)+0.4*Math.sin(2*Math.PI*1760*t))*Math.exp(-t*2.2)*Math.min(1,t*200);}})},
-    {name:'Crowd bed (synth)',kind:'Bed',track:3,buf:crowdBuffer(a,12,7)},
-    {name:'Music bed 120 bpm (synth)',kind:'Bed',track:3,buf:musicBuffer(a,12,120,0)}
+    {name:'Whoosh (synth)',kind:'Whoosh',track:2,buf:mk(1.2,(d,sr)=>{let y=0;for(let i=0;i<d.length;i++){const t=i/sr,e=Math.sin(Math.PI*t/1.2)**2,a=0.02+0.3*e;y+=a*((Math.random()*2-1)-y);d[i]=y*e;}})}
   ];
 }
 async function loadLib(){
