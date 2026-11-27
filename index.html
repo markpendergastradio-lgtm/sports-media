@@ -340,6 +340,7 @@ footer{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);fo
   <a href="#lesson-slides">Lesson slides</a>
   <a href="quiz.html" data-quiz>Skills check ↗</a>
   <a href="#weekly-log">Weekly log</a>
+  <a href="#peer-check">Peer log check</a>
   <a href="#grading">Grading</a>
   <a href="#parents">For parents</a>
   <a href="#next-steps">After the course</a>
@@ -781,6 +782,174 @@ footer{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);fo
       </div>
     </div>
   </article>
+</section>
+
+<!-- PEER LOG CHECK -->
+<section data-view="peer-check" hidden>
+  <style>
+    .pc-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+    .pc-form label{display:grid;grid-template-rows:1fr auto;align-items:end;gap:6px;font-weight:600;font-size:15px}
+    .pc-form input,.pc-form select,.pc-comment{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--rule);padding:9px 10px;width:100%;min-width:0}
+    .pc-group{border-top:1px solid var(--rule);padding-top:12px;display:grid;gap:8px}
+    .pc-group h4{margin:0;font:700 17px/1.2 var(--display);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+    .pc-group h4 small{font:500 12px/1 var(--mono);color:var(--muted)}
+    .pc-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 8px;background:var(--ground)}
+    .pc-row.is-done{box-shadow:inset 4px 0 0 var(--pitch)}
+    .pc-row.is-missing{box-shadow:inset 4px 0 0 var(--tally)}
+    .pc-row.need{outline:2px solid var(--amber)}
+    .pc-toggle{display:flex;gap:6px}
+    .pc-toggle button{font:700 13px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--rule);background:var(--panel);color:var(--muted);padding:8px 10px;cursor:pointer;white-space:nowrap}
+    .pc-toggle button[aria-pressed="true"].d{background:var(--pitch);border-color:var(--pitch);color:#fff}
+    .pc-toggle button[aria-pressed="true"].m{background:var(--tally);border-color:var(--tally);color:#fff}
+    .pc-status{position:sticky;bottom:0;background:var(--panel);border:1px solid var(--rule);padding:10px 14px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;z-index:2}
+    .pc-status b{font-family:var(--display)}
+    .pc-msg{font-weight:600}
+    .pc-msg.err{color:var(--tally)}
+    .pc-result{display:grid;gap:10px}
+    .pc-result ul{margin:0;padding-left:20px}
+    @media (max-width:520px){.pc-row{grid-template-columns:1fr}.pc-toggle button{flex:1}}
+  </style>
+  <div style="display:grid;gap:10px">
+    <span class="kicker">Peer review</span>
+    <h2>Peer log check</h2>
+    <p class="lede">Open a classmate’s weekly log and go through it with them. Mark each element as done or missing, add one tip, then submit. Your teacher sees every check.</p>
+  </div>
+
+  <article class="l3">
+    <header><span class="tag">Step 1</span><span class="ttl"><h3>Who and which week</h3></span></header>
+    <div class="body">
+      <div class="pc-form">
+        <label>Name of the student whose log this is<input id="pcStudent" autocomplete="off" maxlength="60" placeholder="First and last name"></label>
+        <label>Your name (the checker)<input id="pcChecker" autocomplete="off" maxlength="60" placeholder="First and last name"></label>
+        <label>Year<select id="pcYear"><option value="12">Year 12</option><option value="13">Year 13</option></select></label>
+        <label>Week<select id="pcWeek"></select></label>
+        <label style="grid-column:1/-1">Link to the log (optional)<input id="pcLink" type="url" maxlength="300" placeholder="https://…"></label>
+      </div>
+    </div>
+  </article>
+
+  <article class="l3">
+    <header><span class="tag">Step 2</span><span class="ttl"><h3>Tick off each element</h3><span class="tc">DONE · MISSING</span></span></header>
+    <div class="body" id="pcList"></div>
+  </article>
+
+  <article class="l3">
+    <header><span class="tag">Step 3</span><span class="ttl"><h3>One tip and submit</h3></span></header>
+    <div class="body">
+      <label style="display:grid;gap:6px;font-weight:600">One thing that would make this log better<textarea id="pcComment" class="pc-comment" rows="3" maxlength="600"></textarea></label>
+      <div class="pc-result" id="pcResult" hidden></div>
+    </div>
+  </article>
+
+  <div class="pc-status">
+    <span id="pcCount"><b>0</b> of 29 checked</span>
+    <span class="pc-msg" id="pcMsg" aria-live="polite"></span>
+    <div class="btnrow"><button class="btn ghost" type="button" id="pcReset">Start again</button><button class="btn" type="button" id="pcSubmit">Submit check</button></div>
+  </div>
+
+  <script>
+  (function(){
+    var PEER_URL = 'https://script.google.com/macros/s/AKfycbwaMITaZ8FuBfrjaquFn2yjFJUABcs41AIEvyw_QRE6sl6vqx9hyXVHaxkH5DbLxYSX/exec';
+    var GROUPS = [
+      ['1. Context',[['C1','The brief is explained'],['C2','Who it’s for and why'],['C3','Linked research on that audience']]],
+      ['2. Research',[['R1','Technical: kit used and the alternative'],['R2','Story: sources and why they’re reliable'],['R3','Stylistic: similar examples'],['R4','Research linked where it’s mentioned']]],
+      ['3. Ethics & sustainability',[['E1','Contributors treated fairly and safely (consent)'],['E2','Sources credited, copyright respected'],['E3','The least wasteful option explained']]],
+      ['4. Problem solving',[['P1','Three problems described'],['P2','Each problem matched to its solution']]],
+      ['5. Planning & production',[['L1','Pre-production'],['L2','Production, with a set-up diagram'],['L3','Post-production'],['L4','Distribution']]],
+      ['6. Practical skills',[['S1','Annotated screenshots'],['S2','Screenshots are dated'],['S3','Decision moments explained'],['S4','How-to links'],['S5','Before and after']]],
+      ['7. Evaluation & reflection',[['V1','How close you got to the plan'],['V2','Three things that went well'],['V3','Three things to do better']]],
+      ['8. Presentation',[['T1','Why this format suits this audience'],['T2','The other options you had'],['T3','Finished work embedded so it plays']]],
+      ['Whole log',[['G1','Show, don’t tell: images, audio or video'],['G2','Builds on last week']]]
+    ];
+    var IDS = [], LABEL = {};
+    GROUPS.forEach(function(g){ g[1].forEach(function(i){ IDS.push(i[0]); LABEL[i[0]] = i[1]; }); });
+    var state = {};
+    var $ = function(id){ return document.getElementById(id); };
+    var wk = $('pcWeek');
+    for (var n = 1; n <= 30; n++) { var o = document.createElement('option'); o.value = n; o.textContent = 'Week ' + n; wk.appendChild(o); }
+    try { var saved = JSON.parse(localStorage.getItem('pcPrefs') || '{}'); if (saved.checker) $('pcChecker').value = saved.checker; if (saved.year) $('pcYear').value = saved.year; if (saved.week) wk.value = saved.week; } catch (e) {}
+
+    var list = $('pcList');
+    GROUPS.forEach(function(g){
+      var box = document.createElement('div'); box.className = 'pc-group';
+      var h = document.createElement('h4'); h.textContent = g[0];
+      var sm = document.createElement('small'); sm.dataset.group = g[0]; h.appendChild(sm); box.appendChild(h);
+      g[1].forEach(function(i){
+        var row = document.createElement('div'); row.className = 'pc-row'; row.dataset.id = i[0];
+        var t = document.createElement('span'); t.textContent = i[1];
+        var tg = document.createElement('div'); tg.className = 'pc-toggle'; tg.setAttribute('role','group'); tg.setAttribute('aria-label', i[1]);
+        [['Done','d','✓ Done'],['Missing','m','✗ Missing']].forEach(function(b){
+          var btn = document.createElement('button'); btn.type = 'button'; btn.className = b[1]; btn.textContent = b[2]; btn.setAttribute('aria-pressed','false');
+          btn.addEventListener('click', function(){ state[i[0]] = state[i[0]] === b[0] ? '' : b[0]; render(); });
+          tg.appendChild(btn);
+        });
+        row.appendChild(t); row.appendChild(tg); box.appendChild(row);
+      });
+      list.appendChild(box);
+    });
+
+    function render(){
+      var done = 0, miss = 0;
+      list.querySelectorAll('.pc-row').forEach(function(r){
+        var v = state[r.dataset.id] || '';
+        r.classList.toggle('is-done', v === 'Done'); r.classList.toggle('is-missing', v === 'Missing');
+        if (v) r.classList.remove('need');
+        r.querySelector('.d').setAttribute('aria-pressed', v === 'Done'); r.querySelector('.m').setAttribute('aria-pressed', v === 'Missing');
+        if (v === 'Done') done++; if (v === 'Missing') miss++;
+      });
+      GROUPS.forEach(function(g){
+        var d = g[1].filter(function(i){ return state[i[0]] === 'Done'; }).length;
+        list.querySelector('small[data-group="' + g[0] + '"]').textContent = d + ' / ' + g[1].length + ' done';
+      });
+      $('pcCount').innerHTML = '<b>' + (done + miss) + '</b> of ' + IDS.length + ' checked · ' + done + ' done · ' + miss + ' missing';
+    }
+    function msg(t, err){ var m = $('pcMsg'); m.textContent = t; m.className = 'pc-msg' + (err ? ' err' : ''); }
+
+    $('pcReset').addEventListener('click', function(){
+      state = {}; $('pcStudent').value = ''; $('pcLink').value = ''; $('pcComment').value = '';
+      $('pcResult').hidden = true; msg(''); render(); window.scrollTo({ top: 0 });
+    });
+
+    $('pcSubmit').addEventListener('click', function(){
+      var student = $('pcStudent').value.trim(), checker = $('pcChecker').value.trim();
+      if (!student || !checker) { msg('Add both names first.', true); (student ? $('pcChecker') : $('pcStudent')).focus(); return; }
+      var gaps = IDS.filter(function(id){ return !state[id]; });
+      if (gaps.length) {
+        list.querySelectorAll('.pc-row').forEach(function(r){ r.classList.toggle('need', !state[r.dataset.id]); });
+        msg(gaps.length + ' element' + (gaps.length > 1 ? 's' : '') + ' still to mark.', true);
+        list.querySelector('.pc-row.need').scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return;
+      }
+      var items = {}; IDS.forEach(function(id){ items[id] = state[id]; });
+      var data = { student: student, checker: checker, year: $('pcYear').value, week: wk.value, link: $('pcLink').value.trim(), comment: $('pcComment').value.trim(), items: items };
+      try { localStorage.setItem('pcPrefs', JSON.stringify({ checker: checker, year: data.year, week: data.week })); } catch (e) {}
+      var btn = $('pcSubmit'); btn.disabled = true; msg('Sending…');
+      var done = IDS.filter(function(id){ return state[id] === 'Done'; });
+      var missing = IDS.filter(function(id){ return state[id] === 'Missing'; });
+      function showResult(sent){
+        var r = $('pcResult'); r.hidden = false;
+        r.innerHTML = '';
+        var p = document.createElement('p');
+        p.innerHTML = '<b>' + Math.round(done.length / IDS.length * 100) + '%</b> of the log is in place (' + done.length + ' of ' + IDS.length + ').';
+        r.appendChild(p);
+        if (missing.length) {
+          var hp = document.createElement('p'); hp.textContent = student + ' still needs to add:'; r.appendChild(hp);
+          var ul = document.createElement('ul');
+          missing.forEach(function(id){ var li = document.createElement('li'); li.textContent = LABEL[id]; ul.appendChild(li); });
+          r.appendChild(ul);
+        } else { var ok = document.createElement('p'); ok.textContent = 'Nothing missing. Great log.'; r.appendChild(ok); }
+        msg(sent ? 'Sent to your teacher. Press Start again to check another log.' : 'Could not send. Show this screen to your teacher.', !sent);
+        r.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+      if (PEER_URL.indexOf('https://script.google.com/') !== 0) { btn.disabled = false; showResult(false); return; }
+      fetch(PEER_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) })
+        .then(function(res){ return res.json(); })
+        .then(function(j){ btn.disabled = false; if (j && j.ok) showResult(true); else { showResult(false); if (j && j.error) msg('Not sent: ' + j.error, true); } })
+        .catch(function(){ btn.disabled = false; showResult(false); msg('Could not confirm it was sent. Check your internet, or show this screen to your teacher.', true); });
+    });
+    render();
+  })();
+  </script>
 </section>
 
 <!-- GRADING -->
