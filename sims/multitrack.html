@@ -229,7 +229,7 @@ function renderClips(){
   document.querySelectorAll('.clip').forEach(n=>n.remove());
   const lanes=[...document.querySelectorAll('.lane')];
   clips.forEach(c=>{
-    const d=document.createElement('div'); d.className='clip t'+c.track+(sel===c?' sel':''); d.style.left=(c.start*pps)+'px'; d.style.width=Math.max(6,c.len*pps)+'px';
+    const d=document.createElement('div'); d.dataset.id=c.id; d.className='clip t'+c.track+(sel===c?' sel':''); d.style.left=(c.start*pps)+'px'; d.style.width=Math.max(6,c.len*pps)+'px';
     const cv=document.createElement('canvas'); const w=Math.max(6,Math.round(c.len*pps)); cv.width=w; cv.height=56; cv.style.width=w+'px'; drawWave(cv,c); d.appendChild(cv);
     const n=document.createElement('span'); n.className='cn'; n.textContent=c.name+(c.gain?` (${c.gain>0?'+':''}${c.gain} dB)`:''); d.appendChild(n);
     if(c.fin>0){const f=document.createElement('div');f.className='fi';f.style.left=0;f.style.width=(c.fin*pps)+'px';f.style.background='linear-gradient(to top right,rgba(0,0,0,.35) 50%,transparent 50%)';d.appendChild(f);}
@@ -246,16 +246,30 @@ function drawWave(cv,c){
 }
 let drag=null;
 function startDrag(e,c,d){
-  e.preventDefault(); select(c); d.setPointerCapture(e.pointerId);
-  drag={c,x:e.clientX,y:e.clientY,start:c.start,track:c.track,moved:false};
-  d.onpointermove=ev=>{ if(!drag) return; const dx=(ev.clientX-drag.x)/pps; if(Math.abs(ev.clientX-drag.x)+Math.abs(ev.clientY-drag.y)>3) drag.moved=true;
-    c.start=Math.max(0,Math.min(LEN-0.05,snapT(drag.start+dx)));
-    const lanes=[...document.querySelectorAll('.lane')]; const t=lanes.findIndex(l=>{const r=l.getBoundingClientRect();return ev.clientY>=r.top&&ev.clientY<r.bottom;});
-    if(t>=0&&t!==c.track){ c.track=t; lanes[t].appendChild(d); d.className='clip t'+t+' sel'; }
-    d.style.left=(c.start*pps)+'px'; fillInspector(); };
-  d.onpointerup=()=>{ d.onpointermove=null; d.onpointerup=null; const m=drag&&drag.moved; drag=null; if(m){renderClips(); restartIfPlaying();} };
+  if(e.button>0) return;
+  e.preventDefault(); select(c);
+  drag={c,d,x:e.clientX,y:e.clientY,start:c.start,moved:false};
+  d.style.cursor='grabbing'; document.body.style.cursor='grabbing';
+  window.addEventListener('pointermove',onDrag); window.addEventListener('pointerup',endDrag); window.addEventListener('pointercancel',endDrag);
 }
-function select(c){ sel=c; $('#inspector').hidden=!c; document.querySelectorAll('.clip').forEach(n=>n.classList.remove('sel')); if(c){ renderClips(); fillInspector(); } }
+function onDrag(ev){
+  if(!drag) return; const {c,d}=drag; ev.preventDefault();
+  if(Math.abs(ev.clientX-drag.x)+Math.abs(ev.clientY-drag.y)>3) drag.moved=true;
+  c.start=Math.max(0,Math.min(LEN-0.05,snapT(drag.start+(ev.clientX-drag.x)/pps)));
+  const lanes=[...document.querySelectorAll('.lane')];
+  const t=lanes.findIndex(l=>{const r=l.getBoundingClientRect();return ev.clientY>=r.top&&ev.clientY<r.bottom;});
+  if(t>=0&&t!==c.track){ c.track=t; lanes[t].appendChild(d); d.className='clip t'+t+' sel'; }
+  d.style.left=(c.start*pps)+'px'; fillInspector();
+  $('#time').textContent=fmtT(c.start);
+}
+function endDrag(){
+  window.removeEventListener('pointermove',onDrag); window.removeEventListener('pointerup',endDrag); window.removeEventListener('pointercancel',endDrag);
+  document.body.style.cursor=''; if(!drag) return; const m=drag.moved; drag.d.style.cursor=''; drag=null;
+  if(m){ renderClips(); restartIfPlaying(); } drawPH();
+}
+function select(c){ sel=c; $('#inspector').hidden=!c;
+  document.querySelectorAll('.clip').forEach(n=>n.classList.toggle('sel', !!c && +n.dataset.id===c.id));
+  if(c) fillInspector(); }
 function fillInspector(){ if(!sel) return; $('#iname').textContent=sel.name+' · Track '+(sel.track+1);
   $('#iStart').value=sel.start.toFixed(2); $('#iGain').value=sel.gain; $('#iFin').value=sel.fin; $('#iFout').value=sel.fout; $('#iTrim').value=sel.off.toFixed(2); $('#iLen').value=sel.len.toFixed(2); }
 [['iStart','start'],['iGain','gain'],['iFin','fin'],['iFout','fout'],['iTrim','off'],['iLen','len']].forEach(([id,k])=>{
